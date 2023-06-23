@@ -17,8 +17,9 @@ public class EditHolder implements InventoryHolder {
     private final String id;
 
     private final CraftData craftData;
+    private Inventory inventory;
 
-    public EditHolder(String id, CraftData craftData) {
+    EditHolder(String id, CraftData craftData) {
         this.id = id;
         this.craftData = craftData;
     }
@@ -31,9 +32,17 @@ public class EditHolder implements InventoryHolder {
         return this.craftData;
     }
 
+    public static Inventory buildGui(String id, CraftData craftData) {
+        EditHolder holder = new EditHolder(id, craftData);
+        Inventory inventory = Bukkit.createInventory(holder, 9, Message.gui__edit_title.get(holder.id));
+        inventory.setContents(holder.getItems());
+        holder.inventory = inventory;
+        return inventory;
+    }
     public Inventory buildGui() {
         Inventory inventory = Bukkit.createInventory(this, 9, Message.gui__edit_title.get(this.id));
         inventory.setContents(getItems());
+        this.inventory = inventory;
         return inventory;
     }
 
@@ -87,6 +96,6 @@ public class EditHolder implements InventoryHolder {
     }
 
     public Inventory getInventory() {
-        return null;
+        return inventory;
     }
 }

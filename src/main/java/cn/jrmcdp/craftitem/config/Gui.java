@@ -86,8 +86,7 @@ public class Gui {
     }
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData) {
-        ForgeHolder holder = new ForgeHolder(playerData, id, craftData);
-        Inventory gui = Bukkit.createInventory(holder, chest.length, title);
+        Inventory gui = ForgeHolder.buildGui(playerData, id, craftData, chest.length, title);
         ItemStack[] is = new ItemStack[chest.length];
         Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
         for (int i = 0; i < chest.length; i++) {
