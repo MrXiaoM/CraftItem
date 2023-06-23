@@ -1,6 +1,8 @@
 ﻿name: CraftItem
-author: ZhiBuMiao
-version: 1.0
+authors:
+  - ZhiBuMiao
+  - MrXiaoM
+version: ${version}
 main: cn.jrmcdp.craftitem.CraftItem
 api-version: 1.13
 depend:
