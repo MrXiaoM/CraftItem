@@ -11,11 +11,11 @@ import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.CategoryHolder;
 import cn.jrmcdp.craftitem.holder.EditHolder;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
-import com.cryptomorin.xseries.XSound;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,7 +35,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class GuiListener implements Listener {
 
@@ -50,7 +49,7 @@ public class GuiListener implements Listener {
             event.setCancelled(true);
             final PlayerData playerData = holder.getPlayerData();
             final Player player = playerData.getPlayer();
-            player.playSound(player.getLocation(), XSound.matchXSound("UI_BUTTON_CLICK").get().parseSound(), 1.0F, 2.0F);
+            player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
             if (!event.getClick().isRightClick() && !event.getClick().isLeftClick())
                 return;
             if (event.getRawSlot() < 0 || event.getRawSlot() >= (Gui.getChest()).length)
@@ -95,7 +94,7 @@ public class GuiListener implements Listener {
                                     return;
                                 }
                                 if (win) {
-                                    player.playSound(player.getLocation(), XSound.matchXSound("BLOCK_ANVIL_USE").get().parseSound(), 1.0F, 1.0F);
+                                    player.playSound(player.getLocation(), Config.getSoundForgeSuccess(), 1.0F, 1.0F);
                                     Integer value = playerData.addScore(holder.getId(), score);
                                     if (value == 100) {
                                         craftData.takeMaterial(player.getInventory());
@@ -128,7 +127,7 @@ public class GuiListener implements Listener {
                                         }
                                     }
                                 } else {
-                                    player.playSound(player.getLocation(), XSound.matchXSound("BLOCK_GLASS_BREAK").get().parseSound(), 1.0F, 1.0F);
+                                    player.playSound(player.getLocation(), Config.getSoundForgeFail(), 1.0F, 1.0F);
                                     playerData.addScore(holder.getId(), -score);
                                     switch (multiple) {
                                         case 0 : {
@@ -160,8 +159,8 @@ public class GuiListener implements Listener {
                                 clear();
                                 return;
                             }
-                            player.playSound(player.getLocation(), XSound.matchXSound("BLOCK_ANVIL_LAND").get().parseSound(), 1.0F, 0.8F);
                             Config.getForgeTitle().send(player);
+                            player.playSound(player.getLocation(), Config.getSoundForgeTitle(), 1.0F, 0.8F);
                             this.i++;
                         }
                     }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
@@ -172,7 +171,7 @@ public class GuiListener implements Listener {
             CategoryHolder holder = (CategoryHolder) inventoryHolder;
             final Player player = (Player)event.getWhoClicked();
             if (event.getRawSlot() < 0 || event.getRawSlot() >= holder.getChest().length) return;
-            player.playSound(player.getLocation(), XSound.matchXSound("UI_BUTTON_CLICK").get().parseSound(), 1.0F, 2.0F);
+            player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
             String key = holder.getChest()[event.getRawSlot()];
             switch (key) {
                 case "上" : {
@@ -195,7 +194,7 @@ public class GuiListener implements Listener {
             final Inventory gui, loreGui;
             event.setCancelled(true);
             final Player player = (Player)event.getWhoClicked();
-            player.playSound(player.getLocation(), XSound.matchXSound("UI_BUTTON_CLICK").get().parseSound(), 1.0F, 2.0F);
+            player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
             if (event.getRawSlot() < 0 || event.getRawSlot() >= 9) return;
             final CraftData craftData = holder.getCraftData();
             switch (event.getRawSlot()) {

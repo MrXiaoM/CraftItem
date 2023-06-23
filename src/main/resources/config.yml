@@ -23,3 +23,7 @@ Setting:
     Time: 20
     FadeOut: 10
   Sounds:
+    ClickInventory: UI_BUTTON_CLICK
+    ForgeSuccess: BLOCK_ANVIL_USE
+    ForgeFail: BLOCK_GLASS_BREAK
+    ForgeTitle: BLOCK_ANVIL_LAND

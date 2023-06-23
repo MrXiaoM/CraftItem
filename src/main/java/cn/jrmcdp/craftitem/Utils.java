@@ -11,7 +11,7 @@ public class Utils {
     public static List<String> itemToListString(Collection<ItemStack> collection) {
         List<String> list = new ArrayList<>();
         for (ItemStack itemStack : collection) {
-            list.add("§a" + Material.getItemName(itemStack) + "§fx" + itemStack.getAmount());
+            list.add("§a" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
         }
         return list;
     }
@@ -36,6 +36,13 @@ public class Utils {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public static <T extends Enum<?>> Optional<T> valueOf(Class<T> clazz, String s) {
+        if (s != null) for (T t : clazz.getEnumConstants()) {
+            if (t.name().equalsIgnoreCase(s)) return Optional.of(t);
+        }
+        return Optional.empty();
     }
 
     public static String getItemName(ItemStack itemStack) {
