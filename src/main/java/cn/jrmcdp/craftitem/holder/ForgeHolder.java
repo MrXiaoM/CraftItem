@@ -6,11 +6,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 public class ForgeHolder implements InventoryHolder {
-    private PlayerData playerData;
-
-    private String id;
-
-    private CraftData craftData;
+    private final PlayerData playerData;
+    private final String id;
+    private final CraftData craftData;
 
     public ForgeHolder(PlayerData playerData, String id, CraftData craftData) {
         this.playerData = playerData;
@@ -18,28 +16,18 @@ public class ForgeHolder implements InventoryHolder {
         this.craftData = craftData;
     }
 
-    public PlayerData getPlayerData() {
-        return this.playerData;
     }
 
-    public void setPlayerData(PlayerData playerData) {
-        this.playerData = playerData;
+    public PlayerData getPlayerData() {
+        return this.playerData;
     }
 
     public String getId() {
         return this.id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public CraftData getCraftData() {
         return this.craftData;
-    }
-
-    public void setCraftData(CraftData craftData) {
-        this.craftData = craftData;
     }
 
     public Inventory getInventory() {

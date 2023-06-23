@@ -8,11 +8,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public class PlayerData {
-    private YamlConfiguration config;
+    private final YamlConfiguration config;
 
-    private Player player;
+    private final Player player;
 
-    private HashMap<String, Integer> scoreMap;
+    private final HashMap<String, Integer> scoreMap;
 
     public PlayerData(Player player) {
         this.player = player;
@@ -54,7 +54,7 @@ public class PlayerData {
     }
 
     public void save() {
-        this.scoreMap.entrySet().forEach(entry -> this.config.set("ForgeData." + entry.getKey(), entry.getValue()));
+        this.scoreMap.forEach((key, value) -> this.config.set("ForgeData." + key, value));
         FileConfig.Custom.saveConfig("PlayerData", this.player.getName(), this.config);
     }
 }

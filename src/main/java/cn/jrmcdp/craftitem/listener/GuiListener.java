@@ -392,8 +392,7 @@ public class GuiListener implements Listener {
                         public void onInventoryClose(InventoryCloseEvent e) {
                             if (e.getPlayer().getName().equals(player.getName()) && !this.isChat) {
                                 List<String> lore = new ArrayList<>();
-                                for (ListIterator<ItemStack> listIterator = e.getInventory().iterator(); listIterator.hasNext(); ) {
-                                    ItemStack itemStack = listIterator.next();
+                                for (ItemStack itemStack : e.getInventory()) {
                                     if (itemStack == null || itemStack.getType().equals(Material.AIR))
                                         continue;
                                     ItemMeta itemMeta = itemStack.getItemMeta();

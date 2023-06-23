@@ -1,8 +1,8 @@
 package cn.jrmcdp.craftitem.holder;
 
-import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.Utils;
-import com.cryptomorin.xseries.XMaterial;
+import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.data.CraftData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -10,13 +10,13 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EditHolder implements InventoryHolder {
-    private String id;
+    private final String id;
 
-    private CraftData craftData;
+    private final CraftData craftData;
 
     public EditHolder(String id, CraftData craftData) {
         this.id = id;

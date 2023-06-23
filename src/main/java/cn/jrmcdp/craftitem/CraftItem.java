@@ -101,6 +101,6 @@ public class CraftItem extends JavaPlugin {
         if (rsp == null)
             return false;
         econ = rsp.getProvider();
-        return (econ != null);
+        return true;
     }
 }
