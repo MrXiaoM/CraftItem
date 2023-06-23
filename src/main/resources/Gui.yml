@@ -1,0 +1,53 @@
+Title: '§4§n锻造界面' # 界面的标题
+
+Chest: # 使用下面物品来布局
+  - '黑红灰灰灰灰灰红黑'
+  - '红灰材材材灰物灰红'
+  - '栏灰材材材灰灰灰栏'
+  - '红灰材材材灰锻灰红'
+  - '黑红灰灰灰灰灰红黑'
+
+Item:
+  # 以下为固定图标，ID不要更改
+  材:
+    Type: ORANGE_STAINED_GLASS_PANE
+    Name: '§e材料栏'
+    Lore:
+      - '§e此处显示所需材料'
+  物:
+    Type: CHEST
+    Name: '§c物品栏'
+    Lore:
+      - '§e此处显示在锻造的物品'
+  锻:
+    Type: ANVIL
+    Name: '§a点击锻造'
+    Lore:
+      - ''
+      - '§a信息:'
+      - '  §8➥ §6难度 §e<ChanceName>'
+      - '  §8➥ §6进度 §e<Score>%'
+      - '  §8➥ §6价格 §e<Cost> §6㊎'
+
+
+  # 以下可添加装饰物，随意添加更改
+  黑:
+    Type: BLACK_STAINED_GLASS_PANE
+    Name: '边框'
+    Lore:
+      - '装饰品'
+  红:
+    Type: RED_STAINED_GLASS_PANE
+    Name: '边框'
+    Lore:
+      - '装饰品'
+  灰:
+    Type: GRAY_STAINED_GLASS_PANE
+    Name: '边框'
+    Lore:
+      - '装饰品'
+  栏:
+    Type: IRON_BARS
+    Name: '边框'
+    Lore:
+      - '装饰品'

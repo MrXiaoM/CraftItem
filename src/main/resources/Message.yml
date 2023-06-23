@@ -1,0 +1,13 @@
+前缀: '§4§lCraftItem §8>> §e'
+重载: '§a配置文件重载成功！'
+无权限: '§c缺少权限 §e<Prem>'
+非玩家: '§e此命令只有玩家能执行'
+帮助:
+    - '§4§lCraftItem'
+    - '  §8➥ §b/ci Category <TypeID> [Player] §7给 自己/别人 配方分类界面'
+    - '  §8➥ §b/ci Open <ItemID> [Player] §7给 自己/别人 打开锻造界面'
+    - '  §8➥ §b/ci Get <ItemID> [Player] §7给 自己/别人 锻造成功后的奖励'
+    - '  §8➥ §b/ci Create <ItemID> §7创建锻造配方'
+    - '  §8➥ §b/ci Delete <ItemID> §7删除锻造配方'
+    - '  §8➥ §b/ci Edit <ItemID> §7编辑锻造配方'
+    - '  §8➥ §b/ci Reload §7重载配置文件'

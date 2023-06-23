@@ -1,0 +1,13 @@
+﻿name: CraftItem
+author: ZhiBuMiao
+version: 1.0
+main: cn.jrmcdp.craftitem.CraftItem
+api-version: 1.13
+depend:
+  - Vault
+  - PlaceholderAPI
+commands:
+  CraftItem:
+    aliases:
+    - ci
+    description: Main Command

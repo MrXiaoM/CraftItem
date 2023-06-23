@@ -1,0 +1,44 @@
+Title: '§4§n锻造界面§0 当前分类 <Category>' # 界面的标题
+
+Chest: # 使用下面物品来布局
+  - '黑红灰灰灰灰灰红黑'
+  - '红方方方方方方方红'
+  - '上方方方方方方方下'
+  - '红方方方方方方方红'
+  - '黑红灰灰灰灰灰红黑'
+
+Item:
+  # 以下为固定图标，ID不要更改
+  上:
+    Type: ARROW
+    Name: '§a上一页'
+    Lore:
+      - '§7点击翻页'
+  下:
+    Type: ARROW
+    Name: '§a下一页'
+    Lore:
+      - '§7点击翻页'
+
+
+  # 以下可添加装饰物，随意添加更改
+  黑:
+    Type: BLACK_STAINED_GLASS_PANE
+    Name: '边框'
+    Lore:
+      - '装饰品'
+  红:
+    Type: RED_STAINED_GLASS_PANE
+    Name: '边框'
+    Lore:
+      - '装饰品'
+  灰:
+    Type: GRAY_STAINED_GLASS_PANE
+    Name: '边框'
+    Lore:
+      - '装饰品'
+  栏:
+    Type: IRON_BARS
+    Name: '边框'
+    Lore:
+      - '装饰品'
