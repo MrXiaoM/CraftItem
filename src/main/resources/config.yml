@@ -16,3 +16,10 @@ Setting:
     杂项: []
     #示例: <- 类别的 名字/ID
     #  - "钻石剑" <- 类别包含的配方
+  ForgeTitle:
+    Title: "&a敲敲打打"
+    SubTitle: "&e锻造中..."
+    FadeIn: 10
+    Time: 20
+    FadeOut: 10
+  Sounds:

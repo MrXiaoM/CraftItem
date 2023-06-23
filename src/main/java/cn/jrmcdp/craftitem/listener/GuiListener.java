@@ -2,6 +2,7 @@ package cn.jrmcdp.craftitem.listener;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.Utils;
+import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Craft;
 import cn.jrmcdp.craftitem.config.Gui;
 import cn.jrmcdp.craftitem.config.Message;
@@ -11,7 +12,6 @@ import cn.jrmcdp.craftitem.holder.CategoryHolder;
 import cn.jrmcdp.craftitem.holder.EditHolder;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
 import com.cryptomorin.xseries.XSound;
-import com.cryptomorin.xseries.messages.Titles;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -39,13 +39,9 @@ import java.util.ListIterator;
 
 public class GuiListener implements Listener {
 
-    private static Titles title = new Titles("§a敲敲打打", "§e锻造中...", 10, 20, 10);
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
         final Inventory inventory = event.getInventory();
-        if (inventory == null)
-            return;
         InventoryHolder inventoryHolder = inventory.getHolder();
         if (inventoryHolder == null)
             return;
@@ -164,8 +160,8 @@ public class GuiListener implements Listener {
                                 clear();
                                 return;
                             }
-                            title.send(player);
                             player.playSound(player.getLocation(), XSound.matchXSound("BLOCK_ANVIL_LAND").get().parseSound(), 1.0F, 0.8F);
+                            Config.getForgeTitle().send(player);
                             this.i++;
                         }
                     }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
@@ -416,9 +412,6 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         Inventory inventory = event.getInventory();
-        if (inventory == null) {
-            return;
-        }
         InventoryHolder inventoryHolder = inventory.getHolder();
         if (inventoryHolder instanceof ForgeHolder) {
             event.setCancelled(true);
