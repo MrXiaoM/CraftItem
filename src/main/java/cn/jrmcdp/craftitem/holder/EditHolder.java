@@ -70,7 +70,7 @@ public class EditHolder implements InventoryHolder {
                 ),
                 getItemStack(Material.PAINTING, Message.gui__edit__item__display__name.get(),
                         Message.gui__edit__item__display__lore.list(
-                                cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem())
+                                Utils.getItemName(craftData.getDisplayItem())
                         )
                 ),
                 getItemStack(Material.CHEST, Message.gui__edit__item__item__name.get(),

@@ -104,11 +104,11 @@ public class GuiListener implements Listener {
                                     if (value == 100) {
                                         craftData.takeMaterial(player.getInventory());
                                         playerData.clearScore(holder.getId());
-                                        Message.craft__success.msg(player, cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem()));
+                                        Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
                                         for (ItemStack item : craftData.getItems()) {
                                             for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                                                 player.getWorld().dropItem(player.getLocation(), add);
-                                                Message.full_inventory.msg(player, cn.jrmcdp.craftitem.config.Material.getItemName(add), add.getAmount());
+                                                Message.full_inventory.msg(player, Utils.getItemName(add), add.getAmount());
                                             }
                                         }
                                         for (String str : craftData.getCommands()) {
@@ -147,7 +147,7 @@ public class GuiListener implements Listener {
                                             Message.craft__process_fail_big.msg(player, score);
                                             ItemStack itemStack = craftData.takeRandomMaterial(player, player.getInventory());
                                             if (itemStack != null) {
-                                                Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), cn.jrmcdp.craftitem.config.Material.getItemName(itemStack));
+                                                Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), Utils.getItemName(itemStack));
                                             }
                                             break;
                                         }

@@ -173,11 +173,11 @@ public class Cmd implements CommandExecutor, TabCompleter {
         if (craftData == null) {
             return Message.craft__not_found.msg(player, args[1]);
         }
-        Message.craft__success.msg(player, cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem()));
+        Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
         for (ItemStack item : craftData.getItems()) {
             for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                 player.getWorld().dropItem(player.getLocation(), add);
-                Message.full_inventory.msg(player, cn.jrmcdp.craftitem.config.Material.getItemName(add), add.getAmount());
+                Message.full_inventory.msg(player, Utils.getItemName(add), add.getAmount());
             }
         }
         for (String str : craftData.getCommands()) {

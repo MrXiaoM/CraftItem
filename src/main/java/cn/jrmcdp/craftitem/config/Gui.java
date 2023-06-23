@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.Utils;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
@@ -113,7 +114,7 @@ public class Gui {
                     lore.add("");
                     lore.add("§a包含:");
                     for (ItemStack itemStack : craftData.getItems())
-                        lore.add(" §8➥ §e" + Material.getItemName(itemStack) + "§fx" + itemStack.getAmount());
+                        lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
                     for (String command : craftData.getCommands()) {
                         String[] split = command.split("\\|\\|");
                         if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);

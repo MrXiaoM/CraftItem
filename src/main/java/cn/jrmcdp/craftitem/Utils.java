@@ -4,6 +4,7 @@ import java.util.*;
 
 import cn.jrmcdp.craftitem.config.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class Utils {
 
@@ -35,5 +36,15 @@ public class Utils {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public static String getItemName(ItemStack itemStack) {
+        if (itemStack == null) return "空";
+        if (itemStack.hasItemMeta()) {
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            if (itemMeta.hasDisplayName()) return itemMeta.getDisplayName();
+        }
+        String name = itemStack.getType().name();
+        return Material.getMaterial().getOrDefault(name, name);
     }
 }

@@ -26,14 +26,4 @@ public class Material {
     public static HashMap<String, String> getMaterial() {
         return material;
     }
-
-    public static String getItemName(ItemStack itemStack) {
-        if (itemStack == null) return "空";
-        if (itemStack.hasItemMeta()) {
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if (itemMeta.hasDisplayName()) return itemMeta.getDisplayName();
-        }
-        String name = itemStack.getType().name();
-        return material.containsKey(name) ? material.get(name) : name;
-    }
 }
