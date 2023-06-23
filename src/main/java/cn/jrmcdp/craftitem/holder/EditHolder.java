@@ -32,83 +32,56 @@ public class EditHolder implements InventoryHolder {
     }
 
     public Inventory buildGui() {
-        Inventory inventory = Bukkit.createInventory(this, 9, "编辑 " + this.id);
+        Inventory inventory = Bukkit.createInventory(this, 9, Message.gui__edit_title.get(this.id));
         inventory.setContents(getItems());
         return inventory;
     }
 
     private ItemStack[] getItems() {
         return new ItemStack[] {
-                getItemStack(Material.WHEAT, "§a材料",
-                        Arrays.asList(
-                                "§7点击 查看/编辑",
-                                "",
-                                "§7当前:"
-                        ),
-                        Utils.itemToListString(craftData.getMaterial())
-                ),
-                getItemStack(Material.COMPASS, "§a成功率",
-                        Arrays.asList(
-                                "§7点击 编辑",
-                                "§7使用正整数",
-                                "",
-                                "§7当前: §e" + craftData.getChance()
+                getItemStack(Material.WHEAT, Message.gui__edit__item__material__name.get(),
+                        Message.gui__edit__item__material__lore.list(
+                                String.join("\n", Utils.itemToListString(craftData.getMaterial()))
                         )
                 ),
-                getItemStack(Material.HOPPER, "§a倍数",
-                        Arrays.asList(
-                                "§7点击 编辑",
-                                "§7格式 \"5 10 20\"",
-                                "§7对应 小/中/大 失败/成功 的 涨幅/跌幅",
-                                "",
-                                "§7当前: §e" + craftData.getMultiple()
+                getItemStack(Material.COMPASS, Message.gui__edit__item__successful_rate__name.get(),
+                        Message.gui__edit__item__successful_rate__lore.list(
+                                craftData.getChance()
                         )
                 ),
-                getItemStack(Material.GOLD_INGOT, "§a价格",
-                        Arrays.asList(
-                                "§7点击 查看/编辑",
-                                "§7使用正整数",
-                                "",
-                                "§7当前: §e" + craftData.getCost()
+                getItemStack(Material.HOPPER, Message.gui__edit__item__multiple__name.get(),
+                        Message.gui__edit__item__multiple__lore.list(
+                                craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                         )
                 ),
-                getItemStack(Material.PAINTING, "§a显示物品",
-                        Arrays.asList(
-                                "§7点击 查看/编辑",
-                                "§7对外显示的物品外貌",
-                                "",
-                                "§7当前: §e" + cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem())
+                getItemStack(Material.GOLD_INGOT, Message.gui__edit__item__cost__name.get(),
+                        Message.gui__edit__item__cost__lore.list(
+                                craftData.getCost()
                         )
                 ),
-                getItemStack(Material.CHEST, "§a奖励物品",
-                        Arrays.asList(
-                                "§7点击 查看/编辑",
-                                "§7锻造成功后给予的物品",
-                                "",
-                                "§7当前:"
-                        ),
-                        Utils.itemToListString(craftData.getItems())
+                getItemStack(Material.PAINTING, Message.gui__edit__item__display__name.get(),
+                        Message.gui__edit__item__display__lore.list(
+                                cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem())
+                        )
                 ),
-                getItemStack(Material.PAPER, "§a奖励命令",
-                        Arrays.asList(
-                                "§7点击 查看/编辑",
-                                "§7格式 \"say 这个插件太棒了||服务器说这个插件太棒了\"",
-                                "§7用 || 分割，左边是命令 右边是显示出来的介绍",
-                                "§7此处支持 Papi 占位符 变量",
-                                "§7锻造成功后执行的命令",
-                                "",
-                                "§7当前:"
-                        ),
-                        craftData.getCommands()
+                getItemStack(Material.CHEST, Message.gui__edit__item__item__name.get(),
+                        Message.gui__edit__item__item__lore.list(
+                            String.join("\n", Utils.itemToListString(craftData.getItems()))
+                        )
+                ),
+                getItemStack(Material.PAPER, Message.gui__edit__item__command__name.get(),
+                        Message.gui__edit__item__command__lore.list(
+                            String.join("\n", craftData.getCommands())
+                        )
                 )
         };
     }
 
-    private ItemStack getItemStack(Material material, String name, List<String>... lores) {
-        ItemStack itemStack = new ItemStack(XMaterial.matchXMaterial(material).parseItem());
+    private ItemStack getItemStack(Material material, String name, List<String> lores) {
+        ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(name);
-        itemMeta.setLore(Arrays.stream(lores).flatMap(Collection::stream).collect(Collectors.toList()));
+        itemMeta.setLore(lores);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }

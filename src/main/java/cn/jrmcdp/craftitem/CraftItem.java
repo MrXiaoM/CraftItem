@@ -31,7 +31,7 @@ public class CraftItem extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         if (!setupEconomy()) {
-            Bukkit.getConsoleSender().sendMessage(Message.getPrefix() + "§c未安装 Vault，自动关闭插件");
+            Bukkit.getConsoleSender().sendMessage(Message.prefix + "§c未安装 Vault，自动关闭插件");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -49,7 +49,7 @@ public class CraftItem extends JavaPlugin {
                 new PlayerListener()
         );
         getCommand("CraftItem").setExecutor(new Cmd());
-        Bukkit.getConsoleSender().sendMessage(Message.getPrefix() + "§a插件成功启用 By.ZhiBuMiao (Q630580569)");
+        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§a插件成功启用 By.ZhiBuMiao (Q630580569)");
     }
 
     public void onDisable() {
@@ -60,7 +60,7 @@ public class CraftItem extends JavaPlugin {
                 new PlayerListener()
         );
         HandlerList.unregisterAll(this);
-        Bukkit.getConsoleSender().sendMessage(Message.getPrefix() + "§c插件成功卸载 By.ZhiBuMiao (Q630580569)");
+        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§c插件成功卸载 By.ZhiBuMiao (Q630580569)");
     }
 
     public void saveDefaultConfig() {

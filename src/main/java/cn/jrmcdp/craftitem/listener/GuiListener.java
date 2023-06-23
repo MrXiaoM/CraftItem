@@ -64,12 +64,12 @@ public class GuiListener implements Listener {
                 final CraftData craftData = holder.getCraftData();
                 int cost = craftData.getCost();
                 if (!CraftItem.getEcon().has(player, cost)) {
-                    player.sendMessage(Message.getPrefix() + "§e没有足够的金币来锻造");
+                    Message.craft__not_enough_money.msg(player);
                     return;
                 }
                 CraftItem.getEcon().withdrawPlayer(player, cost);
                 if (!craftData.hasMaterial(player.getInventory())) {
-                    player.sendMessage(Message.getPrefix() + "§e身上没有足够的材料");
+                    Message.craft__not_enough_material.msg(player);
                     return;
                 }
                 final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
@@ -94,7 +94,7 @@ public class GuiListener implements Listener {
                         public void run() {
                             if (this.i >= 3) {
                                 if (!craftData.hasMaterial(player.getInventory())) {
-                                    player.sendMessage(Message.getPrefix() + "§e身上没有足够的材料");
+                                    Message.craft__not_enough_material.msg(player);
                                     clear();
                                     return;
                                 }
@@ -104,11 +104,11 @@ public class GuiListener implements Listener {
                                     if (value == 100) {
                                         craftData.takeMaterial(player.getInventory());
                                         playerData.clearScore(holder.getId());
-                                        player.sendMessage(Message.getPrefix() + "§a成功锻造出了 §e" + cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem()));
+                                        Message.craft__success.msg(player, cn.jrmcdp.craftitem.config.Material.getItemName(craftData.getDisplayItem()));
                                         for (ItemStack item : craftData.getItems()) {
                                             for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                                                 player.getWorld().dropItem(player.getLocation(), add);
-                                                player.sendMessage(Message.getPrefix() + "§c背包已满 §d" + cn.jrmcdp.craftitem.config.Material.getItemName(add) + "§ex" + add.getAmount() + " §c掉了出来");
+                                                Message.full_inventory.msg(player, cn.jrmcdp.craftitem.config.Material.getItemName(add), add.getAmount());
                                             }
                                         }
                                         for (String str : craftData.getCommands()) {
@@ -118,15 +118,15 @@ public class GuiListener implements Listener {
                                     } else {
                                         switch (multiple) {
                                             case 0 : {
-                                                player.sendMessage(Message.getPrefix() + "§a锻造 小成功 ！！！ §f§l[ §a+ §e" + score + "% §f§l]");
+                                                Message.craft__process_success_small.msg(player, score);
                                                 break;
                                             }
                                             case 1 : {
-                                                player.sendMessage(Message.getPrefix() + "§a锻造 成功 ！！！ §f§l[ §a+ §e" + score + "% §f§l]");
+                                                Message.craft__process_success_medium.msg(player, score);
                                                 break;
                                             }
                                             case 2 : {
-                                                player.sendMessage(Message.getPrefix() + "§a锻造 大成功 ！！！ §f§l[ §a+ §e" + score + "% §f§l]");
+                                                Message.craft__process_success_big.msg(player, score);
                                                 break;
                                             }
                                         }
@@ -136,16 +136,15 @@ public class GuiListener implements Listener {
                                     playerData.addScore(holder.getId(), -score);
                                     switch (multiple) {
                                         case 0 : {
-                                            player.sendMessage(Message.getPrefix() + "§c锻造 小失败 ！！！ §f§l[ §c- §e" + score + "% §f§l]");
+                                            Message.craft__process_fail_small.msg(player, score);
                                             break;
                                         }
                                         case 1 : {
-                                            player.sendMessage(Message.getPrefix() + "§c锻造 失败 ！！！ §f§l[ §c- §e" + score + "% §f§l]");
+                                            Message.craft__process_fail_medium.msg(player, score);
                                             break;
                                         }
                                         case 2 : {
-                                            player.sendMessage(Message.getPrefix() + "§c锻造 大失败 ！！！ §f§l[ §c- §e" + score + "% §f§l]");
-                                            player.sendMessage(Message.getPrefix() + "§c并且还损坏了一个 §e" + cn.jrmcdp.craftitem.config.Material.getItemName(craftData.takeRandomMaterial(player.getInventory())));
+                                            Message.craft__process_fail_big.msg(player, score);
                                             break;
                                         }
                                     }
@@ -177,18 +176,18 @@ public class GuiListener implements Listener {
             String key = holder.getChest()[event.getRawSlot()];
             switch (key) {
                 case "上" : {
-                    if (!holder.upPage()) player.sendMessage(Message.getPrefix() + "§e当前已是首页");
+
+                    if (!holder.upPage()) Message.page__already_first.msg(player);
                     return;
                 }
                 case "下" : {
-                    if (!holder.downPage()) player.sendMessage(Message.getPrefix() + "§e当前已是尾页");
+                    if (!holder.downPage()) Message.page__already_last.msg(player);
                     return;
                 }
                 case "方" : {
                     String name = holder.getSlot()[event.getRawSlot()];
                     if (name == null) return;
                     Gui.openGui(holder.getPlayerData(), name, Craft.getCraftData(name));
-                    return;
                 }
             }
         } else if (inventoryHolder instanceof EditHolder) {
@@ -201,7 +200,7 @@ public class GuiListener implements Listener {
             final CraftData craftData = holder.getCraftData();
             switch (event.getRawSlot()) {
                 case 0 : {
-                    gui = Bukkit.createInventory(null, 54, "材料");
+                    gui = Bukkit.createInventory(null, 54, Message.gui__edit_material_title.get());
                     gui.addItem((ItemStack[]) craftData.getMaterial().toArray((Object[]) new ItemStack[craftData.getMaterial().size()]));
                     player.openInventory(gui);
                     Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -224,15 +223,15 @@ public class GuiListener implements Listener {
                 }
                 case 1 : {
                     player.closeInventory();
-                    player.sendMessage(Message.getPrefix() + "§a请发送概率 正整数");
+                    Message.gui__edit_input_chance.msg(player);
                     Bukkit.getPluginManager().registerEvents(new Listener() {
                         @EventHandler
                         public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
                             if (eventB.getPlayer().equals(player)) {
                                 eventB.setCancelled(true);
                                 Integer chance = Utils.tryParseInt(eventB.getMessage());
-                                if (chance == null) {
-                                    player.sendMessage(Message.getPrefix() + "§c请输入整数");
+                                if (chance == null || chance < 0) {
+                                    Message.not_integer.msg(player);
                                 } else {
                                     craftData.setChance(chance);
                                     Craft.save(holder.getId(), craftData);
@@ -246,7 +245,7 @@ public class GuiListener implements Listener {
                 }
                 case 2 : {
                     player.closeInventory();
-                    player.sendMessage(Message.getPrefix() + "§a请按照格式填写倍率 \"5 10 20\" (小 中 大)");
+                    Message.gui__edit_input_multiple.msg(player);
                     Bukkit.getPluginManager().registerEvents(new Listener() {
                         @EventHandler
                         public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
@@ -257,7 +256,7 @@ public class GuiListener implements Listener {
                                 for (String str : split) {
                                     Integer chance = Utils.tryParseInt(str);
                                     if (chance == null) {
-                                        player.sendMessage(Message.getPrefix() + "§c数字转换异常");
+                                        Message.not_integer.msg(player);
                                         HandlerList.unregisterAll(this);
                                         Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(holder.buildGui()));
                                         return;
@@ -275,7 +274,7 @@ public class GuiListener implements Listener {
                 }
                 case 3 : {
                     player.closeInventory();
-                    player.sendMessage(Message.getPrefix() + "§a请发送金额 正整数");
+                    Message.gui__edit_input_cost.msg(player);
                     Bukkit.getPluginManager().registerEvents(new Listener() {
                         @EventHandler
                         public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
@@ -283,7 +282,7 @@ public class GuiListener implements Listener {
                                 eventB.setCancelled(true);
                                 Integer chance = Utils.tryParseInt(eventB.getMessage());
                                 if (chance == null) {
-                                    player.sendMessage(Message.getPrefix() + "§c请输入整数");
+                                    Message.not_integer.msg(player);
                                 } else {
                                     craftData.setCost(chance);
                                     Craft.save(holder.getId(), craftData);
@@ -296,7 +295,7 @@ public class GuiListener implements Listener {
                     break;
                 }
                 case 4 : {
-                    gui = Bukkit.createInventory(null, 9, "将要展示的物品放在第一格");
+                    gui = Bukkit.createInventory(null, 9, Message.gui__edit_display_title.get());
                     gui.addItem(craftData.getDisplayItem());
                     player.openInventory(gui);
                     Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -305,7 +304,7 @@ public class GuiListener implements Listener {
                             if (eventB.getPlayer().equals(player)) {
                                 ItemStack item = eventB.getInventory().getItem(0);
                                 if (item == null || item.getType().equals(Material.AIR)) {
-                                    player.sendMessage(Message.getPrefix() + "§c未找到第一格的物品");
+                                    Message.gui__edit_display_not_found.msg(player);
                                     HandlerList.unregisterAll(this);
                                     Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(holder.buildGui()));
                                     return;
@@ -320,7 +319,7 @@ public class GuiListener implements Listener {
                     break;
                 }
                 case 5 : {
-                    gui = Bukkit.createInventory(null, 54, "奖励物品");
+                    gui = Bukkit.createInventory(null, 54, Message.gui__edit_item_title.get());
                     for (ItemStack item : craftData.getItems()) {
                         gui.addItem(item);
                     }
@@ -344,7 +343,7 @@ public class GuiListener implements Listener {
                     break;
                 }
                 case 6 : {
-                    loreGui = Bukkit.createInventory(null, 54, "奖励命令");
+                    loreGui = Bukkit.createInventory(null, 54, Message.gui__edit_command_title.get());
                     for (String line : craftData.getCommands()) {
                         ItemStack itemStack = new ItemStack(Material.PAPER);
                         ItemMeta itemMeta = itemStack.getItemMeta();
