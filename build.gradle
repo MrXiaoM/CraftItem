@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
@@ -32,6 +33,7 @@ tasks {
 }
 def targetJavaVersion = 8
 java {
+    withSourcesJar()
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
@@ -50,5 +52,16 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         expand('version': version)
         include 'plugin.yml'
+    }
+}
+
+publishing {
+    publications {
+        mavenRelease(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+        }
     }
 }
