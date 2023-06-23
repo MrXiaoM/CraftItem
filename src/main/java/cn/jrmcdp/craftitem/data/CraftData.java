@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import org.apache.commons.lang.math.RandomUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -102,15 +106,22 @@ public class CraftData implements ConfigurationSerializable {
         return true;
     }
 
-    public ItemStack takeRandomMaterial(Inventory gui) {
-        ItemStack clone = this.material.get(RandomUtils.nextInt(this.material.size())).clone();
+    public ItemStack takeRandomMaterial(Player player, Inventory gui) {
+        ItemStack item = this.material.get(RandomUtils.nextInt(this.material.size()));
+        ItemStack clone = item.clone();
         clone.setAmount(1);
-        gui.removeItem(new ItemStack[] { clone });
+
+        MaterialDisappearEvent event = new MaterialDisappearEvent(player, this, item, clone);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return null;
+        clone = event.getItemToDisappear();
+
+        gui.removeItem(clone);
         return clone;
     }
 
     public boolean takeMaterial(Inventory gui) {
-        gui.removeItem(this.material.<ItemStack>toArray(new ItemStack[this.material.size()]));
+        gui.removeItem(this.material.toArray(new ItemStack[0]));
         return true;
     }
 

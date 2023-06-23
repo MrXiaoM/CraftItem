@@ -145,6 +145,10 @@ public class GuiListener implements Listener {
                                         }
                                         case 2 : {
                                             Message.craft__process_fail_big.msg(player, score);
+                                            ItemStack itemStack = craftData.takeRandomMaterial(player, player.getInventory());
+                                            if (itemStack != null) {
+                                                Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), cn.jrmcdp.craftitem.config.Material.getItemName(itemStack));
+                                            }
                                             break;
                                         }
                                     }
