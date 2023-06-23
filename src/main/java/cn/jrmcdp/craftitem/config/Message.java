@@ -149,7 +149,7 @@ public enum Message {
         Message.config.clear();
         for (Message m : values()) {
             List<String> list = config.getStringList(m.key);
-            String str = !list.isEmpty() ? String.join("\n", list) : config.getString(m.key);
+            String str = !list.isEmpty() ? String.join("\n§r", list) : config.getString(m.key);
             if (str != null) {
                 Message.config.put(m, ChatColor.translateAlternateColorCodes('&', str));
             }

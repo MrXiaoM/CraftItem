@@ -36,7 +36,7 @@ gui--edit--item--material--lore:
     - '&7点击 查看/编辑'
     - ''
     - '&7当前:'
-    - '%s'
+    - '&7%s'
 gui--edit--item--successful-rate--name: '&a成功率'
 gui--edit--item--successful-rate--lore:
     - '&7点击 编辑'
@@ -68,7 +68,7 @@ gui--edit--item--item--lore:
     - '&7锻造成功后给予的物品'
     - ''
     - '&7当前:'
-    - '%s'
+    - '&7%s'
 gui--edit--item--command--name: '&a奖励命令'
 gui--edit--item--command--lore:
     - '&7点击 查看/编辑'
@@ -78,7 +78,7 @@ gui--edit--item--command--lore:
     - '&7锻造成功后执行的命令'
     - ''
     - '&7当前:'
-    - '%s'
+    - '&7%s'
 gui--edit-material-title: '材料'
 gui--edit-input-chance: '&a请输入概率 正整数'
 gui--edit-input-multiple: '&a请按照格式填写倍率 "5 10 20" (小 中 大)'

@@ -50,7 +50,7 @@ public class EditHolder implements InventoryHolder {
         return new ItemStack[] {
                 getItemStack(Material.WHEAT, Message.gui__edit__item__material__name.get(),
                         Message.gui__edit__item__material__lore.list(
-                                String.join("\n", Utils.itemToListString(craftData.getMaterial()))
+                                String.join("\n§7", Utils.itemToListString(craftData.getMaterial()))
                         )
                 ),
                 getItemStack(Material.COMPASS, Message.gui__edit__item__successful_rate__name.get(),
@@ -75,12 +75,12 @@ public class EditHolder implements InventoryHolder {
                 ),
                 getItemStack(Material.CHEST, Message.gui__edit__item__item__name.get(),
                         Message.gui__edit__item__item__lore.list(
-                            String.join("\n", Utils.itemToListString(craftData.getItems()))
+                            String.join("\n§7", Utils.itemToListString(craftData.getItems()))
                         )
                 ),
                 getItemStack(Material.PAPER, Message.gui__edit__item__command__name.get(),
                         Message.gui__edit__item__command__lore.list(
-                            String.join("\n", craftData.getCommands())
+                            String.join("\n§7", craftData.getCommands())
                         )
                 )
         };
