@@ -18,12 +18,13 @@ public class CraftFailEvent extends Event {
     private final ForgeHolder holder;
     private final int oldValue;
     private int newValue;
-
-    public CraftFailEvent(Player player, ForgeHolder holder, int oldValue, int newValue) {
+    private int multiple;
+    public CraftFailEvent(Player player, ForgeHolder holder, int oldValue, int newValue, int multiple) {
         this.player = player;
         this.holder = holder;
         this.oldValue = oldValue;
         this.newValue = newValue;
+        this.multiple = multiple;
     }
 
     public Player getPlayer() {
@@ -44,5 +45,20 @@ public class CraftFailEvent extends Event {
 
     public void setNewValue(int newValue) {
         this.newValue = newValue;
+    }
+
+    /**
+     * 获取失败类型，0小失败，1失败，2大失败
+     */
+    public int getMultiple() {
+        return multiple;
+    }
+
+    /**
+     * 设置失败类型，0小失败，1失败，2大失败。
+     * 设为这之外的值将不会发送失败提示，也不会丢失物品
+     */
+    public void setMultiple(int multiple) {
+        this.multiple = multiple;
     }
 }

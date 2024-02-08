@@ -102,7 +102,7 @@ public class GuiListener implements Listener {
                                 if (win) {
                                     player.playSound(player.getLocation(), Config.getSoundForgeSuccess(), 1.0F, 1.0F);
                                     int value = playerData.addScore(holder.getId(), score);
-                                    CraftSuccessEvent e = new CraftSuccessEvent(player, holder, oldValue, value);
+                                    CraftSuccessEvent e = new CraftSuccessEvent(player, holder, oldValue, value, multiple);
                                     Bukkit.getPluginManager().callEvent(e);
                                     if (value != e.getNewValue()) {
                                         value = playerData.setScore(holder.getId(), e.getNewValue());
@@ -123,7 +123,7 @@ public class GuiListener implements Listener {
                                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, cmd));
                                         }
                                     } else {
-                                        switch (multiple) {
+                                        switch (e.getMultiple()) {
                                             case 0 : {
                                                 Message.craft__process_success_small.msg(player, score);
                                                 break;
@@ -141,13 +141,13 @@ public class GuiListener implements Listener {
                                 } else {
                                     player.playSound(player.getLocation(), Config.getSoundForgeFail(), 1.0F, 1.0F);
                                     int value = playerData.addScore(holder.getId(), -score);
-                                    CraftFailEvent e = new CraftFailEvent(player, holder, oldValue, value);
+                                    CraftFailEvent e = new CraftFailEvent(player, holder, oldValue, value, multiple);
                                     Bukkit.getPluginManager().callEvent(e);
                                     if (value != e.getNewValue()) {
                                         value = playerData.setScore(holder.getId(), e.getNewValue());
                                         score = value - oldValue;
                                     }
-                                    switch (multiple) {
+                                    switch (e.getMultiple()) {
                                         case 0 : {
                                             Message.craft__process_fail_small.msg(player, score);
                                             break;
