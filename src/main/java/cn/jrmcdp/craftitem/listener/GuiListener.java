@@ -8,6 +8,8 @@ import cn.jrmcdp.craftitem.config.Gui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
+import cn.jrmcdp.craftitem.event.CraftFailEvent;
+import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.holder.CategoryHolder;
 import cn.jrmcdp.craftitem.holder.EditHolder;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
@@ -15,7 +17,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -69,7 +70,6 @@ public class GuiListener implements Listener {
                 }
                 final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
                 final int multiple = RandomUtils.nextInt(3);
-                final Integer score = craftData.getMultiple().get(multiple);
                 player.closeInventory();
                 Bukkit.getPluginManager().registerEvents(new Listener() {
                     @EventHandler
@@ -83,19 +83,31 @@ public class GuiListener implements Listener {
                         HandlerList.unregisterAll(this);
                     }
 
-                    BukkitTask task = (new BukkitRunnable() {
+                    final BukkitTask task = (new BukkitRunnable() {
                         int i = 1;
-
+                        // 因为事件执行可能会阻塞，加个完成标志避免定时器重复执行
+                        boolean doneFlag = false;
                         public void run() {
+                            if (doneFlag) return;
                             if (this.i >= 3) {
+                                doneFlag = true;
                                 if (!craftData.hasMaterial(player.getInventory())) {
                                     Message.craft__not_enough_material.msg(player);
                                     clear();
                                     return;
                                 }
+
+                                int score = craftData.getMultiple().get(multiple);
+                                int oldValue = playerData.getScore(holder.getId());
                                 if (win) {
                                     player.playSound(player.getLocation(), Config.getSoundForgeSuccess(), 1.0F, 1.0F);
-                                    Integer value = playerData.addScore(holder.getId(), score);
+                                    int value = playerData.addScore(holder.getId(), score);
+                                    CraftSuccessEvent e = new CraftSuccessEvent(player, holder, oldValue, value);
+                                    Bukkit.getPluginManager().callEvent(e);
+                                    if (value != e.getNewValue()) {
+                                        value = playerData.setScore(holder.getId(), e.getNewValue());
+                                        score = value - oldValue;
+                                    }
                                     if (value == 100) {
                                         craftData.takeMaterial(player.getInventory());
                                         playerData.clearScore(holder.getId());
@@ -128,7 +140,13 @@ public class GuiListener implements Listener {
                                     }
                                 } else {
                                     player.playSound(player.getLocation(), Config.getSoundForgeFail(), 1.0F, 1.0F);
-                                    playerData.addScore(holder.getId(), -score);
+                                    int value = playerData.addScore(holder.getId(), -score);
+                                    CraftFailEvent e = new CraftFailEvent(player, holder, oldValue, value);
+                                    Bukkit.getPluginManager().callEvent(e);
+                                    if (value != e.getNewValue()) {
+                                        value = playerData.setScore(holder.getId(), e.getNewValue());
+                                        score = value - oldValue;
+                                    }
                                     switch (multiple) {
                                         case 0 : {
                                             Message.craft__process_fail_small.msg(player, score);

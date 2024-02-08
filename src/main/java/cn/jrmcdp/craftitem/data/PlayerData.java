@@ -37,7 +37,7 @@ public class PlayerData {
     }
 
     public Integer getScore(String key) {
-        return this.scoreMap.containsKey(key) ? this.scoreMap.get(key) : 0;
+        return this.scoreMap.getOrDefault(key, 0);
     }
 
     public Integer addScore(String key, int add) {
@@ -45,6 +45,12 @@ public class PlayerData {
         if (score == null)
             score = 0;
         score = Math.min(100, Math.max(0, score + add));
+        this.scoreMap.put(key, score);
+        return score;
+    }
+
+    public Integer setScore(String key, int score) {
+        score = Math.min(100, Math.max(0, score));
         this.scoreMap.put(key, score);
         return score;
     }
