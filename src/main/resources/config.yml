@@ -27,3 +27,24 @@ Setting:
     ForgeSuccess: BLOCK_ANVIL_USE
     ForgeFail: BLOCK_GLASS_BREAK
     ForgeTitle: BLOCK_ANVIL_LAND
+
+# Offset characters' unicodes
+# Never edit this unless you know what you are doing
+offset-characters:
+  font: customfishing:offset_chars
+  '1': 
+  '2': 
+  '4': 
+  '8': 
+  '16': 
+  '32': 
+  '64': 
+  '128': 
+  '-1': 
+  '-2': 
+  '-4': 
+  '-8': 
+  '-16': 
+  '-32': 
+  '-64': 
+  '-128': 

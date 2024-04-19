@@ -8,6 +8,7 @@ api-version: 1.13
 depend:
   - Vault
   - PlaceholderAPI
+  - ProtocolLib
 commands:
   CraftItem:
     aliases:

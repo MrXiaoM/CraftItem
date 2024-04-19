@@ -7,6 +7,7 @@ import cn.jrmcdp.craftitem.listener.PlayerListener;
 
 import java.io.File;
 
+import cn.jrmcdp.craftitem.minigames.GameManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -20,12 +21,18 @@ public class CraftItem extends JavaPlugin {
 
     private static Economy econ;
 
+    private static GameManager miniGames;
+
     public static CraftItem getPlugin() {
         return plugin;
     }
 
     public static Economy getEcon() {
         return econ;
+    }
+
+    public static GameManager getMiniGames() {
+        return miniGames;
     }
 
     public void onEnable() {
@@ -35,6 +42,7 @@ public class CraftItem extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        miniGames = new GameManager(this);
         saveDefaultConfig();
         plugin = this;
         ConfigurationSerialization.registerClass(CraftData.class);
@@ -54,6 +62,7 @@ public class CraftItem extends JavaPlugin {
 
     public void onDisable() {
         super.onDisable();
+        if (miniGames != null) miniGames.disable();
         ConfigurationSerialization.unregisterClass(CraftData.class);
         unRegListener(
                 new GuiListener(),
@@ -81,6 +90,12 @@ public class CraftItem extends JavaPlugin {
             if (!file.exists())
                 saveResource(filename, false);
         }
+    }
+
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        miniGames.reloadConfig();
     }
 
     public void regListener(Listener... list) {
