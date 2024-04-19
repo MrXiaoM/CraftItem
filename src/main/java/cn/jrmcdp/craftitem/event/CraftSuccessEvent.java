@@ -48,15 +48,15 @@ public class CraftSuccessEvent extends Event {
     }
 
     /**
-     * 获取失败类型，0小失败，1失败，2大失败
+     * 获取成功类型，0小成功，1成功，2大成功
      */
     public int getMultiple() {
         return multiple;
     }
 
     /**
-     * 设置失败类型，0小失败，1失败，2大失败。
-     * 设为这之外的值将不会发送失败提示，也不会丢失物品
+     * 设置成功类型，0小成功，1成功，2大成功。
+     * 设为这之外的值将不会发送成功提示
      */
     public void setMultiple(int multiple) {
         this.multiple = multiple;
