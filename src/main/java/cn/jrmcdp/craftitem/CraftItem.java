@@ -22,6 +22,8 @@ public class CraftItem extends JavaPlugin {
     private static Economy econ;
 
     private static GameManager miniGames;
+    private GuiListener guiListener;
+    private PlayerListener playerListener;
 
     public static CraftItem getPlugin() {
         return plugin;
@@ -53,23 +55,20 @@ public class CraftItem extends JavaPlugin {
         Gui.reload();
         Category.reload();
         regListener(
-                new GuiListener(),
-                new PlayerListener()
+                guiListener = new GuiListener(),
+                playerListener = new PlayerListener()
         );
-        getCommand("CraftItem").setExecutor(new Cmd());
-        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§a插件成功启用 By.ZhiBuMiao (Q630580569)");
+        Cmd.register(this, "CraftItem");
+        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§a插件成功启用 By.ZhiBuMiao & MrXiaoM");
     }
 
     public void onDisable() {
         super.onDisable();
         if (miniGames != null) miniGames.disable();
         ConfigurationSerialization.unregisterClass(CraftData.class);
-        unRegListener(
-                new GuiListener(),
-                new PlayerListener()
-        );
+        unRegListener(guiListener, playerListener);
         HandlerList.unregisterAll(this);
-        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§c插件成功卸载 By.ZhiBuMiao (Q630580569)");
+        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§2插件成功卸载 By.ZhiBuMiao & MrXiaoM");
     }
 
     public void saveDefaultConfig() {
@@ -99,13 +98,14 @@ public class CraftItem extends JavaPlugin {
     }
 
     public void regListener(Listener... list) {
-        for (Listener listener : list)
-            Bukkit.getPluginManager().registerEvents(listener, this);
+        for (Listener listener : list) {
+            if (listener != null) Bukkit.getPluginManager().registerEvents(listener, this);
+        }
     }
 
     public void unRegListener(Listener... list) {
         for (Listener listener : list) {
-            HandlerList.unregisterAll(listener);
+            if (listener != null) HandlerList.unregisterAll(listener);
         }
     }
 
