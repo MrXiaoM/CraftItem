@@ -101,6 +101,17 @@ public enum Message {
             "§7当前:",
             "%s"
     ),
+    gui__edit__item__difficult__name("&a困难锻造"),
+    gui__edit__item__difficult__lore(
+            "&7左键点击 切换状态",
+            "",
+            "&7开启困难锻造之后，普通的敲打锻造将会",
+            "&7被替换为 CustomFishing 小游戏锻造。",
+            "&7小游戏失败则敲打失败，小游戏成功再按概率",
+            "&7计算是否成功。",
+            "",
+            "&7状态: %s"
+    ),
 
 
     gui__edit_material_title("材料"),

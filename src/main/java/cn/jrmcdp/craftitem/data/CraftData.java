@@ -1,10 +1,8 @@
 package cn.jrmcdp.craftitem.data;
 
 import cn.jrmcdp.craftitem.Utils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import org.apache.commons.lang.math.RandomUtils;
@@ -14,6 +12,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftData implements ConfigurationSerializable {
     private List<ItemStack> material;
@@ -29,6 +28,7 @@ public class CraftData implements ConfigurationSerializable {
     private List<ItemStack> items;
 
     private List<String> commands;
+    private boolean difficult;
 
     public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands) {
         this.material = material;
@@ -38,6 +38,12 @@ public class CraftData implements ConfigurationSerializable {
         this.displayItem = displayItem;
         this.items = items;
         this.commands = commands;
+    public boolean isDifficult() {
+        return difficult;
+    }
+
+    public void setDifficult(boolean difficult) {
+        this.difficult = difficult;
     }
 
     public List<ItemStack> getMaterial() {
@@ -124,7 +130,7 @@ public class CraftData implements ConfigurationSerializable {
         gui.removeItem(this.material.toArray(new ItemStack[0]));
         return true;
     }
-
+    @NotNull
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("Material", this.material);
@@ -134,6 +140,7 @@ public class CraftData implements ConfigurationSerializable {
         map.put("DisplayItem", this.displayItem);
         map.put("Items", this.items);
         map.put("Commands", this.commands);
+        map.put("Difficult", this.difficult);
         return map;
     }
 
