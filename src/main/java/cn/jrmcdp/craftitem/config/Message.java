@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum Message {
     prefix("&4&lCraftItem &8>> &e"),
@@ -116,13 +115,13 @@ public enum Message {
 
     ;
     private static final Map<Message, String> config = new HashMap<>();
-    final String defValue;
-    final String key = name().replace("_", "-").replace("__", ".").toLowerCase();
+    public final String defValue;
+    public final String key = name().replace("__", ".").replace("_", "-").toLowerCase();
     Message(String defValue) {
         this.defValue = ChatColor.translateAlternateColorCodes('&', defValue);
     }
     Message(String... defValue) {
-        this.defValue = ChatColor.translateAlternateColorCodes('&', String.join("\n", defValue));
+        this.defValue = ChatColor.translateAlternateColorCodes('&', String.join("\n&r", defValue));
     }
 
     @Override
@@ -149,7 +148,7 @@ public enum Message {
         Message.config.clear();
         for (Message m : values()) {
             List<String> list = config.getStringList(m.key);
-            String str = !list.isEmpty() ? String.join("\n§r", list) : config.getString(m.key);
+            String str = !list.isEmpty() ? String.join("\n&r", list) : config.getString(m.key);
             if (str != null) {
                 Message.config.put(m, ChatColor.translateAlternateColorCodes('&', str));
             }

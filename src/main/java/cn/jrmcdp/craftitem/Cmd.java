@@ -9,17 +9,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class Cmd implements CommandExecutor, TabCompleter {
+
+    public static void register(JavaPlugin plugin, String name) {
+        PluginCommand command = plugin.getCommand(name);
+        if (command != null) {
+            Cmd cmd = new Cmd();
+            command.setExecutor(cmd);
+            command.setTabCompleter(cmd);
+        } else {
+            plugin.getLogger().warning("无法注册命令 /" + name);
+        }
+    }
 
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length > 0) {
@@ -95,7 +106,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
         if (craftData != null) {
             return Message.create__found.msg(player, args[1]);
         }
-        craftData = new CraftData(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>());
+        craftData = new CraftData();
         Craft.save(args[1], craftData);
         player.openInventory(EditHolder.buildGui(args[1], craftData));
         return true;
@@ -188,6 +199,19 @@ public class Cmd implements CommandExecutor, TabCompleter {
     }
 
     private boolean runReload(CommandSender sender, String[] args) {
+        if (args.length == 2 && args[1].equalsIgnoreCase("messages")) {
+            YamlConfiguration cfg = new YamlConfiguration();
+            for (Message message : Message.values()) {
+                String defValue = message.defValue.replace("§", "&");
+                if (defValue.contains("\n")) {
+                    List<String> list = Lists.newArrayList(defValue.split("\n"));
+                    cfg.set(message.key, list);
+                } else {
+                    cfg.set(message.key, defValue);
+                }
+            }
+            FileConfig.Message.saveConfig(cfg);
+        }
         Message.reload();
         cn.jrmcdp.craftitem.config.Material.reload();
         Config.reload();
