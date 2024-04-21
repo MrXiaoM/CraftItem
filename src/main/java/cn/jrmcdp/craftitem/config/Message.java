@@ -31,6 +31,7 @@ public enum Message {
     full_inventory("&c背包已满, &d%s&ex%d &c掉了出来."),
 
     craft__not_found("&c未找到 &e%s&c."),
+    craft__time_start("&a已开启时长锻造，时间结束后再次打开锻造书即可锻造成功。你也可以在锻造书中查看进度和剩余时间。"),
     craft__success("&a成功锻造出了 &e%s&a."),
     craft__not_enough_money("&e没有足够的金币来锻造."),
     craft__not_enough_material("&e身上没有足够的材料."),
@@ -55,51 +56,66 @@ public enum Message {
     ),
     gui__edit__item__successful_rate__name("&a成功率"),
     gui__edit__item__successful_rate__lore(
-            "§7点击 编辑",
-            "§7使用正整数",
+            "&7点击 编辑",
+            "&7使用正整数",
             "",
-            "§7当前: §e%d"
+            "&7当前: &e%d"
     ),
     gui__edit__item__multiple__name("&a倍数"),
     gui__edit__item__multiple__lore(
-            "§7点击 编辑",
-            "§7格式 \"5 10 20\"",
-            "§7对应 小/中/大 失败/成功 的 涨幅/跌幅",
+            "&7点击 编辑",
+            "&7格式 \"5 10 20\"",
+            "&7对应 小/中/大 失败/成功 的 涨幅/跌幅",
             "",
-            "§7当前: §e%s"
+            "&7当前: &e%s"
     ),
     gui__edit__item__cost__name("&a价格"),
     gui__edit__item__cost__lore(
-            "§7点击 查看/编辑",
-            "§7使用正整数",
+            "&7点击 查看/编辑",
+            "&7使用正整数",
             "",
-            "§7当前: §e%d"
+            "&7当前: &e%d"
     ),
     gui__edit__item__display__name("&a显示物品"),
     gui__edit__item__display__lore(
-            "§7点击 查看/编辑",
-            "§7对外显示的物品外貌",
+            "&7点击 查看/编辑",
+            "&7对外显示的物品外貌",
             "",
-            "§7当前: §e%s"
+            "&7当前: &e%s"
     ),
     gui__edit__item__item__name("&a奖励物品"),
     gui__edit__item__item__lore(
-            "§7点击 查看/编辑",
-            "§7锻造成功后给予的物品",
+            "&7点击 查看/编辑",
+            "&7锻造成功后给予的物品",
             "",
-            "§7当前:",
+            "&7当前:",
             "%s"
     ),
     gui__edit__item__command__name("&a奖励命令"),
     gui__edit__item__command__lore(
-            "§7点击 查看/编辑",
-            "§7格式 \"say 这个插件太棒了||服务器说这个插件太棒了\"",
-            "§7用 || 分割，左边是命令 右边是显示出来的介绍",
-            "§7此处支持 PAPI 变量",
-            "§7锻造成功后执行的命令",
+            "&7点击 查看/编辑",
+            "&7格式 \"say 这个插件太棒了||服务器说这个插件太棒了\"",
+            "&7用 || 分割，左边是命令 右边是显示出来的介绍",
+            "&7此处支持 PAPI 变量",
+            "&7锻造成功后执行的命令",
             "",
-            "§7当前:",
+            "&7当前:",
             "%s"
+    ),
+    gui__edit__item__time__name("&a锻造时长"),
+    gui__edit__item__time__lore(
+            "&7左键点击 增加1分钟",
+            "&7右键点击 减少1分钟",
+            "&7Shift+左键点击 增加10分钟",
+            "&7Shift+右键点击 减少10分钟",
+            "&7鼠标悬停按Q键 设置所需金币",
+            "",
+            "&7当时间大于0时，在锻造界面增加“时长锻造”选项",
+            "&7玩家可以选择进行“时长锻造”操作，花费一定金币",
+            "&7等待一段时间即可获得奖励，无需敲打锻造。",
+            "",
+            "&7当前时长: &f%s",
+            "&7花费金币: &f%s"
     ),
     gui__edit__item__difficult__name("&a困难锻造"),
     gui__edit__item__difficult__lore(
@@ -122,6 +138,11 @@ public enum Message {
     gui__edit_display_not_found("&c未找到第一格的物品"),
     gui__edit_item_title("奖励物品"),
     gui__edit_command_title("奖励命令"),
+    gui__edit_time_cost("&a请输入锻造时长金额 正整数"),
+
+    gui__edit__status__on("&a开启"),
+    gui__edit__status__off("&c关闭"),
+
     not_integer("&a请输入整数"),
 
     ;

@@ -28,9 +28,17 @@ public class CraftData implements ConfigurationSerializable {
     private List<ItemStack> items;
 
     private List<String> commands;
+    /**
+     * 锻造时长 (秒)
+     */
+    private long time;
+    private int timeCost;
     private boolean difficult;
+    public CraftData() {
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false);
+    }
 
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands) {
+    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult) {
         this.material = material;
         this.chance = chance;
         this.multiple = multiple;
@@ -38,6 +46,45 @@ public class CraftData implements ConfigurationSerializable {
         this.displayItem = displayItem;
         this.items = items;
         this.commands = commands;
+        this.time = time;
+        this.timeCost = timeCost;
+        this.difficult = difficult;
+    }
+
+    public String getTimeDisplay() {
+        return getTimeDisplay(time);
+    }
+    public static String getTimeDisplay(long second) {
+        int hour = 0, minute = 0;
+        while (second >= 86400) {
+            second -= 86400;
+            hour++;
+        }
+        while (second >= 60) {
+            second -= 60;
+            minute++;
+        }
+        return (hour > 0 ? (hour + "时 ") : "")
+                + (minute > 0 || hour > 0 ? (minute + "分 ") : "")
+                + (second > 0 ? (second + "秒") : "0");
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public int getTimeCost() {
+        return timeCost;
+    }
+
+    public void setTimeCost(int timeCost) {
+        this.timeCost = timeCost;
+    }
+
     public boolean isDifficult() {
         return difficult;
     }
@@ -126,24 +173,27 @@ public class CraftData implements ConfigurationSerializable {
         return clone;
     }
 
-    public boolean takeMaterial(Inventory gui) {
+    public void takeAllMaterial(Inventory gui) {
         gui.removeItem(this.material.toArray(new ItemStack[0]));
-        return true;
     }
     @NotNull
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("Material", this.material);
-        map.put("Chance", Integer.valueOf(this.chance));
+        map.put("Chance", this.chance);
         map.put("Multiple", this.multiple);
-        map.put("Cost", Integer.valueOf(this.cost));
+        map.put("Cost", this.cost);
         map.put("DisplayItem", this.displayItem);
         map.put("Items", this.items);
         map.put("Commands", this.commands);
+        map.put("TimeSecond", this.time);
+        map.put("TimeCost", this.timeCost);
         map.put("Difficult", this.difficult);
         return map;
     }
 
+    @NotNull
+    @SuppressWarnings("unchecked")
     public static CraftData deserialize(Map<String, Object> map) {
         return new CraftData(
                 (map.get("Material") == null) ? new ArrayList<>() : (List<ItemStack>)map.get("Material"),
@@ -152,6 +202,9 @@ public class CraftData implements ConfigurationSerializable {
                 (map.get("Cost") == null) ? 0 : (Integer) map.get("Cost"),
                 (map.get("DisplayItem") == null) ? new ItemStack(Material.BARRIER) : (ItemStack)map.get("DisplayItem"),
                 (map.get("Items") == null) ? new ArrayList<>() : (List<ItemStack>)map.get("Items"),
-                (map.get("Commands") == null) ? new ArrayList<>() : (List<String>)map.get("Commands"));
+                (map.get("Commands") == null) ? new ArrayList<>() : (List<String>)map.get("Commands"),
+                (map.get("TimeSecond") == null) ? 0 : (Long) map.get("TimeSecond"),
+                (map.get("TimeCost") == null) ? 0 : (Integer) map.get("TimeCost"),
+                map.get("Difficult") != null && (Boolean) map.get("Difficult"));
     }
 }

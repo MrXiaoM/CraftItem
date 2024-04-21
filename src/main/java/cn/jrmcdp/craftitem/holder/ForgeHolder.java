@@ -32,11 +32,16 @@ public class ForgeHolder implements InventoryHolder {
     private final String id;
     private final CraftData craftData;
     private Inventory inventory;
-
+    public final Long endTime;
+    public final boolean done;
+    public final boolean processing;
     ForgeHolder(PlayerData playerData, String id, CraftData craftData) {
         this.playerData = playerData;
         this.id = id;
         this.craftData = craftData;
+        this.endTime = playerData.getEndTime(id);
+        this.done = endTime != null && System.currentTimeMillis() >= endTime;
+        this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
     }
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
@@ -58,6 +63,7 @@ public class ForgeHolder implements InventoryHolder {
         return this.craftData;
     }
 
+    @NotNull
     public Inventory getInventory() {
         return inventory;
     }
@@ -70,7 +76,7 @@ public class ForgeHolder implements InventoryHolder {
             return;
         if (event.getRawSlot() < 0 || event.getRawSlot() >= (Gui.getChest()).length)
             return;
-        String key = Gui.getChest()[event.getRawSlot()];
+        String key = String.valueOf(Gui.getChest()[event.getRawSlot()]);
         if ("锻".equals(key)) {
             final CraftData craftData = getCraftData();
             int cost = craftData.getCost();
@@ -126,6 +132,47 @@ public class ForgeHolder implements InventoryHolder {
                     }
                 }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
             }, CraftItem.getPlugin());
+        }
+        if ("时".equals(key)) {
+            final CraftData craftData = getCraftData();
+            if (done) {
+                long now = System.currentTimeMillis();
+                Long endTime = playerData.getEndTime(getId());
+                if (endTime == null || now < endTime) {
+                    player.closeInventory();
+                    return;
+                }
+                playerData.removeTime(getId());
+                Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
+                for (ItemStack item : craftData.getItems()) {
+                    for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
+                        player.getWorld().dropItem(player.getLocation(), add);
+                        Message.full_inventory.msg(player, Utils.getItemName(add), add.getAmount());
+                    }
+                }
+                for (String str : craftData.getCommands()) {
+                    String cmd = str.split("\\|\\|")[0];
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, cmd));
+                }
+                return;
+            }
+            if (!processing) {
+                int cost = craftData.getTimeCost();
+                if (!CraftItem.getEcon().has(player, cost)) {
+                    Message.craft__not_enough_money.msg(player);
+                    return;
+                }
+                CraftItem.getEcon().withdrawPlayer(player, cost);
+                if (!craftData.hasMaterial(player.getInventory())) {
+                    Message.craft__not_enough_material.msg(player);
+                    return;
+                }
+                player.closeInventory();
+                craftData.takeAllMaterial(player.getInventory());
+                playerData.setTime(getId(), System.currentTimeMillis() + craftData.getTime() * 1000L);
+                playerData.save();
+                Message.craft__time_start.msg(player);
+            }
         }
     }
 

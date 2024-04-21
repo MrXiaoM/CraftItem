@@ -24,7 +24,9 @@ public class Gui {
 
     private static String title;
 
-    private static String[] chest;
+    private static char[] chest;
+
+    private static char[] chestTime;
 
     private static HashMap<String, ItemStack> items;
 
@@ -38,8 +40,12 @@ public class Gui {
         return title;
     }
 
-    public static String[] getChest() {
+    public static char[] getChest() {
         return chest;
+    }
+
+    public static char[] getChestTime() {
+        return chestTime;
     }
 
     public static HashMap<String, ItemStack> getItems() {
@@ -53,15 +59,13 @@ public class Gui {
     public static void reload() {
         config = FileConfig.Gui.getConfig();
         title = config.getString("Title");
-        chest = new String[config.getStringList("Chest").size() * 9];
-        String info = "";
-        for (String line : config.getStringList("Chest")) {
-            info = info + line;
-        }
-        chest = info.split("");
+
+        chest = String.join("", config.getStringList("Chest")).toCharArray();
+        chestTime = String.join("", config.getStringList("ChestTime")).toCharArray();
+
         slotAmount = 0;
-        for (String key : chest) {
-            if (key.equals("材")) {
+        for (char key : chest) {
+            if (key == '材') {
                 slotAmount++;
             }
         }
@@ -88,6 +92,9 @@ public class Gui {
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData) {
         Inventory gui = ForgeHolder.buildGui(playerData, id, craftData, chest.length, title);
+        ForgeHolder holder = (ForgeHolder) gui.getHolder();
+        if (holder == null) return gui;
+        char[] chest = holder.processing || holder.done ? getChestTime() : getChest();
         ItemStack[] is = new ItemStack[chest.length];
         Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
         for (int i = 0; i < chest.length; i++) {
@@ -95,17 +102,17 @@ public class Gui {
             ItemMeta itemMeta;
             List<String> lore;
             int j, loreSize;
-            String key = chest[i];
+            char key = chest[i];
             switch (key) {
-                case "材" : {
+                case '材' : {
                     if (iterator.hasNext()) {
                         is[i] = iterator.next();
                         break;
                     }
-                    is[i] = items.get(key);
+                    is[i] = items.get(String.valueOf(key));
                     break;
                 }
-                case "物" : {
+                case '物' : {
                     clone = craftData.getDisplayItem().clone();
                     itemMeta = clone.getItemMeta();
                     lore = itemMeta.getLore();
@@ -124,26 +131,65 @@ public class Gui {
                     is[i] = clone;
                     break;
                 }
-                case "锻" : {
-                    item = items.get(key).clone();
+                case '锻' : {
+                    item = items.get(craftData.isDifficult() ? "锻_困难" : "锻").clone();
                     itemMeta = item.getItemMeta();
                     lore = itemMeta.getLore();
-                    for (j = 0, loreSize = lore.size(); j < loreSize; j++) {
+                    for (j = 0, loreSize = lore == null ? 0 : lore.size(); j < loreSize; j++) {
                         String line = lore.get(j);
                         if (line.contains("<ChanceName>"))
-                            lore.set(j, line.replace("<ChanceName>", Config.getChanceName(craftData.getChance())));
+                            line = line.replace("<ChanceName>", Config.getChanceName(craftData.getChance()));
                         if (line.contains("<Score>"))
-                            lore.set(j, line.replace("<Score>", "" + playerData.getScore(id)));
+                            line = line.replace("<Score>", String.valueOf(playerData.getScore(id)));
                         if (line.contains("<Cost>"))
-                            lore.set(j, line.replace("<Cost>", "" + craftData.getCost()));
+                            line = line.replace("<Cost>", String.valueOf(craftData.getCost()));
+                        lore.set(j, line);
                     }
                     itemMeta.setLore(lore);
                     item.setItemMeta(itemMeta);
                     is[i] = item;
                     break;
                 }
+                case '时': {
+                    Long endTime = holder.endTime;
+                    if (craftData.getTime() > 0) {
+                        if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
+                            if (holder.done) {
+                                item = items.get("时_完成").clone();
+                            } else if (holder.processing) {
+                                item = items.get("时_进行中").clone();
+                            } else {
+                                item = items.get("时").clone();
+                            }
+                        } else {
+                            item = items.get("时_条件不足").clone();
+                        }
+                    } else {
+                        item = items.get("时_未开启").clone();
+                    }
+                    double progress = endTime == null ? 0.0d
+                            : Math.min(1.0d, (System.currentTimeMillis() - endTime - craftData.getTime() * 1000.0d) / (craftData.getTime() * 1000.0d));
+                    itemMeta = item.getItemMeta();
+                    lore = itemMeta.getLore();
+                    for (j = 0, loreSize = lore == null ? 0 : lore.size(); j < loreSize; j++) {
+                        String line = lore.get(j);
+                        if (line.contains("<Progress>"))
+                            line = line.replace("<Progress>", String.format("%.2f", progress * 100));
+                        if (line.contains("<RemainTime>"))
+                            line = line.replace("<RemainTime>", endTime == null ? ""
+                                    : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L)));
+                        if (line.contains("<Time>"))
+                            line = line.replace("<Time>", craftData.getTimeDisplay());
+                        if (line.contains("<Cost>"))
+                            line = line.replace("<Cost>", String.valueOf(craftData.getTimeCost()));
+                        lore.set(j, line);
+                    }
+                    itemMeta.setLore(lore);
+                    item.setItemMeta(itemMeta);
+                    is[i] = item;
+                }
                 default : {
-                    is[i] = items.get(key);
+                    is[i] = items.get(String.valueOf(key));
                     break;
                 }
             }

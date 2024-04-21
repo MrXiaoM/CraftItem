@@ -92,10 +92,17 @@ public class EditHolder implements InventoryHolder {
                 Message.gui__edit__item__command__lore.list(
                     String.join("\n§7", craftData.getCommands())
                 ));
+        items[7] = item7();
         items[8] = item8();
         return items;
     }
 
+    private ItemStack item7() {
+        return getItemStack(Material.CLOCK, Message.gui__edit__item__time__name.get(),
+                Message.gui__edit__item__time__lore.list(
+                        craftData.getTimeDisplay(), craftData.getTimeCost()
+                ));
+    }
 
     private ItemStack item8() {
         return getItemStack(Material.FISHING_ROD, Message.gui__edit__item__difficult__name.get(),
@@ -330,6 +337,42 @@ public class EditHolder implements InventoryHolder {
                     }
                 }, CraftItem.getPlugin());
                 break;
+            }
+            case 7: {
+                if (event.isLeftClick()) {
+                    craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 60 : 1));
+                    event.getView().getTopInventory().setItem(7, item7());
+                    player.updateInventory();
+                    Craft.save(getId(), craftData);
+                    break;
+                } else if (event.isRightClick()) {
+                    craftData.setTime(craftData.getTime() - (event.isShiftClick() ? 60 : 1));
+                    event.getView().getTopInventory().setItem(7, item7());
+                    player.updateInventory();
+                    Craft.save(getId(), craftData);
+                    break;
+                } else if (event.getClick().equals(ClickType.DROP)) {
+                    player.closeInventory();
+                    Message.gui__edit_time_cost.msg(player);
+                    Bukkit.getPluginManager().registerEvents(new Listener() {
+                        @EventHandler
+                        public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
+                            if (eventB.getPlayer().equals(player)) {
+                                eventB.setCancelled(true);
+                                Integer cost = Utils.tryParseInt(eventB.getMessage());
+                                if (cost == null || cost < 0) {
+                                    Message.not_integer.msg(player);
+                                } else {
+                                    craftData.setTimeCost(cost);
+                                    Craft.save(getId(), craftData);
+                                }
+                                HandlerList.unregisterAll(this);
+                                Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
+                            }
+                        }
+                    }, CraftItem.getPlugin());
+                    break;
+                }
             }
             case 8: {
                 craftData.setDifficult(!craftData.isDifficult());

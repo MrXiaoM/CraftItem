@@ -38,6 +38,14 @@ public class Utils {
         }
     }
 
+    public static Double tryParseDouble(String text) {
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public static <T extends Enum<?>> Optional<T> valueOf(Class<T> clazz, String s) {
         if (s != null) for (T t : clazz.getEnumConstants()) {
             if (t.name().equalsIgnoreCase(s)) return Optional.of(t);

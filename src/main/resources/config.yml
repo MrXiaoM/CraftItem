@@ -28,6 +28,24 @@ Setting:
     ForgeFail: BLOCK_GLASS_BREAK
     ForgeTitle: BLOCK_ANVIL_LAND
 
+RandomGames:
+  - accurate_click_bar_3_easy
+  - accurate_click_bar_5_easy
+  - accurate_click_bar_7_easy
+  - accurate_click_bar_9_easy
+  - hold_game_easy
+  - tension_game_easy
+
+TimeForgeConditions:
+  经验等级:
+    input: '%player_level%'
+    type: '>='
+    output: 30
+  绑定QQ:
+    input: '%sr_qq%'
+    type: '!='
+    output: ''
+
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
 offset-characters:

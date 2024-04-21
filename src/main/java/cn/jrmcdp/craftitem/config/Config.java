@@ -1,18 +1,93 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.Utils;
 import com.cryptomorin.xseries.messages.Titles;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import static cn.jrmcdp.craftitem.Utils.valueOf;
 
 public class Config {
+    public static class Condition {
+        public final String input;
+        public final String type;
+        public final String output;
+
+        public Condition(String input, String type, String output) {
+            this.input = input;
+            this.type = type;
+            this.output = output;
+        }
+
+        public boolean check(Player player) {
+            String i = PlaceholderAPI.setPlaceholders(player, input);
+            String o = PlaceholderAPI.setPlaceholders(player, output);
+            boolean reversed = type.startsWith("!");
+            String s = reversed ? type.substring(1) : type;
+            switch (s) {
+                case "=":
+                case "==":
+                case "string equals":
+                    return i.equals(o) != reversed;
+                case "~==":
+                case "equalsIgnoreCase":
+                    return i.equalsIgnoreCase(o) != reversed;
+                case ">=":
+                case ">":
+                case "<=":
+                case "<":
+                case "number equals":
+                    Double nInput = Utils.tryParseDouble(i);
+                    Double nOutput = Utils.tryParseDouble(o);
+                    switch (s) {
+                        case "number equals":
+                            if (nInput == null || nOutput == null) {
+                                return i.equals(o) != reversed;
+                            } else {
+                                return (nInput.equals(nOutput)) != reversed;
+                            }
+                        case ">=":
+                            if (nInput == null || nOutput == null) {
+                                return i.equals(o) != reversed;
+                            } else {
+                                return (nInput >= nOutput) != reversed;
+                            }
+                        case "<=":
+                            if (nInput == null || nOutput == null) {
+                                return i.equals(o) != reversed;
+                            } else {
+                                return (nInput <= nOutput) != reversed;
+                            }
+                        case ">":
+                            if (nInput == null || nOutput == null) {
+                                return false;
+                            } else {
+                                return (nInput > nOutput) != reversed;
+                            }
+                        case "<":
+                            if (nInput == null || nOutput == null) {
+                                return false;
+                            } else {
+                                return (nInput < nOutput) != reversed;
+                            }
+                        default:
+                            return false;
+                    }
+                default:
+                    return false;
+            }
+        }
+    }
     private static FileConfiguration config;
 
     private static ConfigurationSection setting;
@@ -23,6 +98,7 @@ public class Config {
     private static Sound soundForgeFail;
     private static Sound soundForgeTitle;
     private static List<String> randomGames;
+    private static List<Condition> timeForgeConditions = new ArrayList<>();
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
         config = CraftItem.getPlugin().getConfig();
@@ -50,6 +126,14 @@ public class Config {
             soundForgeTitle = valueOf(Sound.class, setting.getString("Sounds.ForgeTitle")).orElse(Sound.BLOCK_ANVIL_LAND);
         }
         randomGames = config.getStringList("RandomGames");
+        timeForgeConditions.clear();
+        ConfigurationSection tfcSection = config.getConfigurationSection("TimeForgeConditions");
+        if (tfcSection != null) for (String key : tfcSection.getKeys(false)) {
+            String input = tfcSection.getString(key + ".input");
+            String type = tfcSection.getString(key + ".type");
+            String output = tfcSection.getString(key + ".output");
+            timeForgeConditions.add(new Condition(input, type, output));
+        }
     }
 
     public static FileConfiguration getConfig() {
@@ -83,6 +167,15 @@ public class Config {
     public static String getRandomGame() {
         return getRandomGames().get(new Random().nextInt(getRandomGames().size()));
     }
+
+    public static boolean isMeetTimeForgeCondition(Player player) {
+        if (player == null) return false;
+        for (Condition condition : timeForgeConditions) {
+            if (!condition.check(player)) return false;
+        }
+        return true;
+    }
+
     public static String getChanceName(int chance) {
         ConfigurationSection section = setting.getConfigurationSection("ChanceName");
         if (section != null) for (String key : section.getKeys(false)) {
