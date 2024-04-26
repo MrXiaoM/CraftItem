@@ -142,7 +142,9 @@ public class ForgeHolder implements InventoryHolder {
                     player.closeInventory();
                     return;
                 }
+                player.closeInventory();
                 playerData.removeTime(getId());
+                playerData.save();
                 Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {

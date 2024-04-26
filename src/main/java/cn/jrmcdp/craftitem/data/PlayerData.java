@@ -75,8 +75,8 @@ public class PlayerData {
         return endTime;
     }
 
-    public Long removeTime(String key) {
-        return this.timeMap.remove(key);
+    public void removeTime(String key) {
+        this.timeMap.remove(key);
     }
 
     public void clearScore(String key) {
@@ -84,6 +84,8 @@ public class PlayerData {
     }
 
     public void save() {
+        config.set("ForgeData", null);
+        config.set("TimeForgeData", null);
         this.scoreMap.forEach((key, value) -> this.config.set("ForgeData." + key, value));
         this.timeMap.forEach((key, value) -> this.config.set("TimeForgeData." + key, value));
         FileConfig.Custom.saveConfig("PlayerData", this.player.getName(), this.config);
