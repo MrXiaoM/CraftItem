@@ -340,13 +340,13 @@ public class EditHolder implements InventoryHolder {
             }
             case 7: {
                 if (event.isLeftClick()) {
-                    craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 60 : 1));
+                    craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 600 : 60));
                     event.getView().getTopInventory().setItem(7, item7());
                     player.updateInventory();
                     Craft.save(getId(), craftData);
                     break;
                 } else if (event.isRightClick()) {
-                    craftData.setTime(craftData.getTime() - (event.isShiftClick() ? 60 : 1));
+                    craftData.setTime(craftData.getTime() - (event.isShiftClick() ? 600 : 60));
                     event.getView().getTopInventory().setItem(7, item7());
                     player.updateInventory();
                     Craft.save(getId(), craftData);
