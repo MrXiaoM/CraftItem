@@ -137,46 +137,13 @@ public class Gui {
                     is[i] = item;
                     break;
                 }
-                case '时': {
-                    Long endTime = holder.endTime;
-                    if (craftData.getTime() > 0) {
-                        if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
-                            if (holder.done) {
-                                item = items.get("时_完成").clone();
-                            } else if (holder.processing) {
-                                item = items.get("时_进行中").clone();
-                            } else {
-                                item = items.get("时").clone();
-                            }
-                        } else {
-                            item = items.get("时_条件不足").clone();
-                        }
-                    } else {
-                        item = items.get("时_未开启").clone();
-                    }
-                    double progress = endTime == null ? 0.0d
-                            : Math.min(1.0d, (System.currentTimeMillis() - endTime - craftData.getTime() * 1000.0d) / (craftData.getTime() * 1000.0d));
-                    itemMeta = item.getItemMeta();
-                    lore = itemMeta.getLore();
-                    for (j = 0, loreSize = lore == null ? 0 : lore.size(); j < loreSize; j++) {
-                        String line = lore.get(j);
-                        if (line.contains("<Progress>"))
-                            line = line.replace("<Progress>", String.format("%.2f", progress * 100));
-                        if (line.contains("<RemainTime>"))
-                            line = line.replace("<RemainTime>", endTime == null ? ""
-                                    : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L)));
-                        if (line.contains("<Time>"))
-                            line = line.replace("<Time>", craftData.getTimeDisplay());
-                        if (line.contains("<Cost>"))
-                            line = line.replace("<Cost>", String.valueOf(craftData.getTimeCost()));
-                        lore.set(j, line);
-                    }
-                    itemMeta.setLore(lore);
-                    item.setItemMeta(itemMeta);
-                    is[i] = item;
+                case "时": {
+                    holder.putTimeSlot(i);
+                    is[i] = holder.getTimeIcon();
+                    break;
                 }
                 default : {
-                    is[i] = items.get(String.valueOf(key));
+                    is[i] = getItems().get(key);
                     break;
                 }
             }

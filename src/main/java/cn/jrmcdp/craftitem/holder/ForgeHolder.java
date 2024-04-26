@@ -23,9 +23,15 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ForgeHolder implements IHolder {
     private final PlayerData playerData;
@@ -33,8 +39,10 @@ public class ForgeHolder implements IHolder {
     private final CraftData craftData;
     private Inventory inventory;
     public final Long endTime;
-    public final boolean done;
-    public final boolean processing;
+    public final char[] chest;
+    public boolean done;
+    public boolean processing;
+    Set<Integer> timeSlots = new HashSet<>();
     ForgeHolder(PlayerData playerData, String id, CraftData craftData) {
         this.playerData = playerData;
         this.id = id;
@@ -50,6 +58,67 @@ public class ForgeHolder implements IHolder {
         Inventory inventory = Bukkit.createInventory(holder, size, title);
         holder.inventory = inventory;
         return inventory;
+    }
+
+    public ItemStack getTimeIcon() {
+        ItemStack item;
+        if (craftData.getTime() > 0) {
+            if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
+                if (done) {
+                    item = Gui.getItems().get("时_完成").clone();
+                } else if (processing) {
+                    item = Gui.getItems().get("时_进行中").clone();
+                } else {
+                    item = Gui.getItems().get("时").clone();
+                }
+            } else {
+                item = Gui.getItems().get("时_条件不足").clone();
+            }
+        } else {
+            item = Gui.getItems().get("时_未开启").clone();
+        }
+        long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
+        double progress = endTime == null ? 0.0d
+                : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
+        ItemMeta itemMeta = item.getItemMeta();
+        List<String> lore = itemMeta.getLore();
+        for (int j = 0, loreSize = (lore == null ? 0 : lore.size()); j < loreSize; j++) {
+            String line = lore.get(j);
+            if (line.contains("<Progress>"))
+                line = line.replace("<Progress>", String.format("%.2f%%", progress * 100));
+            if (line.contains("<RemainTime>"))
+                line = line.replace("<RemainTime>", endTime == null ? ""
+                        : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒"));
+            if (line.contains("<Time>"))
+                line = line.replace("<Time>", craftData.getTimeDisplay());
+            if (line.contains("<Cost>"))
+                line = line.replace("<Cost>", String.valueOf(craftData.getTimeCost()));
+            lore.set(j, line);
+        }
+        itemMeta.setLore(lore);
+        if (itemMeta instanceof Damageable) {
+            Damageable damageable = (Damageable) itemMeta;
+            damageable.setDamage((short)((1.0d - progress) * item.getType().getMaxDurability()));
+        }
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+
+    public void putTimeSlot(int i) {
+        timeSlots.add(i);
+    }
+
+    @Override
+    public void onSecond() {
+        this.done = endTime != null && System.currentTimeMillis() >= endTime;
+        this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
+        if (processing || done) {
+            ItemStack item = getTimeIcon();
+            for (int slot : timeSlots) {
+                getInventory().setItem(slot, item);
+            }
+        }
     }
 
     public PlayerData getPlayerData() {
