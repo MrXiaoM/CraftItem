@@ -52,9 +52,12 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public String getTimeDisplay() {
-        return getTimeDisplay(time);
+        return getTimeDisplay(time, "无");
     }
-    public static String getTimeDisplay(long second) {
+    public String getTimeDisplay(String noneTips) {
+        return getTimeDisplay(time, noneTips);
+    }
+    public static String getTimeDisplay(long second, String noneTips) {
         int hour = 0, minute = 0;
         while (second >= 86400) {
             second -= 86400;
@@ -66,7 +69,7 @@ public class CraftData implements ConfigurationSerializable {
         }
         return (hour > 0 ? (hour + "时 ") : "")
                 + (minute > 0 || hour > 0 ? (minute + "分 ") : "")
-                + (second > 0 ? (second + "秒") : "0");
+                + (second > 0 ? (second + "秒") : (minute > 0 || hour > 0 ? "" : noneTips));
     }
 
     public long getTime() {
@@ -74,7 +77,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public void setTime(long time) {
-        this.time = time;
+        this.time = time < 0 ? 0 : time;
     }
 
     public int getTimeCost() {
@@ -203,7 +206,7 @@ public class CraftData implements ConfigurationSerializable {
                 (map.get("DisplayItem") == null) ? new ItemStack(Material.BARRIER) : (ItemStack)map.get("DisplayItem"),
                 (map.get("Items") == null) ? new ArrayList<>() : (List<ItemStack>)map.get("Items"),
                 (map.get("Commands") == null) ? new ArrayList<>() : (List<String>)map.get("Commands"),
-                (map.get("TimeSecond") == null) ? 0 : (Long) map.get("TimeSecond"),
+                (map.get("TimeSecond") == null) ? 0 : Long.parseLong(map.get("TimeSecond").toString()),
                 (map.get("TimeCost") == null) ? 0 : (Integer) map.get("TimeCost"),
                 map.get("Difficult") != null && (Boolean) map.get("Difficult"));
     }
