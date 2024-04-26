@@ -11,9 +11,9 @@
 
 ## 安装教程
 
-1.  于上方介绍链接 帖内下载插件
-2.  放入服务器根目录 plugins 文件夹内
-3.  重启以加载插件 开始享用吧
+1. 于 [Releases](https://github.com/MrXiaoM/CraftItem/releases) 下载插件
+2. 放入服务器根目录 plugins 文件夹内
+3. 重启以加载插件 开始享用吧
 
 ## 详情
 
@@ -25,3 +25,4 @@
 * 修正一些bug
 * 添加更多可配置项
 * 添加小游戏作为锻造难度挑战 (来自 [Custom-Fishing](https://github.com/Xiao-MoMi/Custom-Fishing)，感谢开源!)
+* 添加时长锻造选项，玩家可以仅仅在提交材料后，等待一定时间即可领取锻造成品
