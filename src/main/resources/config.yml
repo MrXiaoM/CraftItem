@@ -37,14 +37,14 @@ RandomGames:
   - tension_game_easy
 
 TimeForgeConditions:
-  经验等级:
-    input: '%player_level%'
-    type: '>='
-    output: 30
-  绑定QQ:
-    input: '%sr_qq%'
-    type: '!='
-    output: ''
+#  经验等级:
+#    input: '%player_level%'
+#    type: '>='
+#    output: 30
+#  绑定QQ:
+#    input: '%sr_qq%'
+#    type: '!='
+#    output: ''
 
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
