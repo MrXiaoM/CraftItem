@@ -152,7 +152,7 @@ public class CraftData implements ConfigurationSerializable {
         this.displayItem = displayItem;
     }
 
-    public boolean hasMaterial(Inventory gui) {
+    public boolean hasAllMaterial(Inventory gui) {
         Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
         for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
             if (!gui.containsAtLeast(entry.getKey(), entry.getValue())) {

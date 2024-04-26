@@ -154,11 +154,11 @@ public class ForgeHolder implements IHolder {
                 Message.craft__not_enough_money.msg(player);
                 return;
             }
-            CraftItem.getEcon().withdrawPlayer(player, cost);
-            if (!craftData.hasMaterial(player.getInventory())) {
+            if (!craftData.hasAllMaterial(player.getInventory())) {
                 Message.craft__not_enough_material.msg(player);
                 return;
             }
+            CraftItem.getEcon().withdrawPlayer(player, cost);
             final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
             final int multiple = RandomUtils.nextInt(3);
             player.closeInventory();
@@ -234,12 +234,12 @@ public class ForgeHolder implements IHolder {
                     Message.craft__not_enough_money.msg(player);
                     return;
                 }
-                CraftItem.getEcon().withdrawPlayer(player, cost);
-                if (!craftData.hasMaterial(player.getInventory())) {
+                if (!craftData.hasAllMaterial(player.getInventory())) {
                     Message.craft__not_enough_material.msg(player);
                     return;
                 }
                 player.closeInventory();
+                CraftItem.getEcon().withdrawPlayer(player, cost);
                 craftData.takeAllMaterial(player.getInventory());
                 playerData.setTime(getId(), System.currentTimeMillis() + craftData.getTime() * 1000L);
                 playerData.save();
@@ -249,7 +249,7 @@ public class ForgeHolder implements IHolder {
     }
 
     public boolean doForgeResult(Player player, boolean win, int multiple, Runnable cancel) {
-        if (!craftData.hasMaterial(player.getInventory())) {
+        if (!craftData.hasAllMaterial(player.getInventory())) {
             Message.craft__not_enough_material.msg(player);
             cancel.run();
             return false;
