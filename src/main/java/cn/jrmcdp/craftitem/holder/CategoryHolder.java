@@ -11,7 +11,7 @@ import org.bukkit.inventory.InventoryHolder;
 import java.util.HashMap;
 import java.util.List;
 
-public class CategoryHolder implements InventoryHolder {
+public class CategoryHolder implements IHolder {
     private Inventory inventory;
 
     private String[] chest;

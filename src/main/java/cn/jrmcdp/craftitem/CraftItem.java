@@ -55,7 +55,7 @@ public class CraftItem extends JavaPlugin {
         Gui.reload();
         Category.reload();
         regListener(
-                guiListener = new GuiListener(),
+                guiListener = new GuiListener(this),
                 playerListener = new PlayerListener()
         );
         Cmd.register(this, "CraftItem");
@@ -65,6 +65,7 @@ public class CraftItem extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
         if (miniGames != null) miniGames.disable();
+        if (guiListener != null) guiListener.onDisable();
         ConfigurationSerialization.unregisterClass(CraftData.class);
         unRegListener(guiListener, playerListener);
         HandlerList.unregisterAll(this);

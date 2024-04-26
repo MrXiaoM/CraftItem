@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EditHolder implements InventoryHolder {
+public class EditHolder implements IHolder {
     private final String id;
 
     private final CraftData craftData;
