@@ -28,9 +28,8 @@ public class Gui {
 
     private static char[] chestTime;
 
-    private static HashMap<String, ItemStack> items;
-
     private static int slotAmount;
+    private static final HashMap<String, ItemStack> items = new HashMap<>();
 
     public static YamlConfiguration getConfig() {
         return config;
@@ -69,7 +68,7 @@ public class Gui {
                 slotAmount++;
             }
         }
-        items = new HashMap<>();
+        items.clear();
         ConfigurationSection section = config.getConfigurationSection("Item");
         for (String key : section.getKeys(false)) {
             ItemStack itemStack = XMaterial.matchXMaterial(section.getString(key + ".Type", "STONE")).get().parseItem();
@@ -94,25 +93,24 @@ public class Gui {
         Inventory gui = ForgeHolder.buildGui(playerData, id, craftData, chest.length, title);
         ForgeHolder holder = (ForgeHolder) gui.getHolder();
         if (holder == null) return gui;
-        char[] chest = holder.processing || holder.done ? getChestTime() : getChest();
-        ItemStack[] is = new ItemStack[chest.length];
+        ItemStack[] is = new ItemStack[holder.chest.length];
         Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
-        for (int i = 0; i < chest.length; i++) {
+        for (int i = 0; i < holder.chest.length; i++) {
             ItemStack clone, item;
             ItemMeta itemMeta;
             List<String> lore;
             int j, loreSize;
-            char key = chest[i];
+            String key = String.valueOf(holder.chest[i]);
             switch (key) {
-                case '材' : {
+                case "材": {
                     if (iterator.hasNext()) {
                         is[i] = iterator.next();
                         break;
                     }
-                    is[i] = items.get(String.valueOf(key));
+                    is[i] = getItems().get(key);
                     break;
                 }
-                case '物' : {
+                case "物": {
                     clone = craftData.getDisplayItem().clone();
                     itemMeta = clone.getItemMeta();
                     lore = itemMeta.getLore();
@@ -131,11 +129,11 @@ public class Gui {
                     is[i] = clone;
                     break;
                 }
-                case '锻' : {
-                    item = items.get(craftData.isDifficult() ? "锻_困难" : "锻").clone();
+                case "锻": {
+                    item = getItems().get(craftData.isDifficult() ? "锻_困难" : "锻").clone();
                     itemMeta = item.getItemMeta();
                     lore = itemMeta.getLore();
-                    for (j = 0, loreSize = lore == null ? 0 : lore.size(); j < loreSize; j++) {
+                    for (j = 0, loreSize = (lore == null ? 0 : lore.size()); j < loreSize; j++) {
                         String line = lore.get(j);
                         if (line.contains("<ChanceName>"))
                             line = line.replace("<ChanceName>", Config.getChanceName(craftData.getChance()));

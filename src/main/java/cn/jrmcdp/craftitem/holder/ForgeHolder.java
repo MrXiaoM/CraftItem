@@ -42,6 +42,7 @@ public class ForgeHolder implements InventoryHolder {
         this.endTime = playerData.getEndTime(id);
         this.done = endTime != null && System.currentTimeMillis() >= endTime;
         this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
+        this.chest = processing || done ? Gui.getChestTime() : Gui.getChest();
     }
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
@@ -74,9 +75,9 @@ public class ForgeHolder implements InventoryHolder {
         player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
         if (!event.getClick().isRightClick() && !event.getClick().isLeftClick())
             return;
-        if (event.getRawSlot() < 0 || event.getRawSlot() >= (Gui.getChest()).length)
+        if (event.getRawSlot() < 0 || event.getRawSlot() >= chest.length)
             return;
-        String key = String.valueOf(Gui.getChest()[event.getRawSlot()]);
+        String key = String.valueOf(chest[event.getRawSlot()]);
         if ("锻".equals(key)) {
             final CraftData craftData = getCraftData();
             int cost = craftData.getCost();
