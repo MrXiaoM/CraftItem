@@ -3,6 +3,8 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.CraftItem;
 import java.io.File;
 import java.io.IOException;
+
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum FileConfig {
@@ -32,6 +34,10 @@ public enum FileConfig {
                 e.printStackTrace();
             }
         return YamlConfiguration.loadConfiguration(this.file);
+    }
+
+    public boolean exists() {
+        return file.exists();
     }
 
     public YamlConfiguration getOrCreateConfig(String path, String name) {

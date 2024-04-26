@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum Message {
     prefix("&4&lCraftItem &8>> &e"),
@@ -176,6 +177,7 @@ public enum Message {
     }
     
     public static void reload() {
+        if (!FileConfig.Message.exists()) save();
         FileConfiguration config = FileConfig.Message.getConfig();
         Message.config.clear();
         for (Message m : values()) {
@@ -185,5 +187,12 @@ public enum Message {
                 Message.config.put(m, ChatColor.translateAlternateColorCodes('&', str));
             }
         }
+    }
+    public static void save() {
+        YamlConfiguration config = FileConfig.Message.getConfig();
+        for (Message m : values()) {
+            config.set(m.key, Message.config.getOrDefault(m, m.defValue).replace("§", "&"));
+        }
+        FileConfig.Message.saveConfig(config);
     }
 }

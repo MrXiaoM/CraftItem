@@ -78,7 +78,6 @@ public class CraftItem extends JavaPlugin {
             folder.mkdirs();
         }
         String[] files = {
-                "Message.yml",
                 "Material.yml",
                 "Craft.yml",
                 "Gui.yml",
