@@ -7,14 +7,12 @@ import cn.jrmcdp.craftitem.minigames.utils.game.GameInstance;
 import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,27 +102,19 @@ public class GameManager implements Listener {
         }
     }
 
-    /**
-     * Known bug: This is a Minecraft packet limitation
-     * When you fish, both left click air and right click air
-     * are triggered. And you can't cancel the left click event.
-     */
     @EventHandler
-    private void onLeftClick(PlayerInteractEvent event) {
-        if (event.getAction() != Action.LEFT_CLICK_AIR)
-            return;
-        if (event.getMaterial() != Material.FISHING_ROD)
-            return;
-        if (event.getHand() != EquipmentSlot.HAND)
-            return;
+    public void onClick(PlayerInteractEvent event) {
         GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
         if (gamingPlayer != null) {
-            if (gamingPlayer.onLeftClick()) {
+            if ((event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+                    && gamingPlayer.onLeftClick()) {
                 event.setCancelled(true);
-                return;
+            }
+            if ((event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+                    && gamingPlayer.onRightClick()) {
+                event.setCancelled(true);
             }
         }
-        return;
     }
 
     @EventHandler (ignoreCancelled = true)

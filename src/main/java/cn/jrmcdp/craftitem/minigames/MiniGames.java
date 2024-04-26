@@ -239,7 +239,14 @@ public class MiniGames {
                     AdventureManagerImpl.getInstance().sendTitle(player, sendTitle, bar,0,10,0);
                 }
 
-                
+                @Override
+                public boolean onLeftClick() {
+                    if (task != null) task.cancel();
+                    setGameResult(isSuccessful());
+                    endGame();
+                    return true;
+                }
+
                 public boolean isSuccessful() {
                     if (isTimeOut) return false;
                     int last = progress / widthPerSection;
@@ -902,6 +909,14 @@ public class MiniGames {
                     );
                 }
 
+
+                @Override
+                public boolean onLeftClick() {
+                    if (task != null) task.cancel();
+                    setGameResult(isSuccessful());
+                    endGame();
+                    return true;
+                }
                 
                 public boolean isSuccessful() {
                     return currentIndex + 1 <= successPosition + successWidth - 1 && currentIndex + 1 >= successPosition;
@@ -973,6 +988,14 @@ public class MiniGames {
                     );
                 }
 
+
+                @Override
+                public boolean onLeftClick() {
+                    if (task != null) task.cancel();
+                    setGameResult(isSuccessful());
+                    endGame();
+                    return true;
+                }
                 
                 public boolean isSuccessful() {
                     return progress < judgement_position + judgementAreaWidth && progress >= judgement_position;
