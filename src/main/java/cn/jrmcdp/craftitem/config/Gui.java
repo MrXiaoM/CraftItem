@@ -28,7 +28,6 @@ public class Gui {
 
     private static char[] chestTime;
 
-    private static int slotAmount;
     private static final HashMap<String, ItemStack> items = new HashMap<>();
 
     public static YamlConfiguration getConfig() {
@@ -51,10 +50,6 @@ public class Gui {
         return items;
     }
 
-    public static int getSlotAmount() {
-        return slotAmount;
-    }
-
     public static void reload() {
         config = FileConfig.Gui.getConfig();
         title = config.getString("Title");
@@ -62,12 +57,6 @@ public class Gui {
         chest = String.join("", config.getStringList("Chest")).toCharArray();
         chestTime = String.join("", config.getStringList("ChestTime")).toCharArray();
 
-        slotAmount = 0;
-        for (char key : chest) {
-            if (key == '材') {
-                slotAmount++;
-            }
-        }
         items.clear();
         ConfigurationSection section = config.getConfigurationSection("Item");
         for (String key : section.getKeys(false)) {
