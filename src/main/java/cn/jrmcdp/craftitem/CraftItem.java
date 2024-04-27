@@ -10,6 +10,7 @@ import java.io.File;
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -94,6 +95,9 @@ public class CraftItem extends JavaPlugin {
     @Override
     public void reloadConfig() {
         super.reloadConfig();
+        FileConfiguration config = getConfig();
+        config.addDefault("TimeForgeConditions", null);
+        config.addDefault("offset-characters", null);
         miniGames.reloadConfig();
     }
 
