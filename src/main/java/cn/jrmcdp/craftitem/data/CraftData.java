@@ -59,8 +59,8 @@ public class CraftData implements ConfigurationSerializable {
     }
     public static String getTimeDisplay(long second, String noneTips) {
         int hour = 0, minute = 0;
-        while (second >= 86400) {
-            second -= 86400;
+        while (second >= 3600) {
+            second -= 3600;
             hour++;
         }
         while (second >= 60) {
@@ -68,7 +68,7 @@ public class CraftData implements ConfigurationSerializable {
             minute++;
         }
         return (hour > 0 ? (hour + "时 ") : "")
-                + (minute > 0 || hour > 0 ? (minute + "分 ") : "")
+                + (minute > 0 ? (minute + "分 ") : "")
                 + (second > 0 ? (second + "秒") : (minute > 0 || hour > 0 ? "" : noneTips));
     }
 
