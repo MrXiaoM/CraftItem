@@ -42,6 +42,14 @@ public class CraftData implements ConfigurationSerializable {
         this.material = material;
         this.chance = chance;
         this.multiple = multiple;
+        if (multiple.isEmpty()) throw new IllegalArgumentException("multiple can not be empty!");
+        Integer i = null;
+        while (multiple.size() < 3) {
+            if (i == null) {
+                i = multiple.get(multiple.size() - 1);
+            }
+            multiple.add(i);
+        }
         this.cost = cost;
         this.displayItem = displayItem;
         this.items = items;
