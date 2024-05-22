@@ -5,7 +5,7 @@ rainbow_1:
   game-type: accurate_click
   title: '<#fd4036>RED!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -24,7 +24,7 @@ rainbow_2:
   game-type: accurate_click
   title: '<#ffa449>ORANGE!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -43,7 +43,7 @@ rainbow_3:
   game-type: accurate_click
   title: '<#ffca4c>YELLOW!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -62,7 +62,7 @@ rainbow_4:
   game-type: accurate_click
   title: '<#34f250>GREEN!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -81,7 +81,7 @@ rainbow_5:
   game-type: accurate_click
   title: '<#34f2d5>AQUA!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -100,7 +100,7 @@ rainbow_6:
   game-type: accurate_click
   title: '<#5284da>BLUE!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -119,7 +119,7 @@ rainbow_7:
   game-type: accurate_click
   title: '<#c96cff>PURPLE!'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀋'
     pointer: '뀁'
   arguments:
@@ -142,7 +142,7 @@ accurate_click_bar_1_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀂'
     pointer: '뀁'
   arguments:
@@ -169,7 +169,7 @@ accurate_click_bar_1_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀂'
     pointer: '뀁'
   arguments:
@@ -196,7 +196,7 @@ accurate_click_bar_1_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀂'
     pointer: '뀁'
   arguments:
@@ -223,7 +223,7 @@ accurate_click_bar_2_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀃'
     pointer: '뀁'
   arguments:
@@ -250,7 +250,7 @@ accurate_click_bar_2_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀃'
     pointer: '뀁'
   arguments:
@@ -277,7 +277,7 @@ accurate_click_bar_2_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀃'
     pointer: '뀁'
   arguments:
@@ -304,7 +304,7 @@ accurate_click_bar_3_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀄'
     pointer: '뀁'
   arguments:
@@ -331,7 +331,7 @@ accurate_click_bar_3_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀄'
     pointer: '뀁'
   arguments:
@@ -358,7 +358,7 @@ accurate_click_bar_3_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀄'
     pointer: '뀁'
   arguments:
@@ -385,7 +385,7 @@ accurate_click_bar_4_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀅'
     pointer: '뀁'
   arguments:
@@ -423,7 +423,7 @@ accurate_click_bar_4_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀅'
     pointer: '뀁'
   arguments:
@@ -461,7 +461,7 @@ accurate_click_bar_4_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀅'
     pointer: '뀁'
   arguments:
@@ -499,7 +499,7 @@ accurate_click_bar_5_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀆'
     pointer: '뀁'
   arguments:
@@ -537,7 +537,7 @@ accurate_click_bar_5_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀆'
     pointer: '뀁'
   arguments:
@@ -575,7 +575,7 @@ accurate_click_bar_5_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀆'
     pointer: '뀁'
   arguments:
@@ -613,7 +613,7 @@ accurate_click_bar_6_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀇'
     pointer: '뀁'
   arguments:
@@ -651,7 +651,7 @@ accurate_click_bar_6_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀇'
     pointer: '뀁'
   arguments:
@@ -689,7 +689,7 @@ accurate_click_bar_6_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀇'
     pointer: '뀁'
   arguments:
@@ -727,7 +727,7 @@ accurate_click_bar_7_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀈'
     pointer: '뀁'
   arguments:
@@ -787,7 +787,7 @@ accurate_click_bar_7_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀈'
     pointer: '뀁'
   arguments:
@@ -847,7 +847,7 @@ accurate_click_bar_7_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀈'
     pointer: '뀁'
   arguments:
@@ -907,7 +907,7 @@ accurate_click_bar_8_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀉'
     pointer: '뀁'
   arguments:
@@ -967,7 +967,7 @@ accurate_click_bar_8_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀉'
     pointer: '뀁'
   arguments:
@@ -1027,7 +1027,7 @@ accurate_click_bar_8_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀉'
     pointer: '뀁'
   arguments:
@@ -1087,7 +1087,7 @@ accurate_click_bar_9_easy:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀊'
     pointer: '뀁'
   arguments:
@@ -1147,7 +1147,7 @@ accurate_click_bar_9_normal:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀊'
     pointer: '뀁'
   arguments:
@@ -1207,7 +1207,7 @@ accurate_click_bar_9_hard:
     - '好险，冷静！'
     - '坚持住！胜利就在眼前！'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀊'
     pointer: '뀁'
   arguments:
@@ -1271,7 +1271,7 @@ hold_game_easy:
   # 首次游玩提示
   tip: '<gray>按下 <red><key:key.sneak> <gray>开始游戏'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀌'
     judgment-area: '뀒'
     pointer: '뀁'
@@ -1289,15 +1289,15 @@ hold_game_easy:
     - 3
     - 4
   progress:
-    - '<font:sweetrice:craft_icons>뀁</font>'
-    - '<font:sweetrice:craft_icons>뀂</font>'
-    - '<font:sweetrice:craft_icons>뀃</font>'
-    - '<font:sweetrice:craft_icons>뀄</font>'
-    - '<font:sweetrice:craft_icons>뀅</font>'
-    - '<font:sweetrice:craft_icons>뀆</font>'
-    - '<font:sweetrice:craft_icons>뀇</font>'
-    - '<font:sweetrice:craft_icons>뀈</font>'
-    - '<font:sweetrice:craft_icons>뀉</font>'
+    - '<font:mrxiaom:craft_icons>뀁</font>'
+    - '<font:mrxiaom:craft_icons>뀂</font>'
+    - '<font:mrxiaom:craft_icons>뀃</font>'
+    - '<font:mrxiaom:craft_icons>뀄</font>'
+    - '<font:mrxiaom:craft_icons>뀅</font>'
+    - '<font:mrxiaom:craft_icons>뀆</font>'
+    - '<font:mrxiaom:craft_icons>뀇</font>'
+    - '<font:mrxiaom:craft_icons>뀈</font>'
+    - '<font:mrxiaom:craft_icons>뀉</font>'
 
 hold_game_normal:
   game-type: hold
@@ -1307,7 +1307,7 @@ hold_game_normal:
   # 首次游玩提示
   tip: '<gray>按下 <red><key:key.sneak> <gray>开始游戏'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀌'
     judgment-area: '뀓'
     pointer: '뀁'
@@ -1327,15 +1327,15 @@ hold_game_normal:
     - 4
     - 4
   progress:
-    - '<font:sweetrice:craft_icons>뀁</font>'
-    - '<font:sweetrice:craft_icons>뀂</font>'
-    - '<font:sweetrice:craft_icons>뀃</font>'
-    - '<font:sweetrice:craft_icons>뀄</font>'
-    - '<font:sweetrice:craft_icons>뀅</font>'
-    - '<font:sweetrice:craft_icons>뀆</font>'
-    - '<font:sweetrice:craft_icons>뀇</font>'
-    - '<font:sweetrice:craft_icons>뀈</font>'
-    - '<font:sweetrice:craft_icons>뀉</font>'
+    - '<font:mrxiaom:craft_icons>뀁</font>'
+    - '<font:mrxiaom:craft_icons>뀂</font>'
+    - '<font:mrxiaom:craft_icons>뀃</font>'
+    - '<font:mrxiaom:craft_icons>뀄</font>'
+    - '<font:mrxiaom:craft_icons>뀅</font>'
+    - '<font:mrxiaom:craft_icons>뀆</font>'
+    - '<font:mrxiaom:craft_icons>뀇</font>'
+    - '<font:mrxiaom:craft_icons>뀈</font>'
+    - '<font:mrxiaom:craft_icons>뀉</font>'
 
 hold_game_hard:
   game-type: hold
@@ -1345,7 +1345,7 @@ hold_game_hard:
   # 首次游玩提示
   tip: '<gray>按下 <red><key:key.sneak> <gray>开始游戏'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀌'
     judgment-area: '뀔'
     pointer: '뀁'
@@ -1365,15 +1365,15 @@ hold_game_hard:
     - 5
     - 5
   progress:
-    - '<font:sweetrice:craft_icons>뀁</font>'
-    - '<font:sweetrice:craft_icons>뀂</font>'
-    - '<font:sweetrice:craft_icons>뀃</font>'
-    - '<font:sweetrice:craft_icons>뀄</font>'
-    - '<font:sweetrice:craft_icons>뀅</font>'
-    - '<font:sweetrice:craft_icons>뀆</font>'
-    - '<font:sweetrice:craft_icons>뀇</font>'
-    - '<font:sweetrice:craft_icons>뀈</font>'
-    - '<font:sweetrice:craft_icons>뀉</font>'
+    - '<font:mrxiaom:craft_icons>뀁</font>'
+    - '<font:mrxiaom:craft_icons>뀂</font>'
+    - '<font:mrxiaom:craft_icons>뀃</font>'
+    - '<font:mrxiaom:craft_icons>뀄</font>'
+    - '<font:mrxiaom:craft_icons>뀅</font>'
+    - '<font:mrxiaom:craft_icons>뀆</font>'
+    - '<font:mrxiaom:craft_icons>뀇</font>'
+    - '<font:mrxiaom:craft_icons>뀈</font>'
+    - '<font:mrxiaom:craft_icons>뀉</font>'
 
 
 ##########################################################
@@ -1387,7 +1387,7 @@ tension_game_easy:
   # 首次游玩提示
   tip: '<gray>按下 <red><key:key.sneak> <gray>开始游戏'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀑'
     fish: '뀍'
     struggling-fish:
@@ -1406,15 +1406,15 @@ tension_game_easy:
     struggling-tension-increase: 2
     loosening-tension-loss: 2
   tension:
-    - '<font:sweetrice:craft_icons>뀑</font>'
-    - '<font:sweetrice:craft_icons>뀒</font>'
-    - '<font:sweetrice:craft_icons>뀓</font>'
-    - '<font:sweetrice:craft_icons>뀔</font>'
-    - '<font:sweetrice:craft_icons>뀕</font>'
-    - '<font:sweetrice:craft_icons>뀖</font>'
-    - '<font:sweetrice:craft_icons>뀗</font>'
-    - '<font:sweetrice:craft_icons>뀘</font>'
-    - '<font:sweetrice:craft_icons>뀙</font>'
+    - '<font:mrxiaom:craft_icons>뀑</font>'
+    - '<font:mrxiaom:craft_icons>뀒</font>'
+    - '<font:mrxiaom:craft_icons>뀓</font>'
+    - '<font:mrxiaom:craft_icons>뀔</font>'
+    - '<font:mrxiaom:craft_icons>뀕</font>'
+    - '<font:mrxiaom:craft_icons>뀖</font>'
+    - '<font:mrxiaom:craft_icons>뀗</font>'
+    - '<font:mrxiaom:craft_icons>뀘</font>'
+    - '<font:mrxiaom:craft_icons>뀙</font>'
 
 tension_game_normal:
   game-type: tension
@@ -1424,7 +1424,7 @@ tension_game_normal:
   # 首次游玩提示
   tip: '<gray>按下 <red><key:key.sneak> <gray>开始游戏'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀑'
     fish: '뀍'
     struggling-fish:
@@ -1443,15 +1443,15 @@ tension_game_normal:
     struggling-tension-increase: 2
     loosening-tension-loss: 2
   tension:
-    - '<font:sweetrice:craft_icons>뀑</font>'
-    - '<font:sweetrice:craft_icons>뀒</font>'
-    - '<font:sweetrice:craft_icons>뀓</font>'
-    - '<font:sweetrice:craft_icons>뀔</font>'
-    - '<font:sweetrice:craft_icons>뀕</font>'
-    - '<font:sweetrice:craft_icons>뀖</font>'
-    - '<font:sweetrice:craft_icons>뀗</font>'
-    - '<font:sweetrice:craft_icons>뀘</font>'
-    - '<font:sweetrice:craft_icons>뀙</font>'
+    - '<font:mrxiaom:craft_icons>뀑</font>'
+    - '<font:mrxiaom:craft_icons>뀒</font>'
+    - '<font:mrxiaom:craft_icons>뀓</font>'
+    - '<font:mrxiaom:craft_icons>뀔</font>'
+    - '<font:mrxiaom:craft_icons>뀕</font>'
+    - '<font:mrxiaom:craft_icons>뀖</font>'
+    - '<font:mrxiaom:craft_icons>뀗</font>'
+    - '<font:mrxiaom:craft_icons>뀘</font>'
+    - '<font:mrxiaom:craft_icons>뀙</font>'
 
 tension_game_hard:
   game-type: tension
@@ -1461,7 +1461,7 @@ tension_game_hard:
   # 首次游玩提示
   tip: '<gray>按下 <red><key:key.sneak> <gray>开始游戏'
   subtitle:
-    font: 'sweetrice:craft'
+    font: 'mrxiaom:craft'
     bar: '뀑'
     fish: '뀍'
     struggling-fish:
@@ -1480,12 +1480,12 @@ tension_game_hard:
     struggling-tension-increase: 2
     loosening-tension-loss: 2
   tension:
-    - '<font:sweetrice:craft_icons>뀑</font>'
-    - '<font:sweetrice:craft_icons>뀒</font>'
-    - '<font:sweetrice:craft_icons>뀓</font>'
-    - '<font:sweetrice:craft_icons>뀔</font>'
-    - '<font:sweetrice:craft_icons>뀕</font>'
-    - '<font:sweetrice:craft_icons>뀖</font>'
-    - '<font:sweetrice:craft_icons>뀗</font>'
-    - '<font:sweetrice:craft_icons>뀘</font>'
-    - '<font:sweetrice:craft_icons>뀙</font>'
+    - '<font:mrxiaom:craft_icons>뀑</font>'
+    - '<font:mrxiaom:craft_icons>뀒</font>'
+    - '<font:mrxiaom:craft_icons>뀓</font>'
+    - '<font:mrxiaom:craft_icons>뀔</font>'
+    - '<font:mrxiaom:craft_icons>뀕</font>'
+    - '<font:mrxiaom:craft_icons>뀖</font>'
+    - '<font:mrxiaom:craft_icons>뀗</font>'
+    - '<font:mrxiaom:craft_icons>뀘</font>'
+    - '<font:mrxiaom:craft_icons>뀙</font>'

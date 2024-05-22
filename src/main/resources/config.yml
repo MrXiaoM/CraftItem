@@ -49,7 +49,7 @@ TimeForgeConditions:
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
 offset-characters:
-  font: customfishing:offset_chars
+  font: mrxiaom:offset_chars
   '1': 
   '2': 
   '4': 
