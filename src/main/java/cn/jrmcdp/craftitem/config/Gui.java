@@ -64,6 +64,9 @@ public class Gui {
                 if (section.contains(key + ".Name")) {
                     itemMeta.setDisplayName(ColorHelper.parseColor(section.getString(key + ".Name")));
                 }
+                if (section.contains(key + ".CustomModelData")) {
+                    itemMeta.setCustomModelData(section.getInt(key + ".CustomModelData"));
+                }
                 itemMeta.setLore(ColorHelper.parseColor(section.getStringList(key + ".Lore")));
                 itemStack.setItemMeta(itemMeta);
             }
