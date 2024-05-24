@@ -65,17 +65,17 @@ public class ForgeHolder implements IHolder {
         if (craftData.getTime() > 0) {
             if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
-                    item = Gui.getItems().get("时_完成").clone();
+                    item = Gui.items.get("时_完成").clone();
                 } else if (processing) {
-                    item = Gui.getItems().get("时_进行中").clone();
+                    item = Gui.items.get("时_进行中").clone();
                 } else {
-                    item = Gui.getItems().get("时").clone();
+                    item = Gui.items.get("时").clone();
                 }
             } else {
-                item = Gui.getItems().get("时_条件不足").clone();
+                item = Gui.items.get("时_条件不足").clone();
             }
         } else {
-            item = Gui.getItems().get("时_未开启").clone();
+            item = Gui.items.get("时_未开启").clone();
         }
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
         double progress = endTime == null ? 0.0d

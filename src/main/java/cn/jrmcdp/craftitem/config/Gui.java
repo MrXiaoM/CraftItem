@@ -6,10 +6,7 @@ import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
@@ -28,7 +25,7 @@ public class Gui {
 
     private static char[] chestTime;
 
-    private static final HashMap<String, ItemStack> items = new HashMap<>();
+    public static final Map<String, ItemStack> items = new HashMap<>();
 
     public static YamlConfiguration getConfig() {
         return config;
@@ -44,10 +41,6 @@ public class Gui {
 
     public static char[] getChestTime() {
         return chestTime;
-    }
-
-    public static HashMap<String, ItemStack> getItems() {
-        return items;
     }
 
     public static void reload() {
@@ -96,7 +89,7 @@ public class Gui {
                         is[i] = iterator.next();
                         break;
                     }
-                    is[i] = getItems().get(key);
+                    is[i] = items.get(key);
                     break;
                 }
                 case "物": {
@@ -119,7 +112,7 @@ public class Gui {
                     break;
                 }
                 case "锻": {
-                    item = getItems().get(craftData.isDifficult() ? "锻_困难" : "锻").clone();
+                    item = items.get(craftData.isDifficult() ? "锻_困难" : "锻").clone();
                     itemMeta = item.getItemMeta();
                     lore = itemMeta.getLore();
                     for (j = 0, loreSize = (lore == null ? 0 : lore.size()); j < loreSize; j++) {
@@ -143,7 +136,7 @@ public class Gui {
                     break;
                 }
                 default : {
-                    is[i] = getItems().get(key);
+                    is[i] = items.get(key);
                     break;
                 }
             }
