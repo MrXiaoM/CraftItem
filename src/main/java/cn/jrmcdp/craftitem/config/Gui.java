@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.config;
 
+import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.Utils;
 import cn.jrmcdp.craftitem.data.CraftData;
@@ -45,21 +46,27 @@ public class Gui {
 
     public static void reload() {
         config = FileConfig.Gui.getConfig();
-        title = config.getString("Title");
+        title = ColorHelper.parseColor(config.getString("Title"));
 
         chest = String.join("", config.getStringList("Chest")).toCharArray();
         chestTime = String.join("", config.getStringList("ChestTime")).toCharArray();
 
         items.clear();
         ConfigurationSection section = config.getConfigurationSection("Item");
-        for (String key : section.getKeys(false)) {
-            ItemStack itemStack = XMaterial.matchXMaterial(section.getString(key + ".Type", "STONE")).get().parseItem();
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if (section.get(key + ".Name") != null) {
-                itemMeta.setDisplayName(section.getString(key + ".Name"));
+        if (section != null) for (String key : section.getKeys(false)) {
+            XMaterial xItem = XMaterial.matchXMaterial(section.getString(key + ".Type", "STONE")).orElse(null);
+            ItemStack itemStack = xItem == null ? null : xItem.parseItem();
+            if (itemStack == null) {
+                continue;
             }
-            itemMeta.setLore(section.getStringList(key + ".Lore"));
-            itemStack.setItemMeta(itemMeta);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            if (itemMeta != null) {
+                if (section.contains(key + ".Name")) {
+                    itemMeta.setDisplayName(ColorHelper.parseColor(section.getString(key + ".Name")));
+                }
+                itemMeta.setLore(ColorHelper.parseColor(section.getStringList(key + ".Lore")));
+                itemStack.setItemMeta(itemMeta);
+            }
             items.put(key, itemStack);
         }
     }
