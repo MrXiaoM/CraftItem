@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.holder;
 
+import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.Utils;
 import cn.jrmcdp.craftitem.config.Config;
@@ -202,6 +203,7 @@ public class ForgeHolder implements IHolder {
                     }
                 }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
             }, CraftItem.getPlugin());
+            return;
         }
         if ("时".equals(key)) {
             if (!Config.isMeetTimeForgeCondition(playerData.getPlayer())) return;
@@ -246,6 +248,38 @@ public class ForgeHolder implements IHolder {
                 playerData.setTime(getId(), System.currentTimeMillis() + craftData.getTime() * 1000L);
                 playerData.save();
                 Message.craft__time_start.msg(player);
+            }
+            return;
+        }
+        if (!event.isShiftClick()) {
+            if (event.isLeftClick()) {
+                runCommands(player, Gui.leftClicks.get(key));
+            }
+            else if (event.isRightClick()) {
+                runCommands(player, Gui.leftClicks.get(key));
+            }
+        } else {
+            if (event.isLeftClick()) {
+                runCommands(player, Gui.shiftLeftClicks.get(key));
+            }
+            else if (event.isRightClick()) {
+                runCommands(player, Gui.shiftRightClicks.get(key));
+            }
+        }
+    }
+
+    private void runCommands(Player player, List<String> commands) {
+        if (commands == null || commands.isEmpty()) return;
+        commands = PlaceholderAPI.setPlaceholders(player, commands);
+        for (String s : commands) {
+            if (s.startsWith("[player]")) {
+                Bukkit.dispatchCommand(player, s.substring(8).trim());
+            } else if (s.startsWith("[console]")) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.substring(9).trim());
+            } else if (s.startsWith("[message]")) {
+                player.sendMessage(ColorHelper.parseColor(s.substring(9).trim()));
+            } else if (s.startsWith("[close]")) {
+                player.closeInventory();
             }
         }
     }

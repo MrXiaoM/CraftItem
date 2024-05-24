@@ -27,6 +27,10 @@ public class Gui {
     private static char[] chestTime;
 
     public static final Map<String, ItemStack> items = new HashMap<>();
+    public static final Map<String, List<String>> leftClicks = new HashMap<>();
+    public static final Map<String, List<String>> rightClicks = new HashMap<>();
+    public static final Map<String, List<String>> shiftLeftClicks = new HashMap<>();
+    public static final Map<String, List<String>> shiftRightClicks = new HashMap<>();
 
     public static YamlConfiguration getConfig() {
         return config;
@@ -71,6 +75,10 @@ public class Gui {
                 itemStack.setItemMeta(itemMeta);
             }
             items.put(key, itemStack);
+            leftClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".LeftClick")));
+            rightClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".RightClick")));
+            shiftLeftClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick")));
+            shiftRightClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick")));
         }
     }
 

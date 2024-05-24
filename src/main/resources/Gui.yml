@@ -112,3 +112,27 @@ Item:
     Type: IRON_BARS
     Name: '边框'
     Lore: []
+
+  按:
+    Type: CLOCK
+    Name: '按钮示例'
+    CustomModelData: 10000
+    Lore:
+    - '这是一个示例图标，默认不添加到菜单中'
+    - ''
+    - '在任意按钮可以额外添加 CustomModelData、LeftClick、RightClick、'
+    - 'ShiftLeftClick、ShiftRightClick。'
+    - ''
+    - 'CustomModelData 不解释，用于修改物品材质'
+    - ''
+    - 'LeftClick 和 RightClick 等可以做到左键、右键点击图标执行操作'
+    - '以 [player] 开头为以玩家身份执行命令'
+    - '以 [console] 开头为以控制台身份执行命令'
+    - '以 [message] 开头在玩家聊天栏显示消息'
+    - '[close] 为关闭菜单'
+    - '支持 PAPI 变量'
+    LeftClick:
+    - '[player]spawn'
+    - '[console]dm open cd_main %player_name%'
+    RightClick:
+    - '[message]&f  这是一条消息  '
