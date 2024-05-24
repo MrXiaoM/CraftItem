@@ -26,6 +26,7 @@ public class Gui {
 
     private static char[] chestTime;
 
+    // TODO: 将 items、leftClicks、rightClicks、shiftLeftClicks、shiftRightClicks 放到一个类里面。items 不要预生成好，以便在名字和 lore 中支持 PlaceholderAPI
     public static final Map<String, ItemStack> items = new HashMap<>();
     public static final Map<String, List<String>> leftClicks = new HashMap<>();
     public static final Map<String, List<String>> rightClicks = new HashMap<>();
