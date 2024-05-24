@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class Cmd implements CommandExecutor, TabCompleter {
 
@@ -222,29 +223,31 @@ public class Cmd implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         switch (args.length) {
             case 1 : {
-                List<String> list = new ArrayList<String>() {{
-                    add("Category");
-                    add("Open");
-                    add("Get");
-                    add("Create");
-                    add("Delete");
-                    add("Edit");
-                    add("Reload");
-                }};
-                list.removeIf(next -> !next.toLowerCase().startsWith(args[0].toLowerCase()));
+                String arg0 = args[0].toLowerCase();
+                List<String> list = Lists.newArrayList(
+                    "category",
+                    "open",
+                    "get",
+                    "create",
+                    "delete",
+                    "edit",
+                    "reload"
+                );
+                list.removeIf(next -> !next.startsWith(arg0));
                 return list;
             }
             case 2 : {
+                String arg1 = args[1].toLowerCase();
                 if (args[0].equalsIgnoreCase("category")) {
                     List<String> list = new ArrayList<>(Config.getCategory().keySet());
-                    list.removeIf(next -> !next.toLowerCase().startsWith(args[1].toLowerCase()));
+                    list.removeIf(next -> !next.toLowerCase().startsWith(arg1));
                     return list;
                 }
                 List<String> list = new ArrayList<>(Craft.getCraftDataMap().keySet());
-                list.removeIf(next -> !next.toLowerCase().startsWith(args[1].toLowerCase()));
+                list.removeIf(next -> !next.toLowerCase().startsWith(arg1));
                 return list;
             }
         }
