@@ -206,6 +206,7 @@ public class ForgeHolder implements IHolder {
         if ("时".equals(key)) {
             if (!Config.isMeetTimeForgeCondition(playerData.getPlayer())) return;
             CraftData craftData = getCraftData();
+            if (craftData.getTime() <= 0) return;
             if (done) {
                 long now = System.currentTimeMillis();
                 Long endTime = playerData.getEndTime(getId());
