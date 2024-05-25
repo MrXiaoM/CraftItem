@@ -33,7 +33,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
         }
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length > 0) {
             String perm = command.getName() + ".command." + args[0];
             switch (args[0].toLowerCase()) {
