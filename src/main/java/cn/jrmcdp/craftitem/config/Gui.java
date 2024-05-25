@@ -9,10 +9,13 @@ import cn.jrmcdp.craftitem.holder.ForgeHolder;
 
 import java.util.*;
 
+import cn.jrmcdp.craftitem.minigames.utils.Pair;
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,12 +29,7 @@ public class Gui {
 
     private static char[] chestTime;
 
-    // TODO: 将 items、leftClicks、rightClicks、shiftLeftClicks、shiftRightClicks 放到一个类里面。items 不要预生成好，以便在名字和 lore 中支持 PlaceholderAPI
-    public static final Map<String, ItemStack> items = new HashMap<>();
-    public static final Map<String, List<String>> leftClicks = new HashMap<>();
-    public static final Map<String, List<String>> rightClicks = new HashMap<>();
-    public static final Map<String, List<String>> shiftLeftClicks = new HashMap<>();
-    public static final Map<String, List<String>> shiftRightClicks = new HashMap<>();
+    public static final Map<String, Icon> items = new HashMap<>();
 
     public static YamlConfiguration getConfig() {
         return config;
@@ -60,26 +58,19 @@ public class Gui {
         ConfigurationSection section = config.getConfigurationSection("Item");
         if (section != null) for (String key : section.getKeys(false)) {
             XMaterial xItem = XMaterial.matchXMaterial(section.getString(key + ".Type", "STONE")).orElse(null);
-            ItemStack itemStack = xItem == null ? null : xItem.parseItem();
-            if (itemStack == null) {
+            org.bukkit.Material material = xItem == null ? null : xItem.parseMaterial();
+            if (material == null) {
                 continue;
             }
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if (itemMeta != null) {
-                if (section.contains(key + ".Name")) {
-                    itemMeta.setDisplayName(ColorHelper.parseColor(section.getString(key + ".Name")));
-                }
-                if (section.contains(key + ".CustomModelData")) {
-                    itemMeta.setCustomModelData(section.getInt(key + ".CustomModelData"));
-                }
-                itemMeta.setLore(ColorHelper.parseColor(section.getStringList(key + ".Lore")));
-                itemStack.setItemMeta(itemMeta);
-            }
-            items.put(key, itemStack);
-            leftClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".LeftClick")));
-            rightClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".RightClick")));
-            shiftLeftClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick")));
-            shiftRightClicks.put(key, ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick")));
+            String name = ColorHelper.parseColor(section.getString(key + ".Name"));
+            int amount = section.getInt(key + ".Amount", 1);
+            List<String> lore = ColorHelper.parseColor(section.getStringList(key + ".Lore"));
+            Integer customModelData = section.contains(key + ".CustomModelData") ? section.getInt(key + ".CustomModelData") : null;
+            List<String> leftClick = ColorHelper.parseColor(section.getStringList(key + ".LeftClick"));
+            List<String> rightClick = ColorHelper.parseColor(section.getStringList(key + ".RightClick"));
+            List<String> shiftLeftClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick"));
+            List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
+            items.put(key, new Icon(key, material, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
     }
 
@@ -94,13 +85,10 @@ public class Gui {
         Inventory gui = ForgeHolder.buildGui(playerData, id, craftData, chest.length, title);
         ForgeHolder holder = (ForgeHolder) gui.getHolder();
         if (holder == null) return gui;
+        Player player = playerData.getPlayer();
         ItemStack[] is = new ItemStack[holder.chest.length];
         Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
         for (int i = 0; i < holder.chest.length; i++) {
-            ItemStack clone, item;
-            ItemMeta itemMeta;
-            List<String> lore;
-            int j, loreSize;
             String key = String.valueOf(holder.chest[i]);
             switch (key) {
                 case "材": {
@@ -108,13 +96,16 @@ public class Gui {
                         is[i] = iterator.next();
                         break;
                     }
-                    is[i] = items.get(key);
+                    Icon icon = items.get(key);
+                    if (icon != null) {
+                        is[i] = icon.getItem(player);
+                    }
                     break;
                 }
                 case "物": {
-                    clone = craftData.getDisplayItem().clone();
-                    itemMeta = clone.getItemMeta();
-                    lore = itemMeta.getLore();
+                    ItemStack item = craftData.getDisplayItem().clone();
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = meta.getLore();
                     if (lore == null)
                         lore = new ArrayList<>();
                     lore.add("");
@@ -125,28 +116,21 @@ public class Gui {
                         String[] split = command.split("\\|\\|");
                         if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
                     }
-                    itemMeta.setLore(lore);
-                    clone.setItemMeta(itemMeta);
-                    is[i] = clone;
+                    meta.setLore(lore);
+                    item.setItemMeta(meta);
+                    is[i] = item;
                     break;
                 }
                 case "锻": {
-                    item = items.get(craftData.isDifficult() ? "锻_困难" : "锻").clone();
-                    itemMeta = item.getItemMeta();
-                    lore = itemMeta.getLore();
-                    for (j = 0, loreSize = (lore == null ? 0 : lore.size()); j < loreSize; j++) {
-                        String line = lore.get(j);
-                        if (line.contains("<ChanceName>"))
-                            line = line.replace("<ChanceName>", Config.getChanceName(craftData.getChance()));
-                        if (line.contains("<Score>"))
-                            line = line.replace("<Score>", String.valueOf(playerData.getScore(id)));
-                        if (line.contains("<Cost>"))
-                            line = line.replace("<Cost>", String.valueOf(craftData.getCost()));
-                        lore.set(j, line);
+                    Icon icon = items.get(craftData.isDifficult() ? "锻_困难" : "锻");
+                    if (icon != null) {
+                        is[i] = icon.getItem(
+                                player,
+                                Pair.of("<ChanceName>", Config.getChanceName(craftData.getChance())),
+                                Pair.of("<Score>", playerData.getScore(id)),
+                                Pair.of("<Cost>", craftData.getCost())
+                        );
                     }
-                    itemMeta.setLore(lore);
-                    item.setItemMeta(itemMeta);
-                    is[i] = item;
                     break;
                 }
                 case "时": {
@@ -155,7 +139,10 @@ public class Gui {
                     break;
                 }
                 default : {
-                    is[i] = items.get(key);
+                    Icon icon = items.get(key);
+                    if (icon != null) {
+                        is[i] = icon.getItem(player);
+                    }
                     break;
                 }
             }

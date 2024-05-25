@@ -22,6 +22,7 @@ public class ColorHelper {
     }
 
     public static String parseColor(String s) {
+        if (s == null) return null;
         String fin = parseHexText(s);
         fin = parseGradientText(fin);
         return fin.replace("&", "§");

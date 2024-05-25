@@ -1,16 +1,17 @@
 package cn.jrmcdp.craftitem.holder;
 
-import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.Utils;
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Gui;
+import cn.jrmcdp.craftitem.config.Icon;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.minigames.GameData;
+import cn.jrmcdp.craftitem.minigames.utils.Pair;
 import cn.jrmcdp.craftitem.minigames.utils.effect.FishingEffect;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang.math.RandomUtils;
@@ -31,7 +32,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ForgeHolder implements IHolder {
@@ -62,41 +62,33 @@ public class ForgeHolder implements IHolder {
     }
 
     public ItemStack getTimeIcon() {
-        ItemStack item;
+        Icon icon;
         if (craftData.getTime() > 0) {
             if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
-                    item = Gui.items.get("时_完成").clone();
+                    icon = Gui.items.get("时_完成");
                 } else if (processing) {
-                    item = Gui.items.get("时_进行中").clone();
+                    icon = Gui.items.get("时_进行中");
                 } else {
-                    item = Gui.items.get("时").clone();
+                    icon = Gui.items.get("时");
                 }
             } else {
-                item = Gui.items.get("时_条件不足").clone();
+                icon = Gui.items.get("时_条件不足");
             }
         } else {
-            item = Gui.items.get("时_未开启").clone();
+            icon = Gui.items.get("时_未开启");
         }
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
-        double progress = endTime == null ? 0.0d
-                : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
+        double progress = endTime == null ? 0.0d : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
+        String remainTime = endTime == null ? "" : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒");
+        ItemStack item = icon.getItem(
+                playerData.getPlayer(),
+                Pair.of("<Progress>", String.format("%.2f%%", progress * 100)),
+                Pair.of("<RemainTime>", remainTime),
+                Pair.of("<Time>", craftData.getTimeDisplay()),
+                Pair.of("<Cost>", craftData.getTimeCost())
+        );
         ItemMeta itemMeta = item.getItemMeta();
-        List<String> lore = itemMeta.getLore();
-        for (int j = 0, loreSize = (lore == null ? 0 : lore.size()); j < loreSize; j++) {
-            String line = lore.get(j);
-            if (line.contains("<Progress>"))
-                line = line.replace("<Progress>", String.format("%.2f%%", progress * 100));
-            if (line.contains("<RemainTime>"))
-                line = line.replace("<RemainTime>", endTime == null ? ""
-                        : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒"));
-            if (line.contains("<Time>"))
-                line = line.replace("<Time>", craftData.getTimeDisplay());
-            if (line.contains("<Cost>"))
-                line = line.replace("<Cost>", String.valueOf(craftData.getTimeCost()));
-            lore.set(j, line);
-        }
-        itemMeta.setLore(lore);
         if (itemMeta instanceof Damageable) {
             Damageable damageable = (Damageable) itemMeta;
             damageable.setDamage((short)((1.0d - progress) * item.getType().getMaxDurability()));
@@ -251,35 +243,21 @@ public class ForgeHolder implements IHolder {
             }
             return;
         }
+        Icon icon = Gui.items.get(key);
+        if (icon == null) return;
         if (!event.isShiftClick()) {
             if (event.isLeftClick()) {
-                runCommands(player, Gui.leftClicks.get(key));
+                icon.leftClick(player);
             }
             else if (event.isRightClick()) {
-                runCommands(player, Gui.leftClicks.get(key));
+                icon.rightClick(player);
             }
         } else {
             if (event.isLeftClick()) {
-                runCommands(player, Gui.shiftLeftClicks.get(key));
+                icon.shiftLeftClick(player);
             }
             else if (event.isRightClick()) {
-                runCommands(player, Gui.shiftRightClicks.get(key));
-            }
-        }
-    }
-
-    private void runCommands(Player player, List<String> commands) {
-        if (commands == null || commands.isEmpty()) return;
-        commands = PlaceholderAPI.setPlaceholders(player, commands);
-        for (String s : commands) {
-            if (s.startsWith("[player]")) {
-                Bukkit.dispatchCommand(player, s.substring(8).trim());
-            } else if (s.startsWith("[console]")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.substring(9).trim());
-            } else if (s.startsWith("[message]")) {
-                player.sendMessage(ColorHelper.parseColor(s.substring(9).trim()));
-            } else if (s.startsWith("[close]")) {
-                player.closeInventory();
+                icon.shiftRightClick(player);
             }
         }
     }
