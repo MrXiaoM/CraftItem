@@ -72,6 +72,27 @@ public class Gui {
             List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
             items.put(key, new Icon(key, material, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
+        
+        for (String s : Lists.newArrayList(
+                "材", "物", "锻", "锻_困难",
+                "时", "时_未开启", "时_条件不足", "时_进行中", "时_完成"
+        )) {
+            if (!items.containsKey(s)) {
+                CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 必要图标 '" + s + "' 的配置不存在");
+            }
+        }
+
+        checkError(chest);
+        checkError(chestTime);
+    }
+
+    private static void checkError(char[] chest) {
+        for (char c : chest) {
+            String key = String.valueOf(c);
+            if (!items.containsKey(key)) {
+                CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 无法找到图标 '" + key + "'");
+            }
+        }
     }
 
     public static void openGui(PlayerData playerData, String id, CraftData craftData) {
