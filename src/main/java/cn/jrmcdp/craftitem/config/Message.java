@@ -129,6 +129,31 @@ public enum Message {
             "",
             "&7状态: %s"
     ),
+    gui__edit__item__fail_times__name("&a保底次数"),
+    gui__edit__item__fail_times__lore(
+            "&7左键点击 增加1",
+            "&7右键点击 减少1",
+            "&7Shift+左键点击 增加10",
+            "&7Shift+右键点击 减少10",
+            "",
+            "&7设置保底次数后，当失败次数超过保底次数时，",
+            "&7所有类型的失败将变为小成功",
+            "",
+            "&7保底次数: &e%s"
+    ),
+    gui__edit__item__combo__name("&a连击次数"),
+    gui__edit__item__combo__lore(
+            "&7左键点击 增加1",
+            "&7右键点击 减少1",
+            "&7Shift+左键点击 增加10",
+            "&7Shift+右键点击 减少10",
+            "",
+            "&7设置连击次数后，玩家在普通锻造中",
+            "&7可以鼠标右键进行锻造连击，即进行数次锻造判定，",
+            "&7当判定时因大失败导致材料不足，将终止连击，保留进度。",
+            "",
+            "&7单次连击次数: &e%s"
+    ),
 
 
     gui__edit_material_title("材料"),
@@ -143,6 +168,7 @@ public enum Message {
 
     gui__edit__status__on("&a开启"),
     gui__edit__status__off("&c关闭"),
+    gui__edit__unset("&f未设置"),
 
     not_integer("&a请输入整数"),
 

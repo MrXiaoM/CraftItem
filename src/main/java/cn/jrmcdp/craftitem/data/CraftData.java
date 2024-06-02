@@ -34,13 +34,14 @@ public class CraftData implements ConfigurationSerializable {
      */
     private long time;
     private int timeCost;
-    private int guaranteeFailTimes;
     private boolean difficult;
+    private int guaranteeFailTimes;
+    private int combo;
     public CraftData() {
-        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0);
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0, 0);
     }
 
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes) {
+    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo) {
         this.material = material;
         this.chance = chance;
         this.multiple = multiple;
@@ -60,6 +61,7 @@ public class CraftData implements ConfigurationSerializable {
         this.timeCost = timeCost;
         this.difficult = difficult;
         this.guaranteeFailTimes = guaranteeFailTimes;
+        this.combo = combo;
     }
 
     public String getTimeDisplay() {
@@ -113,6 +115,14 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setGuaranteeFailTimes(int guaranteeFailTimes) {
         this.guaranteeFailTimes = guaranteeFailTimes;
+    }
+
+    public int getCombo() {
+        return combo;
+    }
+
+    public void setCombo(int combo) {
+        this.combo = combo;
     }
 
     public List<ItemStack> getMaterial() {
@@ -212,6 +222,7 @@ public class CraftData implements ConfigurationSerializable {
         map.put("TimeCost", this.timeCost);
         map.put("Difficult", this.difficult);
         map.put("GuaranteeFailTimes", this.guaranteeFailTimes);
+        map.put("Combo", this.combo);
         return map;
     }
 
@@ -229,7 +240,8 @@ public class CraftData implements ConfigurationSerializable {
                 Long.parseLong(get(map, "TimeSecond", () -> "0")),
                 get(map, "TimeCost", () -> 0),
                 get(map, "Difficult", () -> false),
-                get(map, "GuaranteeFailTimes", () -> 0)
+                get(map, "GuaranteeFailTimes", () -> 0),
+                get(map, "Combo", () -> 0)
         );
     }
     

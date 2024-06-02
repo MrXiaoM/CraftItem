@@ -17,7 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -55,14 +54,13 @@ public class EditHolder implements IHolder {
     }
     public Inventory buildGui() {
         ItemStack[] items = getItems();
-        Inventory inventory = Bukkit.createInventory(this, items.length, Message.gui__edit_title.get(this.id));
-        inventory.setContents(items);
-        this.inventory = inventory;
-        return inventory;
+        Inventory inv = Bukkit.createInventory(this, items.length, Message.gui__edit_title.get(this.id));
+        inv.setContents(items);
+        return this.inventory = inv;
     }
 
     private ItemStack[] getItems() {
-        ItemStack[] items = new ItemStack[9];
+        ItemStack[] items = new ItemStack[18];
         items[0] = getItemStack(Material.WHEAT, Message.gui__edit__item__material__name.get(),
                 Message.gui__edit__item__material__lore.list(
                     String.join("\n§7", Utils.itemToListString(craftData.getMaterial()))
@@ -82,8 +80,7 @@ public class EditHolder implements IHolder {
         items[4] = getItemStack(Material.PAINTING, Message.gui__edit__item__display__name.get(),
                 Message.gui__edit__item__display__lore.list(
                     Utils.getItemName(craftData.getDisplayItem())
-                )
-                );
+                ));
         items[5] = getItemStack(Material.CHEST, Message.gui__edit__item__item__name.get(),
                 Message.gui__edit__item__item__lore.list(
                     String.join("\n§7", Utils.itemToListString(craftData.getItems()))
@@ -94,6 +91,8 @@ public class EditHolder implements IHolder {
                 ));
         items[7] = item7();
         items[8] = item8();
+        items[9] = item9();
+        items[10] = item10();
         return items;
     }
 
@@ -108,6 +107,19 @@ public class EditHolder implements IHolder {
         return getItemStack(Material.FISHING_ROD, Message.gui__edit__item__difficult__name.get(),
                 Message.gui__edit__item__difficult__lore.list(
                         (craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).get()
+                ));
+    }
+    private ItemStack item9() {
+        return getItemStack(Material.BOWL, Message.gui__edit__item__fail_times__name.get(),
+                Message.gui__edit__item__fail_times__lore.list(
+                        craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.get()
+                ));
+    }
+
+    private ItemStack item10() {
+        return getItemStack(Material.MAGMA_CREAM, Message.gui__edit__item__combo__name.get(),
+                Message.gui__edit__item__combo__lore.list(
+                        craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.get()
                 ));
     }
 
@@ -132,7 +144,7 @@ public class EditHolder implements IHolder {
         if (event.getRawSlot() < 0 || event.getRawSlot() >= 9) return;
         final CraftData craftData = getCraftData();
         switch (event.getRawSlot()) {
-            case 0 : {
+            case 0: {
                 gui = Bukkit.createInventory(null, 54, Message.gui__edit_material_title.get());
                 gui.addItem((ItemStack[]) craftData.getMaterial().toArray((Object[]) new ItemStack[craftData.getMaterial().size()]));
                 player.openInventory(gui);
@@ -154,7 +166,7 @@ public class EditHolder implements IHolder {
                 }, CraftItem.getPlugin());
                 break;
             }
-            case 1 : {
+            case 1: {
                 player.closeInventory();
                 Message.gui__edit_input_chance.msg(player);
                 Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -176,7 +188,7 @@ public class EditHolder implements IHolder {
                 }, CraftItem.getPlugin());
                 break;
             }
-            case 2 : {
+            case 2: {
                 player.closeInventory();
                 Message.gui__edit_input_multiple.msg(player);
                 Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -205,7 +217,7 @@ public class EditHolder implements IHolder {
                 }, CraftItem.getPlugin());
                 break;
             }
-            case 3 : {
+            case 3: {
                 player.closeInventory();
                 Message.gui__edit_input_cost.msg(player);
                 Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -227,7 +239,7 @@ public class EditHolder implements IHolder {
                 }, CraftItem.getPlugin());
                 break;
             }
-            case 4 : {
+            case 4: {
                 gui = Bukkit.createInventory(null, 9, Message.gui__edit_display_title.get());
                 gui.addItem(craftData.getDisplayItem());
                 player.openInventory(gui);
@@ -251,7 +263,7 @@ public class EditHolder implements IHolder {
                 }, CraftItem.getPlugin());
                 break;
             }
-            case 5 : {
+            case 5: {
                 gui = Bukkit.createInventory(null, 54, Message.gui__edit_item_title.get());
                 for (ItemStack item : craftData.getItems()) {
                     gui.addItem(item);
@@ -275,7 +287,7 @@ public class EditHolder implements IHolder {
                 }, CraftItem.getPlugin());
                 break;
             }
-            case 6 : {
+            case 6: {
                 loreGui = Bukkit.createInventory(null, 54, Message.gui__edit_command_title.get());
                 for (String line : craftData.getCommands()) {
                     ItemStack itemStack = new ItemStack(Material.PAPER);
@@ -341,16 +353,10 @@ public class EditHolder implements IHolder {
             case 7: {
                 if (event.isLeftClick()) {
                     craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 600 : 60));
-                    event.getView().getTopInventory().setItem(7, item7());
-                    player.updateInventory();
                     Craft.save(getId(), craftData);
-                    break;
                 } else if (event.isRightClick()) {
                     craftData.setTime(craftData.getTime() - (event.isShiftClick() ? 600 : 60));
-                    event.getView().getTopInventory().setItem(7, item7());
-                    player.updateInventory();
                     Craft.save(getId(), craftData);
-                    break;
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     player.closeInventory();
                     Message.gui__edit_time_cost.msg(player);
@@ -373,12 +379,39 @@ public class EditHolder implements IHolder {
                     }, CraftItem.getPlugin());
                     break;
                 }
+                event.getView().getTopInventory().setItem(7, item7());
+                player.updateInventory();
+                break;
             }
             case 8: {
                 craftData.setDifficult(!craftData.isDifficult());
                 event.getView().getTopInventory().setItem(8, item8());
                 player.updateInventory();
                 Craft.save(getId(), craftData);
+                break;
+            }
+            case 9: {
+                if (event.isLeftClick()) {
+                    craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() + (event.isShiftClick() ? 10 : 1));
+                    Craft.save(getId(), craftData);
+                } else if (event.isRightClick()) {
+                    craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() - (event.isShiftClick() ? 10 : 1));
+                    Craft.save(getId(), craftData);
+                }
+                event.getView().getTopInventory().setItem(9, item9());
+                player.updateInventory();
+                break;
+            }
+            case 10: {
+                if (event.isLeftClick()) {
+                    craftData.setCombo(craftData.getCombo() + (event.isShiftClick() ? 10 : 1));
+                    Craft.save(getId(), craftData);
+                } else if (event.isRightClick()) {
+                    craftData.setCombo(craftData.getCombo() - (event.isShiftClick() ? 10 : 1));
+                    Craft.save(getId(), craftData);
+                }
+                event.getView().getTopInventory().setItem(10, item10());
+                player.updateInventory();
                 break;
             }
         }
