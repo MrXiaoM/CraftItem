@@ -228,7 +228,7 @@ public class CraftData implements ConfigurationSerializable {
                 get(map, "Commands", ArrayList::new), // List<String>
                 Long.parseLong(get(map, "TimeSecond", () -> "0")),
                 get(map, "TimeCost", () -> 0),
-                get(map, "Difficult", () -> false)
+                get(map, "Difficult", () -> false),
                 get(map, "GuaranteeFailTimes", () -> 0)
         );
     }
