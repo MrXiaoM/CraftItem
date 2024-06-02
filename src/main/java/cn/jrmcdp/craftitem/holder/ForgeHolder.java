@@ -269,11 +269,13 @@ public class ForgeHolder implements IHolder {
             return false;
         }
 
-        if (!win && craftData.getGuaranteeFailTimes() > 0) {
+        if (!win) {
             int failTimes = playerData.addFailTimes(getId(), 1);
-            if (failTimes > craftData.getGuaranteeFailTimes()) {
-                win = true;
-                multiple = 0;
+            if (craftData.getGuaranteeFailTimes() > 0){
+                if (failTimes > craftData.getGuaranteeFailTimes()) {
+                    win = true;
+                    multiple = 0;
+                }
             }
         }
 
@@ -290,6 +292,7 @@ public class ForgeHolder implements IHolder {
             }
             if (value == 100) {
                 craftData.takeAllMaterial(player.getInventory());
+                String failTimes = String.valueOf(playerData.getFailTimes(getId()));
                 playerData.clearScore(getId());
                 playerData.clearFailTimes(getId());
                 Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
@@ -300,7 +303,7 @@ public class ForgeHolder implements IHolder {
                     }
                 }
                 for (String str : craftData.getCommands()) {
-                    String cmd = str.split("\\|\\|")[0];
+                    String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, cmd));
                 }
             } else {
