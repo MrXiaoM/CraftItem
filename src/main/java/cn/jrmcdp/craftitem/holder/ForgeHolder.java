@@ -209,6 +209,8 @@ public class ForgeHolder implements IHolder {
                     return;
                 }
                 player.closeInventory();
+                playerData.clearScore(getId());
+                playerData.clearFailTimes(getId());
                 playerData.removeTime(getId());
                 playerData.save();
                 Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
