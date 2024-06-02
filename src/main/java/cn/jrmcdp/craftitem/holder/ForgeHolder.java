@@ -269,6 +269,14 @@ public class ForgeHolder implements IHolder {
             return false;
         }
 
+        if (!win && craftData.getGuaranteeFailTimes() > 0) {
+            int failTimes = playerData.addFailTimes(getId(), 1);
+            if (failTimes > craftData.getGuaranteeFailTimes()) {
+                win = true;
+                multiple = 0;
+            }
+        }
+
         int score = craftData.getMultiple().get(multiple);
         int oldValue = playerData.getScore(getId());
         if (win) {
@@ -283,6 +291,7 @@ public class ForgeHolder implements IHolder {
             if (value == 100) {
                 craftData.takeAllMaterial(player.getInventory());
                 playerData.clearScore(getId());
+                playerData.clearFailTimes(getId());
                 Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {

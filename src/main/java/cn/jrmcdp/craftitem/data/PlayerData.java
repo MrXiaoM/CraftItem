@@ -17,6 +17,7 @@ public class PlayerData {
 
     private final HashMap<String, Integer> scoreMap;
     private final HashMap<String, Long> timeMap;
+    private final HashMap<String, Integer> failMap;
 
     public PlayerData(Player player) {
         this.player = player;
@@ -29,6 +30,9 @@ public class PlayerData {
         });
         load("TimeForgeData", (section, key) -> {
             this.timeMap.put(key, section.getLong(key));
+        });
+        load("FailForgeData", (section, key) -> {
+            this.failMap.put(key, section.getInt(key));
         });
     }
 
@@ -52,6 +56,10 @@ public class PlayerData {
         return this.scoreMap.getOrDefault(key, 0);
     }
 
+    public Integer getFailTimes(String key) {
+        return this.failMap.getOrDefault(key, 0);
+    }
+
     public Long getEndTime(String key) {
         return this.timeMap.getOrDefault(key, null);
     }
@@ -71,6 +79,17 @@ public class PlayerData {
         return score;
     }
 
+    public Integer addFailTimes(String key, int add) {
+        Integer score = getFailTimes(key) + add;
+        this.failMap.put(key, score);
+        return score;
+    }
+
+    public Integer setFailTimes(String key, int score) {
+        this.failMap.put(key, score);
+        return score;
+    }
+
     public Long setTime(String key, long endTime) {
         endTime = Math.max(System.currentTimeMillis(), endTime);
         this.timeMap.put(key, endTime);
@@ -83,6 +102,10 @@ public class PlayerData {
 
     public void clearScore(String key) {
         this.scoreMap.put(key, 0);
+    }
+
+    public void clearFailTimes(String key) {
+        this.failMap.put(key, 0);
     }
 
     private void load(String key, BiConsumer<ConfigurationSection, String> consumer) {
@@ -102,6 +125,7 @@ public class PlayerData {
     public void save() {
         save("ForgeData", this.scoreMap);
         save("TimeForgeData", this.timeMap);
+        save("FailForgeData", this.failMap);
         FileConfig.Custom.saveConfig("PlayerData", this.player.getName(), this.config);
     }
 }
