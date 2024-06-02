@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.data;
 import cn.jrmcdp.craftitem.Utils;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import org.apache.commons.lang.math.RandomUtils;
@@ -204,18 +205,24 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     @NotNull
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unused")
     public static CraftData deserialize(Map<String, Object> map) {
         return new CraftData(
-                (map.get("Material") == null) ? new ArrayList<>() : (List<ItemStack>)map.get("Material"),
-                (map.get("Chance") == null) ? 0 : (Integer) map.get("Chance"),
-                (map.get("Multiple") == null) ? new ArrayList<>() : (List<Integer>)map.get("Multiple"),
-                (map.get("Cost") == null) ? 0 : (Integer) map.get("Cost"),
-                (map.get("DisplayItem") == null) ? new ItemStack(Material.BARRIER) : (ItemStack)map.get("DisplayItem"),
-                (map.get("Items") == null) ? new ArrayList<>() : (List<ItemStack>)map.get("Items"),
-                (map.get("Commands") == null) ? new ArrayList<>() : (List<String>)map.get("Commands"),
-                (map.get("TimeSecond") == null) ? 0 : Long.parseLong(map.get("TimeSecond").toString()),
-                (map.get("TimeCost") == null) ? 0 : (Integer) map.get("TimeCost"),
-                map.get("Difficult") != null && (Boolean) map.get("Difficult"));
+                get(map, "Material", ArrayList::new), // List<ItemStack>
+                get(map, "Chance", () -> 0),
+                get(map, "Multiple", ArrayList::new), // List<Integer>
+                get(map, "Cost", () -> 0),
+                get(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
+                get(map, "Items", ArrayList::new), // List<ItemStack>
+                get(map, "Commands", ArrayList::new), // List<String>
+                Long.parseLong(get(map, "TimeSecond", () -> "0")),
+                get(map, "TimeCost", () -> 0),
+                get(map, "Difficult", () -> false)
+        );
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static <T> T get(Map<String, Object> map, String key, Supplier<T> def) {
+        return map.get(key) == null ? def.get() : (T) map.get(key);
     }
 }

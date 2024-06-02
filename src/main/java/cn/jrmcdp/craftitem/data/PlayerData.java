@@ -2,6 +2,9 @@ package cn.jrmcdp.craftitem.data;
 
 import cn.jrmcdp.craftitem.config.FileConfig;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,14 +23,13 @@ public class PlayerData {
         this.config = FileConfig.Custom.getConfig("PlayerData", player.getName());
         this.scoreMap = new HashMap<>();
         this.timeMap = new HashMap<>();
-        ConfigurationSection section = this.config.getConfigurationSection("ForgeData");
-        if (section != null)
-            for (String key : section.getKeys(false))
-                this.scoreMap.put(key, section.getInt(key));
-        section = this.config.getConfigurationSection("TimeForgeData");
-        if (section != null)
-            for (String key : section.getKeys(false))
-                this.timeMap.put(key, section.getLong(key));
+        this.failMap = new HashMap<>();
+        load("ForgeData", (section, key) -> {
+            this.scoreMap.put(key, section.getInt(key));
+        });
+        load("TimeForgeData", (section, key) -> {
+            this.timeMap.put(key, section.getLong(key));
+        });
     }
 
     public YamlConfiguration getConfig() {
@@ -83,11 +85,23 @@ public class PlayerData {
         this.scoreMap.put(key, 0);
     }
 
+    private void load(String key, BiConsumer<ConfigurationSection, String> consumer) {
+        ConfigurationSection section = this.config.getConfigurationSection(key);
+        if (section != null) {
+            for (String k : section.getKeys(false)) {
+                consumer.accept(section, k);
+            }
+        }
+    }
+
+    private <T> void save(String section, Map<String, T> map) {
+        this.config.set(section, null);
+        map.forEach((key, value) -> this.config.set(section + "." + key, value));
+    }
+
     public void save() {
-        config.set("ForgeData", null);
-        config.set("TimeForgeData", null);
-        this.scoreMap.forEach((key, value) -> this.config.set("ForgeData." + key, value));
-        this.timeMap.forEach((key, value) -> this.config.set("TimeForgeData." + key, value));
+        save("ForgeData", this.scoreMap);
+        save("TimeForgeData", this.timeMap);
         FileConfig.Custom.saveConfig("PlayerData", this.player.getName(), this.config);
     }
 }
