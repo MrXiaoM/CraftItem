@@ -63,6 +63,7 @@ public class ForgeHolder implements IHolder {
 
     public ItemStack getTimeIcon() {
         Icon icon;
+        CraftData craftData = getCraftData();
         if (craftData.getTime() > 0) {
             if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
@@ -105,7 +106,7 @@ public class ForgeHolder implements IHolder {
     @Override
     public void onSecond() {
         this.done = endTime != null && System.currentTimeMillis() >= endTime;
-        this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
+        this.processing = endTime != null && (System.currentTimeMillis() >= endTime - getCraftData().getTime() * 1000L);
         if (processing || done) {
             ItemStack item = getTimeIcon();
             for (int slot : timeSlots) {
@@ -141,60 +142,13 @@ public class ForgeHolder implements IHolder {
             return;
         String key = String.valueOf(chest[event.getRawSlot()]);
         if ("锻".equals(key)) {
-            final CraftData craftData = getCraftData();
-            int cost = craftData.getCost();
-            if (!CraftItem.getEcon().has(player, cost)) {
-                Message.craft__not_enough_money.msg(player);
-                return;
-            }
-            if (!craftData.hasAllMaterial(player.getInventory())) {
-                Message.craft__not_enough_material.msg(player);
-                return;
-            }
-            CraftItem.getEcon().withdrawPlayer(player, cost);
-            final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
-            final int multiple = RandomUtils.nextInt(3);
-            player.closeInventory();
-            if (craftData.isDifficult()) {
-                CraftItem.getMiniGames().startGame(
-                        new GameData(this, player, win, multiple),
-                        player,
-                        Config.getRandomGame(),
-                        new FishingEffect()
-                );
-                return;
-            }
-            Bukkit.getPluginManager().registerEvents(new Listener() {
-                @EventHandler
-                public void onPlayerQuit(PlayerQuitEvent eventB) {
-                    if (eventB.getPlayer().equals(player))
-                        clear();
+            if (!event.isShiftClick()) {
+                if (event.isLeftClick()) {
+                    clickForgeOnce(player);
+                } else if (event.isRightClick()) {
+                    clickForgeCombo(player);
                 }
-
-                public void clear() {
-                    task.cancel();
-                    HandlerList.unregisterAll(this);
-                }
-
-                final BukkitTask task = (new BukkitRunnable() {
-                    int i = 1;
-                    // 因为事件执行可能会阻塞，加个完成标志避免定时器重复执行
-                    boolean doneFlag = false;
-                    public void run() {
-                        if (doneFlag) return;
-                        if (this.i >= 3) {
-                            doneFlag = true;
-                            if (doForgeResult(player, win, multiple, this::cancel)) {
-                                clear();
-                            }
-                            return;
-                        }
-                        Config.getForgeTitle().send(player);
-                        player.playSound(player.getLocation(), Config.getSoundForgeTitle(), 1.0F, 0.8F);
-                        this.i++;
-                    }
-                }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
-            }, CraftItem.getPlugin());
+            }
             return;
         }
         if ("时".equals(key)) {
@@ -264,8 +218,137 @@ public class ForgeHolder implements IHolder {
         }
     }
 
-    public boolean doForgeResult(Player player, boolean win, int multiple, Runnable cancel) {
+    private void clickForgeOnce(Player player) {
+        CraftData craftData = getCraftData();
+        int cost = craftData.getCost();
+        if (!CraftItem.getEcon().has(player, cost)) {
+            Message.craft__not_enough_money.msg(player);
+            return;
+        }
         if (!craftData.hasAllMaterial(player.getInventory())) {
+            Message.craft__not_enough_material.msg(player);
+            return;
+        }
+        CraftItem.getEcon().withdrawPlayer(player, cost);
+        final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
+        final int multiple = RandomUtils.nextInt(3);
+        player.closeInventory();
+        if (craftData.isDifficult()) {
+            CraftItem.getMiniGames().startGame(
+                    new GameData(this, player, win, multiple),
+                    player,
+                    Config.getRandomGame(),
+                    new FishingEffect()
+            );
+            return;
+        }
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPlayerQuit(PlayerQuitEvent eventB) {
+                if (eventB.getPlayer().equals(player))
+                    clear();
+            }
+
+            public void clear() {
+                task.cancel();
+                HandlerList.unregisterAll(this);
+            }
+
+            final BukkitTask task = (new BukkitRunnable() {
+                int i = 1;
+                // 因为事件执行可能会阻塞，加个完成标志避免定时器重复执行
+                boolean doneFlag = false;
+                public void run() {
+                    if (doneFlag) return;
+                    if (this.i >= 3) {
+                        doneFlag = true;
+                        if (doForgeResult(player, win, multiple, this::cancel)) {
+                            clear();
+                        }
+                        return;
+                    }
+                    Config.getForgeTitle().send(player);
+                    player.playSound(player.getLocation(), Config.getSoundForgeTitle(), 1.0F, 0.8F);
+                    this.i++;
+                }
+            }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
+        }, CraftItem.getPlugin());
+    }
+
+    private void clickForgeCombo(Player player) {
+        CraftData craftData = getCraftData();
+        int combo = craftData.getCombo();
+        if (craftData.isDifficult() || combo <= 0) return;
+
+        int costOneTime = craftData.getCost();
+        if (!CraftItem.getEcon().has(player, costOneTime * combo)) {
+            Message.craft__not_enough_money.msg(player);
+            return;
+        }
+        if (!craftData.hasAllMaterial(player.getInventory())) {
+            Message.craft__not_enough_material.msg(player);
+            return;
+        }
+        player.closeInventory();
+
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPlayerQuit(PlayerQuitEvent eventB) {
+                if (eventB.getPlayer().equals(player))
+                    clear();
+            }
+
+            public void clear() {
+                task.cancel();
+                HandlerList.unregisterAll(this);
+            }
+
+            final BukkitTask task = (new BukkitRunnable() {
+                int i = 1;
+                // 因为事件执行可能会阻塞，加个完成标志避免定时器重复执行
+                boolean doneFlag = false;
+
+                public void run() {
+                    if (doneFlag) return;
+                    if (this.i >= 3) {
+                        doneFlag = true;
+                        Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> doCombo(player));
+                        clear();
+                        return;
+                    }
+                    Config.getForgeTitle().send(player);
+                    player.playSound(player.getLocation(), Config.getSoundForgeTitle(), 1.0F, 0.8F);
+                    this.i++;
+                }
+            }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
+        }, CraftItem.getPlugin());
+    }
+
+    private void doCombo(Player player) {
+        CraftData craftData = getCraftData();
+        if (!craftData.hasAllMaterial(player.getInventory())) {
+            Message.craft__not_enough_material.msg(player);
+            return;
+        }
+        int combo = craftData.getCombo();
+        int costOneTime = craftData.getCost();
+        for (int i = 0; i < combo; i++) {
+            CraftItem.getEcon().withdrawPlayer(player, costOneTime);
+            final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
+            final int multiple = RandomUtils.nextInt(3);
+            if (!doForgeResult(player, win, multiple, null)) {
+                break;
+            }
+            if (!craftData.hasAllMaterial(player.getInventory())) {
+                Message.craft__not_enough_material.msg(player);
+                break;
+            }
+        }
+    }
+
+    public boolean doForgeResult(Player player, boolean win, int multiple, Runnable cancel) {
+        CraftData craftData = getCraftData();
+        if (cancel != null && !craftData.hasAllMaterial(player.getInventory())) {
             Message.craft__not_enough_material.msg(player);
             cancel.run();
             return false;
@@ -355,7 +438,7 @@ public class ForgeHolder implements IHolder {
         playerData.save();
         Bukkit.getScheduler().runTaskLater(CraftItem.getPlugin(), () -> {
             if (!player.isOnline()) {
-                cancel.run();
+                if (cancel != null) cancel.run();
                 return;
             }
             Gui.openGui(playerData, getId(), craftData);

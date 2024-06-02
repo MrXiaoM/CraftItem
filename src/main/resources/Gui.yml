@@ -35,6 +35,18 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+  锻_连击:
+    Type: ANVIL
+    Name: '&a点击锻造'
+    Lore:
+      - ''
+      - '&a信息:'
+      - '  &8➥ &6难度 &e<ChanceName>'
+      - '  &8➥ &6进度 &e<Score>%'
+      - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - ''
+      - '&a左键 &7| &f锻造一次'
+      - '&b右键 &7| &f连续锻造 &e<Combo> &f次'
   锻_困难:
     Type: ANVIL
     Name: '&a点击锻造'

@@ -74,11 +74,11 @@ public class Gui {
         }
         
         for (String s : Lists.newArrayList(
-                "材", "物", "锻", "锻_困难",
+                "材", "物", "锻", "锻_连击", "锻_困难",
                 "时", "时_未开启", "时_条件不足", "时_进行中", "时_完成"
         )) {
             if (!items.containsKey(s)) {
-                CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 必要图标 '" + s + "' 的配置不存在");
+                CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 必要图标 '" + s + "' 的配置不存在，请从默认配置文件中导入");
             }
         }
 
@@ -143,13 +143,16 @@ public class Gui {
                     break;
                 }
                 case "锻": {
-                    Icon icon = items.get(craftData.isDifficult() ? "锻_困难" : "锻");
+                    Icon icon = items.get(craftData.isDifficult()
+                            ? "锻_困难"
+                            : (craftData.getCombo() > 0 ? "锻_连击" : "锻"));
                     if (icon != null) {
                         is[i] = icon.getItem(
                                 player,
                                 Pair.of("<ChanceName>", Config.getChanceName(craftData.getChance())),
                                 Pair.of("<Score>", playerData.getScore(id)),
-                                Pair.of("<Cost>", craftData.getCost())
+                                Pair.of("<Cost>", craftData.getCost()),
+                                Pair.of("<Combo>", craftData.getCombo())
                         );
                     }
                     break;
