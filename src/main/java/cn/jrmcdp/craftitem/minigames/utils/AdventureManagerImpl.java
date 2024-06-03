@@ -26,10 +26,16 @@ public class AdventureManagerImpl {
     private final BukkitAudiences adventure;
     private static AdventureManagerImpl instance;
 
-    public AdventureManagerImpl(JavaPlugin plugin) {
+    private AdventureManagerImpl(JavaPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         instance = this;
+    }
+
+    public static void load(JavaPlugin plugin) {
+        if (instance == null) {
+            new AdventureManagerImpl(plugin);
+        }
     }
 
     public static AdventureManagerImpl getInstance() {

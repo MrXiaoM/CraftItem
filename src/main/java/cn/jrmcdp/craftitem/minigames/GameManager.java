@@ -29,7 +29,6 @@ public class GameManager implements Listener {
         return inst;
     }
     private final MiniGames miniGames;
-    private final AdventureManagerImpl adventure;
     private final VersionManager versionManager;
     private final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap = new ConcurrentHashMap<>();
     public GameManager(JavaPlugin plugin) {
@@ -40,7 +39,7 @@ public class GameManager implements Listener {
 
         this.versionManager = new VersionManager(plugin);
         ReflectionUtils.load();
-        this.adventure = new AdventureManagerImpl(plugin);
+        AdventureManagerImpl.load(plugin);
         this.miniGames = new MiniGames(plugin);
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
