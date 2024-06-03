@@ -1,11 +1,11 @@
 package cn.jrmcdp.craftitem.minigames;
 
+import cn.jrmcdp.craftitem.Utils;
 import cn.jrmcdp.craftitem.minigames.utils.*;
 import cn.jrmcdp.craftitem.minigames.utils.effect.Effect;
 import cn.jrmcdp.craftitem.minigames.utils.game.BasicGameConfig;
 import cn.jrmcdp.craftitem.minigames.utils.game.GameInstance;
 import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
-import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class GameManager implements Listener {
     }
     private final MiniGames miniGames;
     private final VersionManager versionManager;
-    private final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap = new ConcurrentHashMap<>();
     public GameManager(JavaPlugin plugin) {
         if (GameManager.inst != null) throw new IllegalStateException("GameManager is already loaded");
         GameManager.plugin = plugin;
@@ -42,6 +42,11 @@ public class GameManager implements Listener {
         AdventureManagerImpl.load(plugin);
         this.miniGames = new MiniGames(plugin);
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        if (Utils.isPresent("com.destroystokyo.paper.event.player.PlayerJumpEvent")) {
+            Bukkit.getPluginManager().registerEvents(new OnPaper(this), plugin);
+        } else {
+            plugin.getLogger().warning("当前服务端非 Paper 服务端，困难锻造中 dance 类型的小游戏（默认配置不使用）将无法正常使用");
+        }
     }
 
     public MiniGames getMiniGames() {
@@ -121,16 +126,6 @@ public class GameManager implements Listener {
         GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
         if (gamingPlayer != null) {
             if (gamingPlayer.onSwapHand())
-                event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onJump(PlayerJumpEvent event) {
-        if (event.isCancelled()) return;
-        GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
-        if (gamingPlayer != null) {
-            if (gamingPlayer.onJump())
                 event.setCancelled(true);
         }
     }

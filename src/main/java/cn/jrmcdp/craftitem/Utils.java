@@ -7,6 +7,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Utils {
+    public static boolean isPresent(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
 
     public static List<String> itemToListString(Collection<ItemStack> collection) {
         List<String> list = new ArrayList<>();
