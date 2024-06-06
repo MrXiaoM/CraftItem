@@ -237,7 +237,7 @@ public class CraftData implements ConfigurationSerializable {
                 get(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
                 get(map, "Items", ArrayList::new), // List<ItemStack>
                 get(map, "Commands", ArrayList::new), // List<String>
-                Long.parseLong(get(map, "TimeSecond", () -> "0")),
+                Long.parseLong(String.valueOf(get(map, "TimeSecond", () -> (Object) "0"))),
                 get(map, "TimeCost", () -> 0),
                 get(map, "Difficult", () -> false),
                 get(map, "GuaranteeFailTimes", () -> 0),
