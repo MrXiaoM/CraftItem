@@ -30,6 +30,7 @@ public class EditHolder implements IHolder {
 
     private final CraftData craftData;
     private Inventory inventory;
+    private int invSize = 0;
 
     EditHolder(String id, CraftData craftData) {
         this.id = id;
@@ -60,7 +61,7 @@ public class EditHolder implements IHolder {
     }
 
     private ItemStack[] getItems() {
-        ItemStack[] items = new ItemStack[18];
+        ItemStack[] items = new ItemStack[invSize = 18];
         items[0] = getItemStack(Material.WHEAT, Message.gui__edit__item__material__name.get(),
                 Message.gui__edit__item__material__lore.list(
                     String.join("\n§7", Utils.itemToListString(craftData.getMaterial()))
@@ -119,7 +120,7 @@ public class EditHolder implements IHolder {
     private ItemStack item10() {
         return getItemStack(Material.MAGMA_CREAM, Message.gui__edit__item__combo__name.get(),
                 Message.gui__edit__item__combo__lore.list(
-                        craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.get()
+                        craftData.getCombo() > 0 ? String.valueOf(craftData.getCombo()) : Message.gui__edit__unset.get()
                 ));
     }
 
@@ -141,7 +142,7 @@ public class EditHolder implements IHolder {
         final Inventory gui, loreGui;
         final Player player = (Player)event.getWhoClicked();
         player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
-        if (event.getRawSlot() < 0 || event.getRawSlot() >= 9) return;
+        if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();
         switch (event.getRawSlot()) {
             case 0: {
