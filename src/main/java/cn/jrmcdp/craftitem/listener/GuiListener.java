@@ -50,7 +50,7 @@ public class GuiListener implements Listener {
     }
 
     public void onDisable() {
-        // 放置热重载时玩家可以拿取界面物品
+        // 防止热重载时玩家可以拿取界面物品
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getOpenInventory().getTopInventory().getHolder() instanceof IHolder) {
                 player.closeInventory();
