@@ -356,7 +356,7 @@ public class EditHolder implements IHolder {
                     craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 600 : 60));
                     Craft.save(getId(), craftData);
                 } else if (event.isRightClick()) {
-                    craftData.setTime(craftData.getTime() - (event.isShiftClick() ? 600 : 60));
+                    craftData.setTime(Math.max(0, craftData.getTime() - (event.isShiftClick() ? 600 : 60)));
                     Craft.save(getId(), craftData);
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     player.closeInventory();
@@ -396,7 +396,7 @@ public class EditHolder implements IHolder {
                     craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() + (event.isShiftClick() ? 10 : 1));
                     Craft.save(getId(), craftData);
                 } else if (event.isRightClick()) {
-                    craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() - (event.isShiftClick() ? 10 : 1));
+                    craftData.setGuaranteeFailTimes(Math.max(0, craftData.getGuaranteeFailTimes() - (event.isShiftClick() ? 10 : 1)));
                     Craft.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(9, item9());
@@ -408,7 +408,7 @@ public class EditHolder implements IHolder {
                     craftData.setCombo(craftData.getCombo() + (event.isShiftClick() ? 10 : 1));
                     Craft.save(getId(), craftData);
                 } else if (event.isRightClick()) {
-                    craftData.setCombo(craftData.getCombo() - (event.isShiftClick() ? 10 : 1));
+                    craftData.setCombo(Math.max(0, craftData.getCombo() - (event.isShiftClick() ? 10 : 1)));
                     Craft.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(10, item10());
