@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 public enum Message {
     prefix("&4&lCraftItem &8>> &e"),
@@ -191,6 +193,16 @@ public enum Message {
         return Lists.newArrayList(get(args).split("\n"));
     }
     public String get(Object... args) {
+        for (int i = 0; i < args.length; i++) {
+            Object obj = args[i];
+            if (obj instanceof ItemStack) {
+                args[i] = Utils.getItemName((ItemStack) obj);
+            }
+            if (obj instanceof List<?>) {
+                List<?> list = (List<?>) obj;
+                args[i] = String.format(", ", list.toArray());
+            }
+        }
         return String.format(config.getOrDefault(this, defValue), args);
     }
     public boolean msg0(CommandSender sender, Object... args) {

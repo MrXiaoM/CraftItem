@@ -80,7 +80,7 @@ public class EditHolder implements IHolder {
                 ));
         items[4] = getItemStack(Material.PAINTING, Message.gui__edit__item__display__name.get(),
                 Message.gui__edit__item__display__lore.list(
-                    Utils.getItemName(craftData.getDisplayItem())
+                    craftData.getDisplayItem()
                 ));
         items[5] = getItemStack(Material.CHEST, Message.gui__edit__item__item__name.get(),
                 Message.gui__edit__item__item__lore.list(

@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.utils.Triple;
 import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Gui;
@@ -32,6 +33,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ForgeHolder implements IHolder {
@@ -167,11 +169,11 @@ public class ForgeHolder implements IHolder {
                 playerData.clearFailTimes(getId());
                 playerData.removeTime(getId());
                 playerData.save();
-                Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
+                Message.craft__success.msg(player, craftData.getDisplayItem());
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                         player.getWorld().dropItem(player.getLocation(), add);
-                        Message.full_inventory.msg(player, Utils.getItemName(add), add.getAmount());
+                        Message.full_inventory.msg(player, add, add.getAmount());
                     }
                 }
                 for (String str : craftData.getCommands()) {
@@ -380,11 +382,11 @@ public class ForgeHolder implements IHolder {
                 String failTimes = String.valueOf(playerData.getFailTimes(getId()));
                 playerData.clearScore(getId());
                 playerData.clearFailTimes(getId());
-                Message.craft__success.msg(player, Utils.getItemName(craftData.getDisplayItem()));
+                Message.craft__success.msg(player, craftData.getDisplayItem());
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                         player.getWorld().dropItem(player.getLocation(), add);
-                        Message.full_inventory.msg(player, Utils.getItemName(add), add.getAmount());
+                        Message.full_inventory.msg(player, add, add.getAmount());
                     }
                 }
                 for (String str : craftData.getCommands()) {
@@ -429,7 +431,7 @@ public class ForgeHolder implements IHolder {
                     Message.craft__process_fail_big.msg(player, score);
                     ItemStack itemStack = craftData.takeRandomMaterial(player, player.getInventory());
                     if (itemStack != null) {
-                        Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), Utils.getItemName(itemStack));
+                        Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), itemStack);
                     }
                     break;
                 }
