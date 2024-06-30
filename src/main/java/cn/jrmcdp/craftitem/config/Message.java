@@ -17,6 +17,7 @@ public enum Message {
     reload("&a配置文件重载成功."),
     no_permission("&c缺少权限 &e%s&c."),
     no_player("&e此命令只有玩家能执行."),
+    no_protocollib("&e服务器未安装依赖 ProtocolLib."),
     help(
             "&4&lCraftItem",
             "  &8➥ &b/ci Category <TypeID> [Player] &7给 自己/别人 配方分类界面",

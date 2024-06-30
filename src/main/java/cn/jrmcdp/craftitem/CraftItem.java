@@ -22,7 +22,7 @@ public class CraftItem extends JavaPlugin {
 
     private static Economy econ;
 
-    private static GameManager miniGames;
+    private static GameManager miniGames = null;
     private GuiListener guiListener;
     private PlayerListener playerListener;
 
@@ -45,7 +45,9 @@ public class CraftItem extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        miniGames = new GameManager(this);
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
+            miniGames = new GameManager(this);
+        }
         saveDefaultConfig();
         plugin = this;
         ConfigurationSerialization.registerClass(CraftData.class);
@@ -98,7 +100,7 @@ public class CraftItem extends JavaPlugin {
         FileConfiguration config = getConfig();
         config.addDefault("TimeForgeConditions", null);
         config.addDefault("offset-characters", null);
-        miniGames.reloadConfig();
+        if (miniGames != null) miniGames.reloadConfig();
     }
 
     public void regListener(Listener... list) {

@@ -217,6 +217,10 @@ public class ForgeHolder implements IHolder {
 
     private void clickForgeOnce(Player player) {
         CraftData craftData = getCraftData();
+        if (craftData.isDifficult() && CraftItem.getMiniGames() == null) {
+            Message.no_protocollib.msg(player);
+            return;
+        }
         int cost = craftData.getCost();
         if (!CraftItem.getEcon().has(player, cost)) {
             Message.craft__not_enough_money.msg(player);
