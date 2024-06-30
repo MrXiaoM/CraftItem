@@ -5,6 +5,7 @@ import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -96,10 +97,11 @@ public class Config {
     private static Sound soundForgeFail;
     private static Sound soundForgeTitle;
     private static List<String> randomGames;
-    private static List<Condition> timeForgeConditions = new ArrayList<>();
+    private static final List<Condition> timeForgeConditions = new ArrayList<>();
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
         config = CraftItem.getPlugin().getConfig();
+        config.setDefaults(new MemoryConfiguration());
         setting = config.getConfigurationSection("Setting");
         if (setting != null) {
             category = new HashMap<>();
