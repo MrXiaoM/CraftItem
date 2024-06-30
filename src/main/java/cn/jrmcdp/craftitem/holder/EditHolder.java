@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.Utils;
+import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Craft;
 import cn.jrmcdp.craftitem.config.Message;

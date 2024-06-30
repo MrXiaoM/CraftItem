@@ -1,6 +1,6 @@
 package cn.jrmcdp.craftitem.minigames;
 
-import cn.jrmcdp.craftitem.Utils;
+import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.minigames.utils.*;
 import cn.jrmcdp.craftitem.minigames.utils.effect.Effect;
 import cn.jrmcdp.craftitem.minigames.utils.game.BasicGameConfig;

@@ -6,13 +6,12 @@ import cn.jrmcdp.craftitem.manager.DataManager;
 import cn.jrmcdp.craftitem.holder.EditHolder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;

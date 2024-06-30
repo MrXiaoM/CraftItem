@@ -1,4 +1,4 @@
-package cn.jrmcdp.craftitem;
+package cn.jrmcdp.craftitem.utils;
 
 import java.util.*;
 

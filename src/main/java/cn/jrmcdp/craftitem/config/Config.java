@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.Utils;
+import cn.jrmcdp.craftitem.utils.Utils;
 import com.cryptomorin.xseries.messages.Titles;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import static cn.jrmcdp.craftitem.Utils.valueOf;
+import static cn.jrmcdp.craftitem.utils.Utils.valueOf;
 
 public class Config {
     public static class Condition {

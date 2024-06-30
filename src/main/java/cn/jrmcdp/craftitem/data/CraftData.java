@@ -1,6 +1,6 @@
 package cn.jrmcdp.craftitem.data;
 
-import cn.jrmcdp.craftitem.Utils;
+import cn.jrmcdp.craftitem.utils.Utils;
 
 import java.util.*;
 import java.util.function.Supplier;

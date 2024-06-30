@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.Utils;
+import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
