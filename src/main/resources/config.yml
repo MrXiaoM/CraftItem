@@ -1,5 +1,6 @@
 Setting:
-  ChanceName: # 成功率所显示的信息
+  # 成功率所显示的信息
+  ChanceName:
     "10": "§c§n九死一生" # 低于等于 10 的概率
     "20": "§c§n如履薄冰" # 大于 10 低于等于 20 的概率
     "30": "§d§n铤而走险"
@@ -10,24 +11,28 @@ Setting:
     "80": "§a§n半斤八两"
     "90": "§a§n十拿九稳"
     "100": "§a§n百战百胜"
-  Category: # 配方相关的配置
+  # 配方相关的配置
+  Category:
+    #示例: <- 类别的 名字/ID
+    #  - "钻石剑" <- 类别包含的配方
     武器: []
     防具: []
     杂项: []
-    #示例: <- 类别的 名字/ID
-    #  - "钻石剑" <- 类别包含的配方
+  # 锻造标题
   ForgeTitle:
     Title: "&a敲敲打打"
     SubTitle: "&e锻造中..."
     FadeIn: 10
     Time: 20
     FadeOut: 10
+  # 音效
   Sounds:
     ClickInventory: UI_BUTTON_CLICK
     ForgeSuccess: BLOCK_ANVIL_USE
     ForgeFail: BLOCK_GLASS_BREAK
     ForgeTitle: BLOCK_ANVIL_LAND
 
+# 困难锻造随机进行的小游戏列表
 RandomGames:
   - accurate_click_bar_3_easy
   - accurate_click_bar_5_easy
@@ -36,19 +41,32 @@ RandomGames:
   - hold_game_easy
   - tension_game_easy
 
+# 时长锻造条件列表
+# 其中，type 可使用以下类型，所有类型均可在前面加英文感叹号"!"来反转
+# 如 "!=" 代表 "字符串不匹配"，"!>" 代表 "数字不大于" 即 "数字小于等于"
+# input 和 output 为需要比较的两个值，可用 PlaceholderAPI 变量
+#
+# 字符串匹配: = 或 == 或 string equals
+# 字符串忽略大小写匹配: ~== 或 equalsIgnoreCase
+# 数字匹配: number equals
+# 数字大于: >
+# 数字大于或等于: >=
+# 数字小于: <
+# 数字小于或等于: <=
+#
 TimeForgeConditions:
 #  经验等级:
 #    input: '%player_level%'
 #    type: '>='
 #    output: 30
-#  绑定QQ:
-#    input: '%sr_qq%'
-#    type: '!='
-#    output: ''
 
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
+# 贴图位移字符配置
+# 如果你不知道你在做什么，请勿修改这里的值
 offset-characters:
+  # 字体路径，如果你修改了默认材质包的命名空间 (默认 mrxiaom)，
+  # 则需要修改该选项
   font: mrxiaom:offset_chars
   '1': 
   '2': 
