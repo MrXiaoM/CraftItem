@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
@@ -38,14 +38,6 @@ public class Category {
         return title;
     }
 
-    public static String[] getChest() {
-        return chest;
-    }
-
-    public static HashMap<String, ItemStack> getItems() {
-        return items;
-    }
-
     public static int getSlotAmount() {
         return slotAmount;
     }
@@ -54,11 +46,11 @@ public class Category {
         config = FileConfig.Category.getConfig();
         title = config.getString("Title");
         chest = new String[config.getStringList("Chest").size() * 9];
-        String info = "";
+        StringBuilder info = new StringBuilder();
         for (String line : config.getStringList("Chest")) {
-            info = info + line;
+            info.append(line);
         }
-        chest = info.split("");
+        chest = info.toString().split("");
         slotAmount = 0;
         for (String key : chest) {
             if (key.equals("方")) {
@@ -67,8 +59,11 @@ public class Category {
         }
         items = new HashMap<>();
         ConfigurationSection section = config.getConfigurationSection("Item");
-        for (String key : section.getKeys(false)) {
-            ItemStack itemStack = XMaterial.matchXMaterial(section.getString(key + ".Type", "STONE")).get().parseItem();
+        if (section != null) for (String key : section.getKeys(false)) {
+            ItemStack itemStack = Utils
+                    .parseMaterial(section.getString(key + ".Type", "STONE"))
+                    .map(ItemStack::new)
+                    .orElseGet(() -> new ItemStack(Material.STONE));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if (section.get(key + ".Name") != null) {
                 itemMeta.setDisplayName(section.getString(key + ".Name"));
@@ -82,7 +77,7 @@ public class Category {
     public static void openGui(PlayerData playerData, String type, List<String> craftList, int page) {
         Bukkit.getScheduler().runTaskAsynchronously(CraftItem.getPlugin(), () -> {
             Inventory inventory = buildGui(playerData, type, craftList, page);
-            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> {playerData.getPlayer().openInventory(inventory);});
+            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> playerData.getPlayer().openInventory(inventory));
         });
     }
 
@@ -91,51 +86,49 @@ public class Category {
         Inventory gui = Bukkit.createInventory(holder, chest.length, title.replace("<Category>", type));
         holder.setInventory(gui);
         ItemStack[] is = new ItemStack[chest.length];
-        Iterator<String> iterator = craftList.subList(Math.min(craftList.size(), page*slotAmount), Math.min(craftList.size(), page*slotAmount+slotAmount)).iterator();
+        Iterator<String> iterator = craftList.subList(
+                Math.min(craftList.size(), page * slotAmount),
+                Math.min(craftList.size(), page * slotAmount + slotAmount)
+        ).iterator();
         for (int i = 0; i < chest.length; i++) {
             ItemStack clone;
             ItemMeta itemMeta;
             List<String> lore;
             String key = chest[i];
-            switch (key) {
-                case "方" : {
-                    if (iterator.hasNext()) {
-                        String name = iterator.next();
-                        CraftData craftData = Craft.getCraftData(name);
-                        if (craftData == null) {
-                            ItemStack itemStack = XMaterial.PAPER.parseItem();
-                            ItemMeta meta = itemStack.getItemMeta();
-                            meta.setDisplayName("§c未找到 §e" + name);
-                            itemStack.setItemMeta(meta);
-                            is[i] = itemStack;
-                            break;
-                        }
-                        clone = craftData.getDisplayItem().clone();
-                        itemMeta = clone.getItemMeta();
-                        lore = itemMeta.getLore();
-                        if (lore == null)
-                            lore = new ArrayList<>();
-                        lore.add("");
-                        lore.add("§a包含:");
-                        for (ItemStack itemStack : craftData.getItems())
-                            lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
-                        for (String command : craftData.getCommands()) {
-                            String[] split = command.split("\\|\\|");
-                            if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
-                        }
-                        itemMeta.setLore(lore);
-                        clone.setItemMeta(itemMeta);
-                        is[i] = clone;
-                        holder.getSlot()[i] = name;
-                    } else {
-                        is[i] = null;
-                    }
-                    break;
+            if (key.equals("方")) {
+                if (!iterator.hasNext()) {
+                    is[i] = null;
+                    continue;
                 }
-                default : {
-                    is[i] = items.get(key);
-                    break;
+                String name = iterator.next();
+                CraftData craftData = Craft.getCraftData(name);
+                if (craftData == null) {
+                    ItemStack itemStack = new ItemStack(Material.PAPER);
+                    ItemMeta meta = itemStack.getItemMeta();
+                    meta.setDisplayName("§c未找到 §e" + name);
+                    itemStack.setItemMeta(meta);
+                    is[i] = itemStack;
+                    continue;
                 }
+                clone = craftData.getDisplayItem().clone();
+                itemMeta = clone.getItemMeta();
+                lore = itemMeta.getLore();
+                if (lore == null)
+                    lore = new ArrayList<>();
+                lore.add("");
+                lore.add("§a包含:");
+                for (ItemStack itemStack : craftData.getItems())
+                    lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
+                for (String command : craftData.getCommands()) {
+                    String[] split = command.split("\\|\\|");
+                    if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
+                }
+                itemMeta.setLore(lore);
+                clone.setItemMeta(itemMeta);
+                is[i] = clone;
+                holder.getSlot()[i] = name;
+            } else {
+                is[i] = items.get(key);
             }
         }
         gui.setContents(is);

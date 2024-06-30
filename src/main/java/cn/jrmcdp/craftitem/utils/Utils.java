@@ -55,6 +55,10 @@ public class Utils {
         }
     }
 
+    public static Optional<org.bukkit.Material> parseMaterial(String s) {
+        return valueOf(org.bukkit.Material.class, s);
+    }
+
     public static <T extends Enum<?>> Optional<T> valueOf(Class<T> clazz, String s) {
         if (s != null) for (T t : clazz.getEnumConstants()) {
             if (t.name().equalsIgnoreCase(s)) return Optional.of(t);

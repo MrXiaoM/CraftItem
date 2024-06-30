@@ -2,9 +2,7 @@ package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.utils.Utils;
-import com.cryptomorin.xseries.messages.Titles;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -92,7 +90,7 @@ public class Config {
 
     private static ConfigurationSection setting;
     private static HashMap<String, List<String>> category;
-    private static Titles forgeTitle;
+    private static Title forgeTitle;
     private static Sound soundClickInventory;
     private static Sound soundForgeSuccess;
     private static Sound soundForgeFail;
@@ -118,7 +116,7 @@ public class Config {
             int fadeIn = setting.getInt("ForgeTitle.FadeIn", 10);
             int time = setting.getInt("ForgeTitle.Time", 20);
             int fadeOut = setting.getInt("ForgeTitle.FadeOut", 10);
-            forgeTitle = new Titles(ChatColor.translateAlternateColorCodes('&', title), ChatColor.translateAlternateColorCodes('&', subtitle), fadeIn, time, fadeOut);
+            forgeTitle = new Title(title, subtitle, fadeIn, time, fadeOut);
 
             soundClickInventory = valueOf(Sound.class, setting.getString("Sounds.ClickInventory")).orElse(Sound.UI_BUTTON_CLICK);
             soundForgeSuccess = valueOf(Sound.class, setting.getString("Sounds.ForgeSuccess")).orElse(Sound.BLOCK_ANVIL_USE);
@@ -152,7 +150,7 @@ public class Config {
     public static Sound getSoundForgeTitle() {
         return soundForgeTitle;
     }
-    public static Titles getForgeTitle() {
+    public static Title getForgeTitle() {
         return forgeTitle;
     }
 

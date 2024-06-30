@@ -10,7 +10,6 @@ import cn.jrmcdp.craftitem.holder.ForgeHolder;
 import java.util.*;
 
 import cn.jrmcdp.craftitem.minigames.utils.Pair;
-import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -57,11 +56,11 @@ public class Gui {
         items.clear();
         ConfigurationSection section = config.getConfigurationSection("Item");
         if (section != null) for (String key : section.getKeys(false)) {
-            XMaterial xItem = XMaterial.matchXMaterial(section.getString(key + ".Type", "STONE")).orElse(null);
-            org.bukkit.Material material = xItem == null ? null : xItem.parseMaterial();
-            if (material == null) {
-                continue;
-            }
+            org.bukkit.Material material = Utils
+                    .parseMaterial(section.getString(key + ".Type", "STONE"))
+                    .orElse(null);
+            if (material == null) continue;
+
             String name = ColorHelper.parseColor(section.getString(key + ".Name"));
             int amount = section.getInt(key + ".Amount", 1);
             List<String> lore = ColorHelper.parseColor(section.getStringList(key + ".Lore"));
@@ -98,7 +97,7 @@ public class Gui {
     public static void openGui(PlayerData playerData, String id, CraftData craftData) {
         Bukkit.getScheduler().runTaskAsynchronously(CraftItem.getPlugin(), () -> {
             Inventory inventory = buildGui(playerData, id, craftData);
-            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> {playerData.getPlayer().openInventory(inventory);});
+            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> playerData.getPlayer().openInventory(inventory));
         });
     }
 
