@@ -1,5 +1,7 @@
 package cn.jrmcdp.craftitem.data;
 
+import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.utils.Triple;
 import cn.jrmcdp.craftitem.utils.Utils;
 
 import java.util.*;
@@ -189,6 +191,34 @@ public class CraftData implements ConfigurationSerializable {
             }
         }
         return true;
+    }
+
+    public boolean isNotEnoughMaterial(Player player) {
+        List<Triple<ItemStack, Integer, Integer>> state = getMaterialState(player.getInventory());
+        state.removeIf(it -> it.getSecond() >= it.getThird());
+        if (!state.isEmpty()) {
+            Message.craft__not_enough_material.msg(player);
+            for (Triple<ItemStack, Integer, Integer> triple : state) {
+                Message.craft__not_enough_material_details.msg(player, triple.getFirst(), triple.getSecond(), triple.getThird());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public List<Triple<ItemStack, Integer, Integer>> getMaterialState(Inventory gui) {
+        List<Triple<ItemStack, Integer, Integer>> list = new ArrayList<>();
+        Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
+        for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
+            int amount = 0;
+            for (ItemStack i : gui.getStorageContents()) {
+                if (entry.getKey().isSimilar(i)) amount += i.getAmount();
+            }
+            list.add(Triple.of(entry.getKey(), amount, entry.getValue()));
+        }
+        list.sort(Comparator.comparingInt(Triple::getSecond));
+        Collections.reverse(list);
+        return list;
     }
 
     public ItemStack takeRandomMaterial(Player player, Inventory gui) {

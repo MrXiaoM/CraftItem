@@ -38,6 +38,7 @@ public enum Message {
     craft__success("&a成功锻造出了 &e%s&a."),
     craft__not_enough_money("&e没有足够的金币来锻造."),
     craft__not_enough_material("&e身上没有足够的材料."),
+    craft__not_enough_material_details("&7需要 %s&7 (&f%d &7/ &f%d&7)."),
     craft__process_success_small("&a锻造 小成功 ！！！ &f&l[ &a+ &e%d%% &f&l]"),
     craft__process_success_medium("&a锻造 成功 ！！！ &f&l[ &a+ &e%d%% &f&l]"),
     craft__process_success_big("&a锻造 大成功 ！！！ &f&l[ &a+ &e%d%% &f&l]"),

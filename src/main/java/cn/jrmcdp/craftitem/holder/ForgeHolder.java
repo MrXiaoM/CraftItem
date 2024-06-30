@@ -1,8 +1,6 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.utils.Triple;
-import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Gui;
 import cn.jrmcdp.craftitem.config.Icon;
@@ -33,7 +31,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ForgeHolder implements IHolder {
@@ -188,10 +185,8 @@ public class ForgeHolder implements IHolder {
                     Message.craft__not_enough_money.msg(player);
                     return;
                 }
-                if (!craftData.hasAllMaterial(player.getInventory())) {
-                    Message.craft__not_enough_material.msg(player);
-                    return;
-                }
+                if (craftData.isNotEnoughMaterial(player)) return;
+
                 player.closeInventory();
                 CraftItem.getEcon().withdrawPlayer(player, cost);
                 craftData.takeAllMaterial(player.getInventory());
@@ -227,10 +222,8 @@ public class ForgeHolder implements IHolder {
             Message.craft__not_enough_money.msg(player);
             return;
         }
-        if (!craftData.hasAllMaterial(player.getInventory())) {
-            Message.craft__not_enough_material.msg(player);
-            return;
-        }
+        if (craftData.isNotEnoughMaterial(player)) return;
+
         CraftItem.getEcon().withdrawPlayer(player, cost);
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
         final int multiple = RandomUtils.nextInt(3);
@@ -287,10 +280,8 @@ public class ForgeHolder implements IHolder {
             Message.craft__not_enough_money.msg(player);
             return;
         }
-        if (!craftData.hasAllMaterial(player.getInventory())) {
-            Message.craft__not_enough_material.msg(player);
-            return;
-        }
+        if (craftData.isNotEnoughMaterial(player)) return;
+
         player.closeInventory();
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -328,10 +319,8 @@ public class ForgeHolder implements IHolder {
 
     private void doCombo(Player player) {
         CraftData craftData = getCraftData();
-        if (!craftData.hasAllMaterial(player.getInventory())) {
-            Message.craft__not_enough_material.msg(player);
-            return;
-        }
+        if (craftData.isNotEnoughMaterial(player)) return;
+
         int combo = craftData.getCombo();
         int costOneTime = craftData.getCost();
         for (int i = 0; i < combo; i++) {
@@ -341,17 +330,13 @@ public class ForgeHolder implements IHolder {
             if (!doForgeResult(player, win, multiple, null)) {
                 break;
             }
-            if (!craftData.hasAllMaterial(player.getInventory())) {
-                Message.craft__not_enough_material.msg(player);
-                break;
-            }
+            if (craftData.isNotEnoughMaterial(player)) break;
         }
     }
 
     public boolean doForgeResult(Player player, boolean win, int multiple, Runnable cancel) {
         CraftData craftData = getCraftData();
-        if (cancel != null && !craftData.hasAllMaterial(player.getInventory())) {
-            Message.craft__not_enough_material.msg(player);
+        if (craftData.isNotEnoughMaterial(player)) {
             cancel.run();
             return false;
         }
