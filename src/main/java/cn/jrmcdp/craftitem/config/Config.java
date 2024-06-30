@@ -1,8 +1,8 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import cn.jrmcdp.craftitem.utils.Utils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,8 +28,8 @@ public class Config {
         }
 
         public boolean check(Player player) {
-            String i = PlaceholderAPI.setPlaceholders(player, input);
-            String o = PlaceholderAPI.setPlaceholders(player, output);
+            String i = PlaceholderSupport.setPlaceholders(player, input);
+            String o = PlaceholderSupport.setPlaceholders(player, output);
             boolean reversed = type.startsWith("!");
             String s = reversed ? type.substring(1) : type;
             switch (s) {

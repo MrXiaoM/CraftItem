@@ -8,6 +8,7 @@ import cn.jrmcdp.craftitem.listener.PlayerListener;
 import java.io.File;
 
 import cn.jrmcdp.craftitem.minigames.GameManager;
+import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -45,6 +46,7 @@ public class CraftItem extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        PlaceholderSupport.init();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
             miniGames = new GameManager(this);
         }

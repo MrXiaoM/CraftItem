@@ -12,7 +12,7 @@ import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.minigames.utils.Pair;
 import cn.jrmcdp.craftitem.minigames.utils.effect.FishingEffect;
-import me.clip.placeholderapi.PlaceholderAPI;
+import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -55,7 +55,7 @@ public class ForgeHolder implements IHolder {
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
         ForgeHolder holder = new ForgeHolder(playerData, id, craftData);
-        Inventory inventory = Bukkit.createInventory(holder, size, PlaceholderAPI.setPlaceholders(playerData.getPlayer(), title));
+        Inventory inventory = Bukkit.createInventory(holder, size, PlaceholderSupport.setPlaceholders(playerData.getPlayer(), title));
         holder.inventory = inventory;
         return inventory;
     }
@@ -175,7 +175,7 @@ public class ForgeHolder implements IHolder {
                 }
                 for (String str : craftData.getCommands()) {
                     String cmd = str.split("\\|\\|")[0];
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, cmd));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderSupport.setPlaceholders(player, cmd));
                 }
                 return;
             }
@@ -380,7 +380,7 @@ public class ForgeHolder implements IHolder {
                 }
                 for (String str : craftData.getCommands()) {
                     String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, cmd));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderSupport.setPlaceholders(player, cmd));
                 }
             } else {
                 switch (e.getMultiple()) {

@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.minigames.utils.Pair;
-import me.clip.placeholderapi.PlaceholderAPI;
+import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -43,7 +43,7 @@ public class Icon {
         if (name != null) meta.setDisplayName(name);
         if (!lore.isEmpty()) {
             List<String> lore = new ArrayList<>();
-            for (String s : PlaceholderAPI.setPlaceholders(player, this.lore)) {
+            for (String s : PlaceholderSupport.setPlaceholders(player, this.lore)) {
                 for (Pair<String, Object> pair : replacements) {
                     if (s.contains(pair.getKey())) {
                         s = s.replace(pair.getKey(), pair.getValue().toString());
@@ -99,7 +99,7 @@ public class Icon {
 
     public static void runCommands(Player player, List<String> commands) {
         if (commands == null || commands.isEmpty()) return;
-        commands = PlaceholderAPI.setPlaceholders(player, commands);
+        commands = PlaceholderSupport.setPlaceholders(player, commands);
         for (String s : commands) {
             if (s.startsWith("[player]")) {
                 Bukkit.dispatchCommand(player, s.substring(8).trim());

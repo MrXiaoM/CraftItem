@@ -7,8 +7,8 @@ main: cn.jrmcdp.craftitem.CraftItem
 api-version: 1.13
 depend:
   - Vault
-  - PlaceholderAPI
 softdepend:
+  - PlaceholderAPI
   - ProtocolLib
 commands:
   CraftItem:

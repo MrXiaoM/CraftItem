@@ -8,9 +8,8 @@ import cn.jrmcdp.craftitem.holder.EditHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jrmcdp.craftitem.utils.Utils;
+import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import com.google.common.collect.Lists;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -193,7 +192,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
         }
         for (String str : craftData.getCommands()) {
             String cmd = str.split("\\|\\|")[0];
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, cmd));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderSupport.setPlaceholders(player, cmd));
         }
         return true;
     }
