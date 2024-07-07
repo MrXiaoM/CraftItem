@@ -164,7 +164,11 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public List<ItemStack> getItems() {
-        return this.items;
+        List<ItemStack> list = new ArrayList<>();
+        for (ItemStack item : items) {
+            list.add(item.clone());
+        }
+        return list;
     }
 
     public List<String> getCommands() {
