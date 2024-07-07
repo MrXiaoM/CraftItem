@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.config.Gui;
 import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Craft;
@@ -162,6 +163,16 @@ public class EditHolder implements IHolder {
                             Craft.save(getId(), craftData);
                             HandlerList.unregisterAll(this);
                             Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
+                            int count1 = 0, count2 = 0;
+                            for (char c : Gui.getChest()) {
+                                if (c == '材') count1++;
+                            }
+                            for (char c : Gui.getChestTime()) {
+                                if (c == '材') count2++;
+                            }
+                            if (list.size() > count1 || list.size() > count2) {
+                                Message.gui__edit__item__material__too_much.msg(player);
+                            }
                         }
                     }
                 }, CraftItem.getPlugin());

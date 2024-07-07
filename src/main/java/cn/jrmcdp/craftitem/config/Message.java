@@ -59,6 +59,7 @@ public enum Message {
             "&7当前:",
             "%s"
     ),
+    gui__edit__item__material__too_much("&e你放的材料太多了! 超出了界面能够显示的范围，玩家将无法从界面中看到完整材料列表。&b请调整材料列表，或调整界面配置。"),
     gui__edit__item__successful_rate__name("&a成功率"),
     gui__edit__item__successful_rate__lore(
             "&7点击 编辑",
