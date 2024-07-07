@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.jrmcdp"
-version = "1.0.9"
+version = "1.1.0"
 val targetJavaVersion = 8
 
 repositories {
