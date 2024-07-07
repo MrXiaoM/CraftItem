@@ -9,6 +9,7 @@ import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -43,7 +44,7 @@ public class GameManager implements Listener {
         this.miniGames = new MiniGames(plugin);
         Bukkit.getPluginManager().registerEvents(this, plugin);
         if (Utils.isPresent("com.destroystokyo.paper.event.player.PlayerJumpEvent")) {
-            Bukkit.getPluginManager().registerEvents(new OnPaper(this), plugin);
+            Bukkit.getPluginManager().registerEvents(new OnPaper(this::onJump), plugin);
         } else {
             plugin.getLogger().warning("当前服务端非 Paper 服务端，困难锻造中 dance 类型的小游戏（默认配置不使用）将无法正常使用");
         }
@@ -137,6 +138,15 @@ public class GameManager implements Listener {
         GamingPlayer gamingPlayer = gamingPlayerMap.get(event.getPlayer().getUniqueId());
         if (gamingPlayer != null) {
             if (gamingPlayer.onSneak())
+                event.setCancelled(true);
+        }
+    }
+
+    private void onJump(Cancellable event, Player player) {
+        if (event.isCancelled()) return;
+        GamingPlayer gamingPlayer = gamingPlayerMap.get(player.getUniqueId());
+        if (gamingPlayer != null) {
+            if (gamingPlayer.onJump())
                 event.setCancelled(true);
         }
     }

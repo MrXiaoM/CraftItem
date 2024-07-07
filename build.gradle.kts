@@ -4,31 +4,42 @@ plugins {
     id ("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-group = "cn.jrmcdp"
-version = "1.1.0"
 val targetJavaVersion = 8
+allprojects {
+    group = "cn.jrmcdp"
+    version = "1.1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://repo.codemc.io/repository/maven-public/")
-    maven("https://jitpack.io")
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
+    repositories {
+        mavenCentral()
+        maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://repo.codemc.io/repository/maven-public/")
+        maven("https://jitpack.io")
+        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
+    }
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
+            options.release.set(targetJavaVersion)
+        }
+    }
 }
 
+fun DependencyHandlerScope.impl(dependencyNotation: Any): Dependency? {
+    return implementation(dependencyNotation)
+}
 dependencies {
-    // 只在 cn.jrmcdp.craftitem.minigames.OnPaper#onJump 用到了 PaperAPI
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
 
-    implementation("net.kyori:adventure-api:4.15.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
-    implementation("net.objecthunter:exp4j:0.4.8")
+    impl("net.kyori:adventure-api:4.15.0")
+    impl("net.kyori:adventure-platform-bukkit:4.3.2")
+    impl("net.kyori:adventure-text-minimessage:4.14.0")
+    impl("net.objecthunter:exp4j:0.4.8")
+    impl(project(":paper"))
 }
 
 java {
@@ -60,12 +71,6 @@ tasks {
         from(sourceSets.main.get().resources.srcDirs) {
             expand(mapOf("version" to version))
             include("plugin.yml")
-        }
-    }
-    withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
-            options.release.set(targetJavaVersion)
         }
     }
 }
