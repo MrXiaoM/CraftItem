@@ -1,5 +1,7 @@
 # CraftItem
 
+[![Releases](https://img.shields.io/github/downloads/MrXiaoM/CraftItem/total)](https://github.com/MrXiaoM/CraftItem/releases)
+
 本插件 Fork 自 https://gitee.com/zhibumiao/CraftItem
 
 ## 介绍
