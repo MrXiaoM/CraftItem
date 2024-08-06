@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
@@ -218,7 +219,7 @@ public enum Message {
     }
     
     public static void reload() {
-        if (!FileConfig.Message.exists()) save();
+        save(!FileConfig.Message.exists());
         FileConfiguration config = FileConfig.Message.getConfig();
         Message.config.clear();
         for (Message m : values()) {
@@ -230,10 +231,22 @@ public enum Message {
         }
     }
     public static void save() {
+        save(true);
+    }
+    public static void save(boolean overwrite) {
         YamlConfiguration config = FileConfig.Message.getConfig();
+        boolean save = false;
         for (Message m : values()) {
-            config.set(m.key, Message.config.getOrDefault(m, m.defValue).replace("§", "&"));
+            if (overwrite || !config.contains(m.key)) {
+                config.set(m.key, Message.config.getOrDefault(m, m.defValue).replace("§", "&"));
+                save = true;
+            }
         }
-        FileConfig.Message.saveConfig(config);
+        if (save) {
+            FileConfig.Message.saveConfig(config);
+            if (!overwrite) {
+                CraftItem.getPlugin().getLogger().info("Message.yml 已自动更新");
+            }
+        }
     }
 }
