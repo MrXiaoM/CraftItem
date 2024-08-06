@@ -63,31 +63,31 @@ public class EditHolder implements IHolder {
 
     private ItemStack[] getItems() {
         ItemStack[] items = new ItemStack[invSize = 18];
-        items[0] = getItemStack(Material.WHEAT, Message.gui__edit__item__material__name.get(),
+        items[0] = getItemStack(Utils.getMaterial("WHEAT"), Message.gui__edit__item__material__name.get(),
                 Message.gui__edit__item__material__lore.list(
                     String.join("\n§7", Utils.itemToListString(craftData.getMaterial()))
                 ));
-        items[1] = getItemStack(Material.COMPASS, Message.gui__edit__item__successful_rate__name.get(),
+        items[1] = getItemStack(Utils.getMaterial("COMPASS"), Message.gui__edit__item__successful_rate__name.get(),
                 Message.gui__edit__item__successful_rate__lore.list(
                     craftData.getChance()
                 ));
-        items[2] = getItemStack(Material.HOPPER, Message.gui__edit__item__multiple__name.get(),
+        items[2] = getItemStack(Utils.getMaterial("HOPPER"), Message.gui__edit__item__multiple__name.get(),
                 Message.gui__edit__item__multiple__lore.list(
                     craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                 ));
-        items[3] = getItemStack(Material.GOLD_INGOT, Message.gui__edit__item__cost__name.get(),
+        items[3] = getItemStack(Utils.getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.get(),
                 Message.gui__edit__item__cost__lore.list(
                     craftData.getCost()
                 ));
-        items[4] = getItemStack(Material.PAINTING, Message.gui__edit__item__display__name.get(),
+        items[4] = getItemStack(Utils.getMaterial("PAINTING"), Message.gui__edit__item__display__name.get(),
                 Message.gui__edit__item__display__lore.list(
                     craftData.getDisplayItem()
                 ));
-        items[5] = getItemStack(Material.CHEST, Message.gui__edit__item__item__name.get(),
+        items[5] = getItemStack(Utils.getMaterial("CHEST"), Message.gui__edit__item__item__name.get(),
                 Message.gui__edit__item__item__lore.list(
                     String.join("\n§7", Utils.itemToListString(craftData.getItems()))
                 ));
-        items[6] = getItemStack(Material.PAPER, Message.gui__edit__item__command__name.get(),
+        items[6] = getItemStack(Utils.getMaterial("PAPER"), Message.gui__edit__item__command__name.get(),
                 Message.gui__edit__item__command__lore.list(
                     String.join("\n§7", craftData.getCommands())
                 ));
@@ -99,27 +99,27 @@ public class EditHolder implements IHolder {
     }
 
     private ItemStack item7() {
-        return getItemStack(Material.CLOCK, Message.gui__edit__item__time__name.get(),
+        return getItemStack(Utils.getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.get(),
                 Message.gui__edit__item__time__lore.list(
                         craftData.getTimeDisplay(), craftData.getTimeCost()
                 ));
     }
 
     private ItemStack item8() {
-        return getItemStack(Material.FISHING_ROD, Message.gui__edit__item__difficult__name.get(),
+        return getItemStack(Utils.getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.get(),
                 Message.gui__edit__item__difficult__lore.list(
                         (craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).get()
                 ));
     }
     private ItemStack item9() {
-        return getItemStack(Material.BOWL, Message.gui__edit__item__fail_times__name.get(),
+        return getItemStack(Utils.getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.get(),
                 Message.gui__edit__item__fail_times__lore.list(
                         craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.get()
                 ));
     }
 
     private ItemStack item10() {
-        return getItemStack(Material.MAGMA_CREAM, Message.gui__edit__item__combo__name.get(),
+        return getItemStack(Utils.getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.get(),
                 Message.gui__edit__item__combo__lore.list(
                         craftData.getCombo() > 0 ? String.valueOf(craftData.getCombo()) : Message.gui__edit__unset.get()
                 ));
@@ -302,7 +302,7 @@ public class EditHolder implements IHolder {
             case 6: {
                 loreGui = Bukkit.createInventory(null, 54, Message.gui__edit_command_title.get());
                 for (String line : craftData.getCommands()) {
-                    ItemStack itemStack = new ItemStack(Material.PAPER);
+                    ItemStack itemStack = new ItemStack(Utils.getMaterial("PAPER"));
                     ItemMeta itemMeta = itemStack.getItemMeta();
                     itemMeta.setDisplayName(line);
                     itemStack.setItemMeta(itemMeta);
@@ -327,7 +327,7 @@ public class EditHolder implements IHolder {
                                     if (e.getPlayer().equals(player)) {
                                         e.setCancelled(true);
                                         String id = e.getMessage();
-                                        ItemStack itemStack = new ItemStack(Material.PAPER);
+                                        ItemStack itemStack = new ItemStack(Utils.getMaterial("PAPER"));
                                         ItemMeta itemMeta = itemStack.getItemMeta();
                                         itemMeta.setDisplayName(id.replace("&", "§"));
                                         itemStack.setItemMeta(itemMeta);

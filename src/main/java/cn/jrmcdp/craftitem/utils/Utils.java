@@ -16,6 +16,17 @@ public class Utils {
         }
     }
 
+    public static org.bukkit.Material getMaterial(String... ids) {
+        return getMaterial(org.bukkit.Material.STONE, ids);
+    }
+
+    public static org.bukkit.Material getMaterial(org.bukkit.Material def, String... ids) {
+        for (String id : ids) {
+            org.bukkit.Material material = org.bukkit.Material.getMaterial(id.toUpperCase());
+            if (material != null) return material;
+        }
+        return def;
+    }
 
     public static List<String> itemToListString(Collection<ItemStack> collection) {
         List<String> list = new ArrayList<>();
