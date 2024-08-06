@@ -16,6 +16,15 @@ public class Utils {
         }
     }
 
+    public static ItemStack getItemStack(org.bukkit.Material material, String name, List<String> lores) {
+        ItemStack itemStack = new ItemStack(material);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(name);
+        itemMeta.setLore(lores);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
     public static org.bukkit.Material getMaterial(String... ids) {
         return getMaterial(org.bukkit.Material.STONE, ids);
     }
