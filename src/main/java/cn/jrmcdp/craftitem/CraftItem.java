@@ -9,6 +9,7 @@ import java.io.File;
 
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
+import cn.jrmcdp.craftitem.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -54,7 +55,7 @@ public class CraftItem extends JavaPlugin {
         plugin = this;
         ConfigurationSerialization.registerClass(CraftData.class);
         Message.reload();
-        Material.reload();
+        CraftMaterial.reload();
         Config.reload();
         Craft.reload();
         Gui.reload();
@@ -80,9 +81,8 @@ public class CraftItem extends JavaPlugin {
     public void saveDefaultConfig() {
         super.saveDefaultConfig();
         File folder = new File(getDataFolder(), "PlayerData");
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
+        Utils.createDirectory(folder);
+
         String[] files = {
                 "Material.yml",
                 "Craft.yml",

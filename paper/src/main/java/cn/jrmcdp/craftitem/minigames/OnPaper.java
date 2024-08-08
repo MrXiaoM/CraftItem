@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class OnPaper implements Listener {
-    PlayerJump playerJump;
+    private final PlayerJump playerJump;
     public interface PlayerJump {
         void run(Cancellable event, Player player);
     }

@@ -2,8 +2,6 @@ package cn.jrmcdp.craftitem.minigames.utils.game;
 
 import cn.jrmcdp.craftitem.minigames.GameData;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
-import cn.jrmcdp.craftitem.minigames.utils.effect.Effect;
 
 public interface GamingPlayer {
 
@@ -47,10 +45,4 @@ public interface GamingPlayer {
     Player getPlayer();
 
     GameData getGame();
-
-    /**
-     * @return effect reward based on game results
-     */
-    @Nullable
-    Effect getEffectReward();
 }

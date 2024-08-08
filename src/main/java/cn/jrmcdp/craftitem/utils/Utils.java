@@ -1,8 +1,14 @@
 package cn.jrmcdp.craftitem.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
-import cn.jrmcdp.craftitem.config.Material;
+import cn.jrmcdp.craftitem.config.CraftMaterial;
+import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -16,22 +22,44 @@ public class Utils {
         }
     }
 
-    public static ItemStack getItemStack(org.bukkit.Material material, String name, List<String> lores) {
+    @CanIgnoreReturnValue
+    public static boolean createDirectory(File file) {
+        return !file.exists() && file.mkdirs();
+    }
+
+    @CanIgnoreReturnValue
+    public static boolean createNewFile(File file) {
+        if (file.exists()) return false;
+        try {
+            return file.createNewFile();
+        } catch (IOException e) {
+            LogUtils.warn("创建文件 " + file.getName() + " 时出现一个错误", e);
+            return false;
+        }
+    }
+
+    public static void updateInventory(Player player) {
+        player.updateInventory();
+    }
+
+    public static ItemStack getItemStack(Material material, String name, List<String> lore) {
         ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(name);
-        itemMeta.setLore(lores);
-        itemStack.setItemMeta(itemMeta);
+        ItemMeta meta = itemStack.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(name);
+            meta.setLore(lore);
+        }
+        itemStack.setItemMeta(meta);
         return itemStack;
     }
 
-    public static org.bukkit.Material getMaterial(String... ids) {
-        return getMaterial(org.bukkit.Material.STONE, ids);
+    public static Material getMaterial(String... ids) {
+        return getMaterial(Material.STONE, ids);
     }
 
-    public static org.bukkit.Material getMaterial(org.bukkit.Material def, String... ids) {
+    public static Material getMaterial(Material def, String... ids) {
         for (String id : ids) {
-            org.bukkit.Material material = org.bukkit.Material.getMaterial(id.toUpperCase());
+            Material material = Material.getMaterial(id.toUpperCase());
             if (material != null) return material;
         }
         return def;
@@ -75,9 +103,9 @@ public class Utils {
         }
     }
 
-    public static Optional<org.bukkit.Material> parseMaterial(String s) {
-        Class<org.bukkit.Material> m = org.bukkit.Material.class;
-        Optional<org.bukkit.Material> material = valueOf(m, s);
+    public static Optional<Material> parseMaterial(String s) {
+        Class<Material> m = Material.class;
+        Optional<Material> material = valueOf(m, s);
         if (!material.isPresent()) { // some legacy material (1.12.2 and lower)
             String lower = s.toLowerCase();
             if (lower.contains("stained_glass_pane")) return valueOf(m, "stained_glass_pane");
@@ -104,10 +132,10 @@ public class Utils {
     public static String getItemName(ItemStack itemStack) {
         if (itemStack == null) return "空";
         if (itemStack.hasItemMeta()) {
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if (itemMeta.hasDisplayName()) return itemMeta.getDisplayName();
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta != null && meta.hasDisplayName()) return meta.getDisplayName();
         }
         String name = itemStack.getType().name();
-        return Material.getMaterial().getOrDefault(name, name);
+        return CraftMaterial.getMaterial().getOrDefault(name, name);
     }
 }

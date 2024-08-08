@@ -24,31 +24,13 @@ public class PlayerData {
         this.scoreMap = new HashMap<>();
         this.timeMap = new HashMap<>();
         this.failMap = new HashMap<>();
-        load("ForgeData", (section, key) -> {
-            this.scoreMap.put(key, section.getInt(key));
-        });
-        load("TimeForgeData", (section, key) -> {
-            this.timeMap.put(key, section.getLong(key));
-        });
-        load("FailForgeData", (section, key) -> {
-            this.failMap.put(key, section.getInt(key));
-        });
-    }
-
-    public YamlConfiguration getConfig() {
-        return this.config;
+        load("ForgeData", (section, key) -> this.scoreMap.put(key, section.getInt(key)));
+        load("TimeForgeData", (section, key) -> this.timeMap.put(key, section.getLong(key)));
+        load("FailForgeData", (section, key) -> this.failMap.put(key, section.getInt(key)));
     }
 
     public Player getPlayer() {
         return this.player;
-    }
-
-    public HashMap<String, Integer> getScoreMap() {
-        return this.scoreMap;
-    }
-
-    public HashMap<String, Long> getTimeMap() {
-        return this.timeMap;
     }
 
     public Integer getScore(String key) {
@@ -84,15 +66,13 @@ public class PlayerData {
         return score;
     }
 
-    public Integer setFailTimes(String key, int score) {
+    public void setFailTimes(String key, int score) {
         this.failMap.put(key, score);
-        return score;
     }
 
-    public Long setTime(String key, long endTime) {
+    public void setTime(String key, long endTime) {
         endTime = Math.max(System.currentTimeMillis(), endTime);
         this.timeMap.put(key, endTime);
-        return endTime;
     }
 
     public void removeTime(String key) {
@@ -100,11 +80,11 @@ public class PlayerData {
     }
 
     public void clearScore(String key) {
-        this.scoreMap.put(key, 0);
+        setScore(key, 0);
     }
 
     public void clearFailTimes(String key) {
-        this.failMap.put(key, 0);
+        setFailTimes(key, 0);
     }
 
     private void load(String key, BiConsumer<ConfigurationSection, String> consumer) {

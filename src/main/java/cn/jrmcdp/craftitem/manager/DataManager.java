@@ -3,10 +3,12 @@ package cn.jrmcdp.craftitem.manager;
 import cn.jrmcdp.craftitem.data.PlayerData;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.entity.Player;
 
 public class DataManager {
-    public static HashMap<String, PlayerData> playerDataHashMap = new HashMap<>();
+    public static final Map<String, PlayerData> playerDataHashMap = new HashMap<>();
 
     public static PlayerData getOrCreatePlayerData(Player player) {
         PlayerData playerData = playerDataHashMap.get(player.getName());

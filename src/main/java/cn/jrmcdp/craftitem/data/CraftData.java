@@ -67,7 +67,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public String getTimeDisplay() {
-        return getTimeDisplay(time, "无");
+        return getTimeDisplay("无");
     }
     public String getTimeDisplay(String noneTips) {
         return getTimeDisplay(time, noneTips);
@@ -199,11 +199,11 @@ public class CraftData implements ConfigurationSerializable {
 
     public boolean isNotEnoughMaterial(Player player) {
         List<Triple<ItemStack, Integer, Integer>> state = getMaterialState(player.getInventory());
-        state.removeIf(it -> it.getSecond() >= it.getThird());
+        state.removeIf(it -> it.second >= it.third);
         if (!state.isEmpty()) {
             Message.craft__not_enough_material.msg(player);
             for (Triple<ItemStack, Integer, Integer> triple : state) {
-                Message.craft__not_enough_material_details.msg(player, triple.getFirst(), triple.getSecond(), triple.getThird());
+                Message.craft__not_enough_material_details.msg(player, triple.first, triple.second, triple.third);
             }
             return true;
         }
@@ -220,7 +220,7 @@ public class CraftData implements ConfigurationSerializable {
             }
             list.add(Triple.of(entry.getKey(), amount, entry.getValue()));
         }
-        list.sort(Comparator.comparingInt(Triple::getSecond));
+        list.sort(Comparator.comparingInt(it -> it.second));
         Collections.reverse(list);
         return list;
     }
@@ -232,8 +232,8 @@ public class CraftData implements ConfigurationSerializable {
 
         MaterialDisappearEvent event = new MaterialDisappearEvent(player, this, item, clone);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return null;
         clone = event.getItemToDisappear();
+        if (event.isCancelled() || clone == null) return null;
 
         gui.removeItem(clone);
         return clone;

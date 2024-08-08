@@ -4,11 +4,11 @@ import cn.jrmcdp.craftitem.ColorHelper;
 import org.bukkit.entity.Player;
 
 public class Title {
-    String title;
-    String subTitle;
-    int fadeIn;
-    int stay;
-    int fadeOut;
+    public final String title;
+    public final String subTitle;
+    public final int fadeIn;
+    public final int stay;
+    public final int fadeOut;
 
     public Title(String title, String subTitle, int fadeIn, int stay, int fadeOut) {
         this.title = ColorHelper.parseColor(title);

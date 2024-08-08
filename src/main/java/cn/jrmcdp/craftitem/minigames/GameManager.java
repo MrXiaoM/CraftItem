@@ -1,8 +1,9 @@
 package cn.jrmcdp.craftitem.minigames;
 
+import cn.jrmcdp.craftitem.minigames.utils.game.GameSettings;
+import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.minigames.utils.*;
-import cn.jrmcdp.craftitem.minigames.utils.effect.Effect;
 import cn.jrmcdp.craftitem.minigames.utils.game.BasicGameConfig;
 import cn.jrmcdp.craftitem.minigames.utils.game.GameInstance;
 import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
@@ -15,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,14 +29,13 @@ public class GameManager implements Listener {
     public static GameManager inst() {
         return inst;
     }
-    private final MiniGames miniGames;
-    private final VersionManager versionManager;
+    public final MiniGames miniGames;
+    public final VersionManager versionManager;
     protected final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap = new ConcurrentHashMap<>();
     public GameManager(JavaPlugin plugin) {
         if (GameManager.inst != null) throw new IllegalStateException("GameManager is already loaded");
         GameManager.plugin = plugin;
         GameManager.inst = this;
-        NMSHelper.init();
 
         this.versionManager = new VersionManager(plugin);
         ReflectionUtils.load();
@@ -48,10 +47,6 @@ public class GameManager implements Listener {
         } else {
             plugin.getLogger().warning("当前服务端非 Paper 服务端，困难锻造中 dance 类型的小游戏（默认配置不使用）将无法正常使用");
         }
-    }
-
-    public MiniGames getMiniGames() {
-        return miniGames;
     }
 
     public VersionManager getVersionManager() {
@@ -161,21 +156,22 @@ public class GameManager implements Listener {
         }
     }
 
-    @Nullable
-    public GamingPlayer startGame(GameData game, Player player, String key, Effect effect) {
-        if (gamingPlayerMap.containsKey(player.getUniqueId())) return null;
+    public void startGame(GameData game, Player player, String key) {
+        if (gamingPlayerMap.containsKey(player.getUniqueId())) return;
         Pair<BasicGameConfig, GameInstance> gamePair = miniGames.getGameInstance(key);
         if (key == null) {
             LogUtils.warn("No game is available for player:" + player.getName());
-            return null;
+            return;
         }
         if (gamePair == null) {
             LogUtils.warn(String.format("Game %s doesn't exist.", key));
-            return null;
+            return;
         }
-        GamingPlayer gamingPlayer;
-        gamingPlayerMap.put(player.getUniqueId(), gamingPlayer = gamePair.right().start(game, player, gamePair.left().getGameSetting(effect)));
-        return gamingPlayer;
+        BasicGameConfig cfg = gamePair.left();
+        GameInstance inst = gamePair.right();
+        GameSettings settings = cfg.getGameSetting();
+        GamingPlayer gamePlayer = inst.start(game, player, settings);
+        gamingPlayerMap.put(player.getUniqueId(), gamePlayer);
     }
 
 }

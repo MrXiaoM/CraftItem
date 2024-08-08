@@ -3,18 +3,16 @@ package cn.jrmcdp.craftitem.minigames.utils.game;
 import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-import cn.jrmcdp.craftitem.minigames.utils.effect.Effect;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
-    protected long deadline;
-    protected boolean success;
+    protected final GameData game;
+    protected final Player player;
+    protected final GameSettings settings;
+    protected final long deadline;
     protected BukkitTask task;
-    protected GameData game;
-    protected Player player;
-    protected GameSettings settings;
+    protected boolean success;
     protected boolean isTimeOut;
 
     public AbstractGamingPlayer(GameData game, Player player, GameSettings settings) {
@@ -79,11 +77,6 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     @Override
     public Player getPlayer() {
         return player;
-    }
-
-    @Override
-    public Effect getEffectReward() {
-        return null;
     }
 
     @Override

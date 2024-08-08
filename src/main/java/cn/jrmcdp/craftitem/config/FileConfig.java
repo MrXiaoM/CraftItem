@@ -4,6 +4,8 @@ import cn.jrmcdp.craftitem.CraftItem;
 import java.io.File;
 import java.io.IOException;
 
+import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
+import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum FileConfig {
@@ -35,13 +37,9 @@ public enum FileConfig {
     }
 
     public YamlConfiguration loadConfig(String path, String name) {
-        this.file = new File(CraftItem.getPlugin().getDataFolder(), path + File.separator + name + ".yml");
-        if (!this.file.exists())
-            try {
-                this.file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        File parent = CraftItem.getPlugin().getDataFolder();
+        this.file = new File(parent, path + File.separator + name + ".yml");
+        Utils.createNewFile(this.file);
         return YamlConfiguration.loadConfiguration(this.file);
     }
 
@@ -53,12 +51,13 @@ public enum FileConfig {
         try {
             config.save(this.file);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.warn("保存 " + file.getName() + " 时出现一个错误", e);
         }
     }
 
     public void saveConfig(String path, String name, YamlConfiguration config) {
-        this.file = new File(CraftItem.getPlugin().getDataFolder(), path + File.separator + name + ".yml");
+        File parent = CraftItem.getPlugin().getDataFolder();
+        this.file = new File(parent, path + File.separator + name + ".yml");
         saveConfig(config);
     }
 }

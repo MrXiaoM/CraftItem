@@ -87,7 +87,6 @@ public class Config {
             }
         }
     }
-    private static FileConfiguration config;
 
     private static ConfigurationSection setting;
     private static HashMap<String, List<String>> category;
@@ -100,7 +99,7 @@ public class Config {
     private static final List<Condition> timeForgeConditions = new ArrayList<>();
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
-        config = CraftItem.getPlugin().getConfig();
+        FileConfiguration config = CraftItem.getPlugin().getConfig();
         config.setDefaults(new MemoryConfiguration());
         setting = config.getConfigurationSection("Setting");
         if (setting != null) {
@@ -134,10 +133,6 @@ public class Config {
             String output = tfcSection.getString(key + ".output");
             timeForgeConditions.add(new Condition(input, type, output));
         }
-    }
-
-    public static FileConfiguration getConfig() {
-        return config;
     }
 
     public static Sound getSoundClickInventory() {

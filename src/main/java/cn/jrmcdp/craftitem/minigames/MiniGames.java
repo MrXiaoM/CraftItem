@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.minigames;
 
+import cn.jrmcdp.craftitem.utils.Pair;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
@@ -8,13 +9,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import cn.jrmcdp.craftitem.minigames.utils.*;
-import cn.jrmcdp.craftitem.minigames.utils.effect.BaseEffect;
 import cn.jrmcdp.craftitem.minigames.utils.game.AbstractGamingPlayer;
 import cn.jrmcdp.craftitem.minigames.utils.game.BasicGameConfig;
 import cn.jrmcdp.craftitem.minigames.utils.game.GameFactory;
 import cn.jrmcdp.craftitem.minigames.utils.game.GameInstance;
-import cn.jrmcdp.craftitem.minigames.utils.misc.PlainValue;
-import cn.jrmcdp.craftitem.minigames.utils.misc.Value;
 
 import java.io.File;
 import java.util.*;
@@ -32,7 +30,6 @@ public class MiniGames {
         this.gameInstanceMap = new HashMap<>();
         this.registerInbuiltGames();
     }
-
 
     private void registerInbuiltGames() {
         this.registerHoldGame();
@@ -57,49 +54,17 @@ public class MiniGames {
         unload();
         this.gameCreatorMap.clear();
     }
-    public static BaseEffect getBaseEffect(ConfigurationSection section) {
-        if (section == null) return new BaseEffect(
-                new PlainValue(0), new PlainValue(1d),
-                new PlainValue(0), new PlainValue(1d),
-                new PlainValue(0), new PlainValue(1d)
-        );
-        Value waitTime = section.contains("wait-time") ? ConfigUtils.getValue(section.get("wait-time")) : new PlainValue(0);
-        Value difficulty = section.contains("difficulty") ? ConfigUtils.getValue(section.get("difficulty")) : new PlainValue(0);
-        Value gameTime = section.contains("game-time") ? ConfigUtils.getValue(section.get("game-time")) : new PlainValue(0);
-        Value waitTimeMultiplier = section.contains("wait-time-multiplier") ? ConfigUtils.getValue(section.get("wait-time-multiplier")) : new PlainValue(1);
-        Value difficultyMultiplier = section.contains("difficulty-multiplier") ? ConfigUtils.getValue(section.get("difficulty-multiplier")) : new PlainValue(1);
-        Value gameTimeMultiplier = section.contains("game-time-multiplier") ? ConfigUtils.getValue(section.get("game-time-multiplier")) : new PlainValue(1);
-        return new BaseEffect(
-                waitTime, waitTimeMultiplier,
-                difficulty, difficultyMultiplier,
-                gameTime, gameTimeMultiplier
-        );
-    }
+
     /**
      * Registers a new game type with the specified type identifier.
      *
-     * @param type         The type identifier for the game.
-     * @param gameFactory  The {@link GameFactory} that creates instances of the game.
-     * @return {@code true} if the registration was successful, {@code false} if the type identifier is already registered.
+     * @param type        The type identifier for the game.
+     * @param gameFactory The {@link GameFactory} that creates instances of the game.
      */
-    
-    public boolean registerGameType(String type, GameFactory gameFactory) {
-        if (gameCreatorMap.containsKey(type))
-            return false;
-        else
+    public void registerGameType(String type, GameFactory gameFactory) {
+        if (!gameCreatorMap.containsKey(type)) {
             gameCreatorMap.put(type, gameFactory);
-        return true;
-    }
-
-    /**
-     * Unregisters a game type with the specified type identifier.
-     *
-     * @param type The type identifier of the game to unregister.
-     * @return {@code true} if the game type was successfully unregistered, {@code false} if the type identifier was not found.
-     */
-    
-    public boolean unregisterGameType(String type) {
-        return gameCreatorMap.remove(type) != null;
+        }
     }
 
     /**
@@ -169,7 +134,7 @@ public class MiniGames {
                     continue;
                 }
 
-                BasicGameConfig.Builder basicGameBuilder = new BasicGameConfig.Builder();
+                BasicGameConfig.Builder basicGameBuilder = BasicGameConfig.builder();
                 Object time = section.get("time", 15);
                 if (time instanceof String) {
                     String[] split = ((String) time).split("~");
@@ -427,7 +392,7 @@ public class MiniGames {
                 public void onTick() {
                     if (struggling_time <= 0) {
                         if (Math.random() < ((double) settings.getDifficulty() / 4000)) {
-                            struggling_time = (int) (10 + Math.random() * (settings.getDifficulty() / 4));
+                            struggling_time = (int) (10 + Math.random() * ((double) settings.getDifficulty() / 4));
                         }
                     } else {
                         struggling_time--;
@@ -508,8 +473,8 @@ public class MiniGames {
             String tip = section.getString("tip");
             boolean easy = section.getBoolean("easy", false);
 
-            String correctSound = section.getString("sound.correct", "minecraft:block.amethyst_block.hit");
-            String wrongSound = section.getString("sound.wrong", "minecraft:block.anvil.land");
+            Key correctSound = key(section.getString("sound.correct", "minecraft:block.amethyst_block.hit"));
+            Key wrongSound = key(section.getString("sound.wrong", "minecraft:block.anvil.land"));
 
             return (game, player, settings) -> new AbstractGamingPlayer(game, player, settings) {
 
@@ -548,7 +513,7 @@ public class MiniGames {
                         AdventureManagerImpl.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
-                                Key.key(wrongSound),
+                                wrongSound,
                                 1,
                                 1
                         );
@@ -559,7 +524,7 @@ public class MiniGames {
                     AdventureManagerImpl.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
-                            Key.key(correctSound),
+                            correctSound,
                             1,
                             1
                     );
@@ -581,7 +546,7 @@ public class MiniGames {
                         AdventureManagerImpl.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
-                                Key.key(wrongSound),
+                                wrongSound,
                                 1,
                                 1
                         );
@@ -592,7 +557,7 @@ public class MiniGames {
                     AdventureManagerImpl.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
-                            Key.key(correctSound),
+                            correctSound,
                             1,
                             1
                     );
@@ -614,7 +579,7 @@ public class MiniGames {
                         AdventureManagerImpl.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
-                                Key.key(wrongSound),
+                                wrongSound,
                                 1,
                                 1
                         );
@@ -625,7 +590,7 @@ public class MiniGames {
                     AdventureManagerImpl.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
-                            Key.key(correctSound),
+                            correctSound,
                             1,
                             1
                     );
@@ -652,7 +617,7 @@ public class MiniGames {
                         AdventureManagerImpl.getInstance().sendSound(
                                 player,
                                 Sound.Source.PLAYER,
-                                Key.key(wrongSound),
+                                wrongSound,
                                 1,
                                 1
                         );
@@ -663,7 +628,7 @@ public class MiniGames {
                     AdventureManagerImpl.getInstance().sendSound(
                             player,
                             Sound.Source.PLAYER,
-                            Key.key(correctSound),
+                            correctSound,
                             1,
                             1
                     );
@@ -758,7 +723,7 @@ public class MiniGames {
                             );
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LogUtils.warn("显示 dance 小游戏的 UI 时出现错误", e);
                     }
                 }
             };
@@ -1157,5 +1122,9 @@ public class MiniGames {
                 }
             };
         }));
+    }
+
+    private static Key key(String string) {
+        return Key.key(string, ':');
     }
 }

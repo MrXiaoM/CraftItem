@@ -230,9 +230,6 @@ public enum Message {
             }
         }
     }
-    public static void save() {
-        save(true);
-    }
     public static void save(boolean overwrite) {
         YamlConfiguration config = FileConfig.Message.loadConfig();
         boolean save = false;

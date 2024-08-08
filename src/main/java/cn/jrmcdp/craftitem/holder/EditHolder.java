@@ -325,9 +325,9 @@ public class EditHolder implements IHolder {
                 loreGui = Bukkit.createInventory(null, 54, Message.gui__edit_command_title.get());
                 for (String line : craftData.getCommands()) {
                     ItemStack itemStack = new ItemStack(Utils.getMaterial("PAPER"));
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.setDisplayName(line);
-                    itemStack.setItemMeta(itemMeta);
+                    ItemMeta meta = itemStack.getItemMeta();
+                    if (meta != null) meta.setDisplayName(line);
+                    itemStack.setItemMeta(meta);
                     loreGui.addItem(itemStack);
                 }
                 player.openInventory(loreGui);
@@ -350,9 +350,9 @@ public class EditHolder implements IHolder {
                                         e.setCancelled(true);
                                         String id = e.getMessage();
                                         ItemStack itemStack = new ItemStack(Utils.getMaterial("PAPER"));
-                                        ItemMeta itemMeta = itemStack.getItemMeta();
-                                        itemMeta.setDisplayName(id.replace("&", "§"));
-                                        itemStack.setItemMeta(itemMeta);
+                                        ItemMeta meta = itemStack.getItemMeta();
+                                        if (meta != null) meta.setDisplayName(id.replace("&", "§"));
+                                        itemStack.setItemMeta(meta);
                                         loreGui.addItem(itemStack);
                                         Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(loreGui));
                                         isChat = false;
@@ -370,10 +370,10 @@ public class EditHolder implements IHolder {
                             for (ItemStack itemStack : e.getInventory()) {
                                 if (itemStack == null || itemStack.getType().equals(Material.AIR))
                                     continue;
-                                ItemMeta itemMeta = itemStack.getItemMeta();
-                                if (!itemMeta.hasDisplayName())
+                                ItemMeta meta = itemStack.getItemMeta();
+                                if (meta == null || !meta.hasDisplayName())
                                     continue;
-                                lore.add(itemMeta.getDisplayName());
+                                lore.add(meta.getDisplayName());
                             }
                             craftData.setCommands(lore);
                             Craft.save(getId(), craftData);
@@ -414,13 +414,13 @@ public class EditHolder implements IHolder {
                     break;
                 }
                 event.getView().getTopInventory().setItem(7, item7());
-                player.updateInventory();
+                Utils.updateInventory(player);
                 break;
             }
             case 8: {
                 craftData.setDifficult(!craftData.isDifficult());
                 event.getView().getTopInventory().setItem(8, item8());
-                player.updateInventory();
+                Utils.updateInventory(player);
                 Craft.save(getId(), craftData);
                 break;
             }
@@ -433,7 +433,7 @@ public class EditHolder implements IHolder {
                     Craft.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(9, item9());
-                player.updateInventory();
+                Utils.updateInventory(player);
                 break;
             }
             case 10: {
@@ -445,7 +445,7 @@ public class EditHolder implements IHolder {
                     Craft.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(10, item10());
-                player.updateInventory();
+                Utils.updateInventory(player);
                 break;
             }
         }

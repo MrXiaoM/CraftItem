@@ -1,23 +1,21 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.config.*;
-import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class CategoryHolder implements IHolder {
     private Inventory inventory;
 
-    private String[] chest;
-    private PlayerData playerData;
-    private String type;
-    private List<String> list;
+    private final String[] chest;
+    private final PlayerData playerData;
+    private final String type;
+    private final List<String> list;
     private String[] slot;
 
     private int page;
@@ -39,42 +37,34 @@ public class CategoryHolder implements IHolder {
         return playerData;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public List<String> getList() {
-        return list;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
     public String[] getSlot() {
         return slot;
     }
 
     public boolean upPage() {
         if (page < 1) return false;
-        page--;
-        Inventory gui = Category.buildGui(playerData, type, list, page);
+        CategoryHolder holder = Category.buildGui(playerData, type, list, --page);
+        Inventory gui = holder.getInventory();
         inventory.setContents(gui.getContents());
-        slot = ((CategoryHolder)gui.getHolder()).getSlot();
+        slot = holder.getSlot();
         return true;
     }
 
     public boolean downPage() {
-        if (list.subList(Math.min(list.size(), (page+1)*Category.getSlotAmount()), Math.min(list.size(), (page+1)*Category.getSlotAmount()+Category.getSlotAmount())).isEmpty()) return false;
-        page++;
-        Inventory gui = Category.buildGui(playerData, type, list, page);
+        int size = list.size();
+        int nextIndex = (page + 1) * Category.getSlotAmount();
+        int startIndex = Math.min(size, nextIndex);
+        int endIndex = Math.min(size, nextIndex + Category.getSlotAmount());
+        if (list.subList(startIndex, endIndex).isEmpty()) return false;
+        CategoryHolder holder = Category.buildGui(playerData, type, list, ++page);
+        Inventory gui = holder.getInventory();
         inventory.setContents(gui.getContents());
-        slot = ((CategoryHolder)gui.getHolder()).getSlot();
+        slot = holder.getSlot();
         return true;
     }
 
-
     @Override
+    @NotNull
     public Inventory getInventory() {
         return inventory;
     }
@@ -89,7 +79,6 @@ public class CategoryHolder implements IHolder {
         String key = getChest()[event.getRawSlot()];
         switch (key) {
             case "上" : {
-
                 if (!upPage()) Message.page__already_first.msg(player);
                 return;
             }

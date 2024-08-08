@@ -20,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Category {
-    private static YamlConfiguration config;
-
     private static String title;
 
     private static String[] chest;
@@ -30,20 +28,12 @@ public class Category {
 
     private static int slotAmount;
 
-    public static YamlConfiguration getConfig() {
-        return config;
-    }
-
-    public static String getTitle() {
-        return title;
-    }
-
     public static int getSlotAmount() {
         return slotAmount;
     }
 
     public static void reload() {
-        config = FileConfig.Category.loadConfig();
+        YamlConfiguration config = FileConfig.Category.loadConfig();
         title = config.getString("Title");
         chest = new String[config.getStringList("Chest").size() * 9];
         StringBuilder info = new StringBuilder();
@@ -64,24 +54,26 @@ public class Category {
                     .parseMaterial(section.getString(key + ".Type", "STONE"))
                     .map(ItemStack::new)
                     .orElseGet(() -> new ItemStack(Material.STONE));
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if (section.get(key + ".Name") != null) {
-                itemMeta.setDisplayName(section.getString(key + ".Name"));
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta != null) {
+                if (section.get(key + ".Name") != null) {
+                    meta.setDisplayName(section.getString(key + ".Name"));
+                }
+                meta.setLore(section.getStringList(key + ".Lore"));
             }
-            itemMeta.setLore(section.getStringList(key + ".Lore"));
-            itemStack.setItemMeta(itemMeta);
+            itemStack.setItemMeta(meta);
             items.put(key, itemStack);
         }
     }
 
     public static void openGui(PlayerData playerData, String type, List<String> craftList, int page) {
         Bukkit.getScheduler().runTaskAsynchronously(CraftItem.getPlugin(), () -> {
-            Inventory inventory = buildGui(playerData, type, craftList, page);
-            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> playerData.getPlayer().openInventory(inventory));
+            CategoryHolder holder = buildGui(playerData, type, craftList, page);
+            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> playerData.getPlayer().openInventory(holder.getInventory()));
         });
     }
 
-    public static Inventory buildGui(PlayerData playerData, String type, List<String> craftList, int page) {
+    public static CategoryHolder buildGui(PlayerData playerData, String type, List<String> craftList, int page) {
         CategoryHolder holder = new CategoryHolder(chest, playerData, type, craftList, page);
         Inventory gui = Bukkit.createInventory(holder, chest.length, title.replace("<Category>", type));
         holder.setInventory(gui);
@@ -91,9 +83,6 @@ public class Category {
                 Math.min(craftList.size(), page * slotAmount + slotAmount)
         ).iterator();
         for (int i = 0; i < chest.length; i++) {
-            ItemStack clone;
-            ItemMeta itemMeta;
-            List<String> lore;
             String key = chest[i];
             if (key.equals("方")) {
                 if (!iterator.hasNext()) {
@@ -105,26 +94,27 @@ public class Category {
                 if (craftData == null) {
                     ItemStack itemStack = new ItemStack(Material.PAPER);
                     ItemMeta meta = itemStack.getItemMeta();
-                    meta.setDisplayName("§c未找到 §e" + name);
+                    if (meta != null) meta.setDisplayName("§c未找到 §e" + name);
                     itemStack.setItemMeta(meta);
                     is[i] = itemStack;
                     continue;
                 }
-                clone = craftData.getDisplayItem().clone();
-                itemMeta = clone.getItemMeta();
-                lore = itemMeta.getLore();
-                if (lore == null)
-                    lore = new ArrayList<>();
-                lore.add("");
-                lore.add("§a包含:");
-                for (ItemStack itemStack : craftData.getItems())
-                    lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
-                for (String command : craftData.getCommands()) {
-                    String[] split = command.split("\\|\\|");
-                    if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
+                ItemStack clone = craftData.getDisplayItem().clone();
+                ItemMeta meta = clone.getItemMeta();
+                if (meta != null) {
+                    List<String> lore = meta.getLore();
+                    if (lore == null) lore = new ArrayList<>();
+                    lore.add("");
+                    lore.add("§a包含:");
+                    for (ItemStack itemStack : craftData.getItems())
+                        lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
+                    for (String command : craftData.getCommands()) {
+                        String[] split = command.split("\\|\\|");
+                        if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
+                    }
+                    meta.setLore(lore);
                 }
-                itemMeta.setLore(lore);
-                clone.setItemMeta(itemMeta);
+                clone.setItemMeta(meta);
                 is[i] = clone;
                 holder.getSlot()[i] = name;
             } else {
@@ -132,7 +122,6 @@ public class Category {
             }
         }
         gui.setContents(is);
-        return gui;
+        return holder;
     }
-
 }

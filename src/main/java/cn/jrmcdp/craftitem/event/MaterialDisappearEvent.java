@@ -16,11 +16,11 @@ public class MaterialDisappearEvent extends Event implements Cancellable {
     public static HandlerList getHandlerList() {
         return handlers;
     }
-    boolean cancelled = false;
-    Player player;
-    CraftData craftData;
-    ItemStack item;
-    ItemStack itemToDisappear;
+    private boolean cancelled = false;
+    private final Player player;
+    private final CraftData craftData;
+    private final ItemStack item;
+    private ItemStack itemToDisappear;
 
     public MaterialDisappearEvent(Player player, CraftData craftData, ItemStack item, ItemStack itemToDisappear) {
         this.player = player;

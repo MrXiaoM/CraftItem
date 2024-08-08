@@ -212,7 +212,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
             FileConfig.Message.saveConfig(cfg);
         }
         Message.reload();
-        cn.jrmcdp.craftitem.config.Material.reload();
+        CraftMaterial.reload();
         Config.reload();
         Craft.reload();
         Gui.reload();

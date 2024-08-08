@@ -1,9 +1,8 @@
 package cn.jrmcdp.craftitem.utils;
 
 public class Pair<K, V> {
-    K key;
-    V value;
-
+    public final K key;
+    public final V value;
     Pair(K key, V value) {
         this.key = key;
         this.value = value;
@@ -13,16 +12,16 @@ public class Pair<K, V> {
         return key;
     }
 
-    public void setKey(K key) {
-        this.key = key;
-    }
-
     public V getValue() {
         return value;
     }
 
-    public void setValue(V value) {
-        this.value = value;
+    public K left() {
+        return key;
+    }
+
+    public V right() {
+        return value;
     }
 
     public static <K, V> Pair<K, V> of(K key, V value) {

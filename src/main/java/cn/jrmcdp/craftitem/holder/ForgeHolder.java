@@ -10,8 +10,7 @@ import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.minigames.GameData;
-import cn.jrmcdp.craftitem.minigames.utils.Pair;
-import cn.jrmcdp.craftitem.minigames.utils.effect.FishingEffect;
+import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -42,7 +41,7 @@ public class ForgeHolder implements IHolder {
     public final char[] chest;
     public boolean done;
     public boolean processing;
-    Set<Integer> timeSlots = new HashSet<>();
+    private final Set<Integer> timeSlots = new HashSet<>();
     ForgeHolder(PlayerData playerData, String id, CraftData craftData) {
         this.playerData = playerData;
         this.id = id;
@@ -88,13 +87,13 @@ public class ForgeHolder implements IHolder {
                 Pair.of("<Time>", craftData.getTimeDisplay()),
                 Pair.of("<Cost>", craftData.getTimeCost())
         );
-        ItemMeta itemMeta = item.getItemMeta();
-        if (itemMeta instanceof Damageable) {
-            Damageable damageable = (Damageable) itemMeta;
+        ItemMeta meta = item.getItemMeta();
+        if (meta instanceof Damageable) {
+            Damageable damageable = (Damageable) meta;
             damageable.setDamage((short)((1.0d - progress) * item.getType().getMaxDurability()));
         }
-        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
-        item.setItemMeta(itemMeta);
+        if (meta != null) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+        item.setItemMeta(meta);
         return item;
     }
 
@@ -236,8 +235,7 @@ public class ForgeHolder implements IHolder {
             CraftItem.getMiniGames().startGame(
                     new GameData(this, player, win, multiple),
                     player,
-                    Config.getRandomGame(),
-                    new FishingEffect()
+                    Config.getRandomGame()
             );
             return;
         }
@@ -353,6 +351,8 @@ public class ForgeHolder implements IHolder {
                     multiple = 0;
                 }
             }
+        } else {
+            playerData.setFailTimes(getId(), 0);
         }
 
         int score = craftData.getMultiple().get(multiple);

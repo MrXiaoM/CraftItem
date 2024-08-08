@@ -8,6 +8,7 @@ import java.util.logging.Level;
 /**
  * Utility class for logging messages with various log levels.
  */
+@SuppressWarnings({"unused"})
 public final class LogUtils {
 
     /**

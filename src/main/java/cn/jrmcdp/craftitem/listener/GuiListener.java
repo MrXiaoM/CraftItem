@@ -14,10 +14,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
 
 public class GuiListener implements Listener {
-    CraftItem plugin;
-    BukkitTask timer;
+    private final BukkitTask timer;
     public GuiListener(CraftItem plugin) {
-        this.plugin = plugin;
         this.timer = Bukkit.getScheduler().runTaskTimer(plugin, this::onSecond, 20L, 20L);
     }
 

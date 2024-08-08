@@ -1,9 +1,10 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.ColorHelper;
-import cn.jrmcdp.craftitem.minigames.utils.Pair;
+import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,20 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Icon {
-    private final String key;
-    private final org.bukkit.Material material;
-    private final int data;
-    private final int amount;
-    private final String name;
-    private final List<String> lore;
-    private final Integer customModelData;
-    private final List<String> leftClick;
-    private final List<String> rightClick;
-    private final List<String> shiftLeftClick;
-    private final List<String> shiftRightClick;
+    public final Material material;
+    public final int data;
+    public final int amount;
+    public final String name;
+    public final List<String> lore;
+    public final Integer customModelData;
+    public final List<String> leftClick;
+    public final List<String> rightClick;
+    public final List<String> shiftLeftClick;
+    public final List<String> shiftRightClick;
 
-    public Icon(String key, org.bukkit.Material material, int data, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
-        this.key = key;
+    public Icon(Material material, int data, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
         this.material = material;
         this.data = data;
         this.amount = amount;
@@ -42,62 +41,43 @@ public class Icon {
     public final ItemStack getItem(Player player, Pair<String, Object>... replacements) {
         ItemStack item = data > 0 ? new ItemStack(material, amount, (short) data) : new ItemStack(material, amount);
         ItemMeta meta = item.getItemMeta();
-        if (name != null) meta.setDisplayName(name);
-        if (!lore.isEmpty()) {
-            List<String> lore = new ArrayList<>();
-            for (String s : PlaceholderSupport.setPlaceholders(player, this.lore)) {
-                for (Pair<String, Object> pair : replacements) {
-                    if (s.contains(pair.getKey())) {
-                        s = s.replace(pair.getKey(), pair.getValue().toString());
+        if (meta != null) {
+            if (name != null) meta.setDisplayName(name);
+            if (!lore.isEmpty()) {
+                List<String> lore = new ArrayList<>();
+                for (String s : PlaceholderSupport.setPlaceholders(player, this.lore)) {
+                    for (Pair<String, Object> pair : replacements) {
+                        if (s.contains(pair.getKey())) {
+                            s = s.replace(pair.getKey(), pair.getValue().toString());
+                        }
                     }
+                    lore.add(s);
                 }
-                lore.add(s);
+                meta.setLore(lore);
             }
-            meta.setLore(lore);
-        }
-        if (customModelData != null) {
-            meta.setCustomModelData(customModelData);
+            if (customModelData != null) {
+                meta.setCustomModelData(customModelData);
+            }
         }
         item.setItemMeta(meta);
         return item;
     }
 
     public void leftClick(Player player) {
-        runCommands(player, getLeftClick());
+        runCommands(player, leftClick);
     }
 
     public void rightClick(Player player) {
-        runCommands(player, getRightClick());
+        runCommands(player, rightClick);
     }
 
     public void shiftLeftClick(Player player) {
-        runCommands(player, getShiftLeftClick());
+        runCommands(player, shiftLeftClick);
     }
 
     public void shiftRightClick(Player player) {
-        runCommands(player, getShiftRightClick());
+        runCommands(player, shiftRightClick);
     }
-
-    public String getKey() {
-        return key;
-    }
-
-    public List<String> getLeftClick() {
-        return leftClick;
-    }
-
-    public List<String> getRightClick() {
-        return rightClick;
-    }
-
-    public List<String> getShiftLeftClick() {
-        return shiftLeftClick;
-    }
-
-    public List<String> getShiftRightClick() {
-        return shiftRightClick;
-    }
-
 
     public static void runCommands(Player player, List<String> commands) {
         if (commands == null || commands.isEmpty()) return;
@@ -114,5 +94,4 @@ public class Icon {
             }
         }
     }
-
 }

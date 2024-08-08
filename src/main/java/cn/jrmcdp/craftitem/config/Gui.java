@@ -9,7 +9,7 @@ import cn.jrmcdp.craftitem.holder.ForgeHolder;
 
 import java.util.*;
 
-import cn.jrmcdp.craftitem.minigames.utils.Pair;
+import cn.jrmcdp.craftitem.utils.Pair;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,8 +21,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Gui {
-    private static YamlConfiguration config;
-
     private static String title;
 
     private static char[] chest;
@@ -30,14 +28,6 @@ public class Gui {
     private static char[] chestTime;
 
     public static final Map<String, Icon> items = new HashMap<>();
-
-    public static YamlConfiguration getConfig() {
-        return config;
-    }
-
-    public static String getTitle() {
-        return title;
-    }
 
     public static char[] getChest() {
         return chest;
@@ -48,7 +38,7 @@ public class Gui {
     }
 
     public static void reload() {
-        config = FileConfig.Gui.loadConfig();
+        YamlConfiguration config = FileConfig.Gui.loadConfig();
         title = ColorHelper.parseColor(config.getString("Title"));
 
         chest = String.join("", config.getStringList("Chest")).toCharArray();
@@ -84,7 +74,7 @@ public class Gui {
             List<String> rightClick = ColorHelper.parseColor(section.getStringList(key + ".RightClick"));
             List<String> shiftLeftClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick"));
             List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
-            items.put(key, new Icon(key, material, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
+            items.put(key, new Icon(material, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
 
         checkError(chest);
@@ -133,18 +123,19 @@ public class Gui {
                 case "物": {
                     ItemStack item = craftData.getDisplayItem().clone();
                     ItemMeta meta = item.getItemMeta();
-                    List<String> lore = meta.getLore();
-                    if (lore == null)
-                        lore = new ArrayList<>();
-                    lore.add("");
-                    lore.add("§a包含:");
-                    for (ItemStack itemStack : craftData.getItems())
-                        lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
-                    for (String command : craftData.getCommands()) {
-                        String[] split = command.split("\\|\\|");
-                        if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
+                    if (meta != null) {
+                        List<String> lore = meta.getLore();
+                        if (lore == null) lore = new ArrayList<>();
+                        lore.add("");
+                        lore.add("§a包含:");
+                        for (ItemStack itemStack : craftData.getItems())
+                            lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
+                        for (String command : craftData.getCommands()) {
+                            String[] split = command.split("\\|\\|");
+                            if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
+                        }
+                        meta.setLore(lore);
                     }
-                    meta.setLore(lore);
                     item.setItemMeta(meta);
                     is[i] = item;
                     break;

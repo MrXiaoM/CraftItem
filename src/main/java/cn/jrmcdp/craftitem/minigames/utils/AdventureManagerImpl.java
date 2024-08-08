@@ -1,7 +1,6 @@
 package cn.jrmcdp.craftitem.minigames.utils;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
@@ -12,10 +11,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,12 +36,6 @@ public class AdventureManagerImpl {
     public static AdventureManagerImpl getInstance() {
         return instance;
     }
-
-    public void close() {
-        if (adventure != null)
-            adventure.close();
-    }
-
     
     public Component getComponentFromMiniMessage(String text) {
         if (text == null) {
@@ -59,35 +48,6 @@ public class AdventureManagerImpl {
         }
     }
 
-    
-    public void sendMessage(CommandSender sender, String s) {
-        if (s == null) return;
-        if (sender instanceof Player) sendPlayerMessage((Player) sender, s);
-        else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(s);
-    }
-
-    
-    public void sendMessageWithPrefix(CommandSender sender, String s) {
-        if (s == null) return;
-        if (sender instanceof Player) sendPlayerMessage((Player) sender, CFLocale.MSG_Prefix + s);
-        else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(CFLocale.MSG_Prefix + s);
-    }
-
-    
-    public void sendConsoleMessage(String s) {
-        if (s == null) return;
-        Audience au = adventure.sender(Bukkit.getConsoleSender());
-        au.sendMessage(getComponentFromMiniMessage(s));
-    }
-
-    
-    public void sendPlayerMessage(Player player, String s) {
-        if (s == null) return;
-        Audience au = adventure.player(player);
-        au.sendMessage(getComponentFromMiniMessage(s));
-    }
-
-    
     public void sendTitle(Player player, String title, String subtitle, int in, int duration, int out) {
         sendTitle(player, getComponentFromMiniMessage(title), getComponentFromMiniMessage(subtitle), in, duration, out);
     }
@@ -129,13 +89,6 @@ public class AdventureManagerImpl {
         au.playSound(sound);
     }
 
-    
-    public void sendSound(Player player, Sound sound) {
-        Audience au = adventure.player(player);
-        au.playSound(sound);
-    }
-
-    
     public String legacyToMiniMessage(String legacy) {
         StringBuilder stringBuilder = new StringBuilder();
         char[] chars = legacy.toCharArray();
@@ -210,26 +163,8 @@ public class AdventureManagerImpl {
         return c == '§' || c == '&';
     }
 
-    
-    public String componentToLegacy(Component component) {
-        return LegacyComponentSerializer.legacySection().serialize(component);
-    }
-
-    
     public String componentToJson(Component component) {
         return GsonComponentSerializer.gson().serialize(component);
-    }
-
-    
-    public Object shadedComponentToOriginalComponent(Component component) {
-        Object cp;
-        try {
-            cp = ReflectionUtils.gsonDeserializeMethod.invoke(ReflectionUtils.gsonInstance, GsonComponentSerializer.gson().serialize(component));
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return cp;
     }
 
     public Object getIChatComponent(String json) throws InvocationTargetException, IllegalAccessException {

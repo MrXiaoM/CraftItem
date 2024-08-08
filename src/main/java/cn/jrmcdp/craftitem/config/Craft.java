@@ -28,10 +28,6 @@ public class Craft {
         }
     }
 
-    public static YamlConfiguration getConfig() {
-        return config;
-    }
-
     public static Map<String, CraftData> getCraftDataMap() {
         return craftDataMap;
     }
@@ -50,5 +46,4 @@ public class Craft {
         config.set(id, null);
         FileConfig.Craft.saveConfig(config);
     }
-
 }

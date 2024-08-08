@@ -152,12 +152,10 @@ public class ColorHelper {
         return list;
     }
     private static class RegexResult {
-        public final MatchResult result;
         public final boolean isMatched;
         public final String text;
 
         public RegexResult(MatchResult result, String text) {
-            this.result = result;
             this.isMatched = result != null;
             this.text = text;
         }
