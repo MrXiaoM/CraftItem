@@ -76,7 +76,22 @@ public class Utils {
     }
 
     public static Optional<org.bukkit.Material> parseMaterial(String s) {
-        return valueOf(org.bukkit.Material.class, s);
+        Class<org.bukkit.Material> m = org.bukkit.Material.class;
+        Optional<org.bukkit.Material> material = valueOf(m, s);
+        if (!material.isPresent()) { // some legacy material (1.12.2 and lower)
+            String lower = s.toLowerCase();
+            if (lower.contains("stained_glass_pane")) return valueOf(m, "stained_glass_pane");
+            if (lower.contains("stained_glass")) return valueOf(m, "stained_glass");
+            if (lower.contains("terracotta")) return valueOf(m, "stained_clay");
+            if (lower.contains("banner") && !lower.contains("pattern")) return valueOf(m, "stained_banner");
+            if (lower.equals("clock")) return valueOf(m, "watch");
+            if (lower.contains("bed")) return valueOf(m, "bed");
+            if (lower.contains("wool")) return valueOf(m, "wool");
+            if (lower.equals("crafting_table")) return valueOf(m, "workbench");
+            if (lower.contains("_door") && !lower.contains("iron_")) return valueOf(m, "wooden_door");
+            if (lower.startsWith("wooden_")) return valueOf(m, lower.replace("wooden_", "wood"));
+        }
+        return material;
     }
 
     public static <T extends Enum<?>> Optional<T> valueOf(Class<T> clazz, String s) {
