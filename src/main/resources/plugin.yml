@@ -1,17 +1,13 @@
 ﻿name: CraftItem
-authors:
-  - ZhiBuMiao
-  - MrXiaoM
 version: ${version}
 main: cn.jrmcdp.craftitem.CraftItem
+authors: [ ZhiBuMiao, MrXiaoM ]
+depend: [ Vault ]
+softdepend: [ PlaceholderAPI, ProtocolLib ]
 api-version: 1.13
-depend:
-  - Vault
-softdepend:
-  - PlaceholderAPI
-  - ProtocolLib
 commands:
   CraftItem:
     aliases:
     - ci
+    - dz
     description: Main Command
