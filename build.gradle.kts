@@ -73,6 +73,24 @@ tasks {
             include("plugin.yml")
         }
     }
+
+    register<Jar>("javadocJar") {
+        dependsOn(javadoc)
+        archiveClassifier.set("javadoc")
+        from(javadoc.get().destinationDir)
+    }
+    javadoc {
+        (options as StandardJavadocDocletOptions).apply {
+            links("https://docs.oracle.com/javase/8/docs/api/")
+            links("https://hub.spigotmc.org/javadocs/spigot/")
+
+            locale("zh_CN")
+            encoding("UTF-8")
+            docEncoding("UTF-8")
+            addBooleanOption("keywords", true)
+            addBooleanOption("Xdoclint:none", true)
+        }
+    }
 }
 
 publishing {
@@ -82,6 +100,8 @@ publishing {
             groupId = project.group.toString()
             artifactId = project.name
             version = project.version.toString()
+
+            artifact(tasks.getByName("javadocJar"))
         }
     }
 }
