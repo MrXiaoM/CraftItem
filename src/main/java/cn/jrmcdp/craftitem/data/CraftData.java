@@ -131,6 +131,14 @@ public class CraftData implements ConfigurationSerializable {
         return this.material;
     }
 
+    public ItemStack[] getMaterialArray() {
+        ItemStack[] array = new ItemStack[material.size()];
+        for (int i = 0; i < material.size(); i++) {
+            array[i] = material.get(i);
+        }
+        return array;
+    }
+
     public void setMaterial(List<ItemStack> material) {
         this.material = material;
     }

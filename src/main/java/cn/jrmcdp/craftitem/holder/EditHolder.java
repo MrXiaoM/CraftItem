@@ -2,6 +2,7 @@ package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.Gui;
+import cn.jrmcdp.craftitem.utils.Prompter;
 import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Craft;
@@ -10,13 +11,8 @@ import cn.jrmcdp.craftitem.data.CraftData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static cn.jrmcdp.craftitem.utils.Utils.getItemStack;
-import static cn.jrmcdp.craftitem.utils.Utils.getMaterial;
+import static cn.jrmcdp.craftitem.utils.Utils.*;
 
 public class EditHolder implements IHolder {
     private final String id;
@@ -62,6 +58,13 @@ public class EditHolder implements IHolder {
         Inventory inv = Bukkit.createInventory(this, items.length, Message.gui__edit_title.get(this.id));
         inv.setContents(items);
         return this.inventory = inv;
+    }
+
+    public void open(Player player) {
+        open(player, buildGui());
+    }
+    public void open(Player player, Inventory inv) {
+        Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(inv));
     }
 
     private ItemStack[] getItems() {
@@ -161,230 +164,163 @@ public class EditHolder implements IHolder {
         return inventory;
     }
 
+    private void checkMaterialSlots(Player player, int size) {
+
+        int count1 = 0, count2 = 0;
+        for (char c : Gui.getChest()) if (c == '材') count1++;
+        for (char c : Gui.getChestTime()) if (c == '材') count2++;
+        if (size > count1 || size > count2) {
+            Message.gui__edit__item__material__too_much.msg(player);
+        }
+    }
+
     public void onClick(InventoryClickEvent event) {
-        final Inventory gui, loreGui;
         final Player player = (Player)event.getWhoClicked();
         player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
         if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();
         switch (event.getRawSlot()) {
-            case 0: {
-                gui = Bukkit.createInventory(null, 54, Message.gui__edit_material_title.get());
-                gui.addItem((ItemStack[]) craftData.getMaterial().toArray((Object[]) new ItemStack[craftData.getMaterial().size()]));
-                player.openInventory(gui);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onInventoryClose(InventoryCloseEvent eventB) {
-                        if (eventB.getPlayer().equals(player)) {
-                            List<ItemStack> list = new ArrayList<>();
-                            for (ItemStack content : eventB.getInventory().getContents()) {
-                                if (content != null && !content.getType().equals(Material.AIR))
-                                    list.add(content);
-                            }
-                            craftData.setMaterial(list);
-                            Craft.save(getId(), craftData);
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                            int count1 = 0, count2 = 0;
-                            for (char c : Gui.getChest()) {
-                                if (c == '材') count1++;
-                            }
-                            for (char c : Gui.getChestTime()) {
-                                if (c == '材') count2++;
-                            }
-                            if (list.size() > count1 || list.size() > count2) {
-                                Message.gui__edit__item__material__too_much.msg(player);
-                            }
+            case 0: { // 材料
+                Message title = Message.gui__edit_material_title;
+                ItemStack[] items = craftData.getMaterialArray();
+                Prompter.gui(player, 54, title, items, inv -> { // onClose
+                    List<ItemStack> list = new ArrayList<>();
+                    for (ItemStack content : inv.getContents()) {
+                        if (content != null && !content.getType().equals(Material.AIR)) {
+                            list.add(content);
                         }
                     }
-                }, CraftItem.getPlugin());
+                    craftData.setMaterial(list);
+                    Craft.save(getId(), craftData);
+                    checkMaterialSlots(player, list.size());
+                    open(player);
+                });
                 break;
             }
-            case 1: {
+            case 1: { // 成功率
                 player.closeInventory();
                 Message.gui__edit_input_chance.msg(player);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
-                        if (eventB.getPlayer().equals(player)) {
-                            eventB.setCancelled(true);
-                            Integer chance = Utils.tryParseInt(eventB.getMessage());
-                            if (chance == null || chance < 0) {
-                                Message.not_integer.msg(player);
-                            } else {
-                                craftData.setChance(chance);
-                                Craft.save(getId(), craftData);
-                            }
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                        }
+                Prompter.onChat(player, message -> {
+                    Integer chance = Utils.tryParseInt(message);
+                    if (chance == null || chance < 0) {
+                        Message.not_integer.msg(player);
+                    } else {
+                        craftData.setChance(chance);
+                        Craft.save(getId(), craftData);
                     }
-                }, CraftItem.getPlugin());
+                    open(player);
+                });
                 break;
             }
-            case 2: {
+            case 2: { // 倍数
                 player.closeInventory();
                 Message.gui__edit_input_multiple.msg(player);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
-                        if (eventB.getPlayer().equals(player)) {
-                            eventB.setCancelled(true);
-                            String[] split = eventB.getMessage().split(" ");
-                            List<Integer> list = new ArrayList<>();
-                            for (String str : split) {
-                                Integer chance = Utils.tryParseInt(str);
-                                if (chance == null) {
-                                    Message.not_integer.msg(player);
-                                    HandlerList.unregisterAll(this);
-                                    Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                                    return;
-                                }
-                                list.add(chance);
-                            }
-                            craftData.setMultiple(list);
-                            Craft.save(getId(), craftData);
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
+                Prompter.onChat(player, message -> {
+                    String[] split = message.split(" ");
+                    List<Integer> list = new ArrayList<>();
+                    for (String str : split) {
+                        Integer chance = Utils.tryParseInt(str);
+                        if (chance == null) {
+                            Message.not_integer.msg(player);
+                            open(player);
+                            return;
                         }
+                        list.add(chance);
                     }
-                }, CraftItem.getPlugin());
+                    craftData.setMultiple(list);
+                    Craft.save(getId(), craftData);
+                    open(player);
+                });
                 break;
             }
-            case 3: {
+            case 3: { // 价格
                 player.closeInventory();
                 Message.gui__edit_input_cost.msg(player);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
-                        if (eventB.getPlayer().equals(player)) {
-                            eventB.setCancelled(true);
-                            Integer cost = Utils.tryParseInt(eventB.getMessage());
-                            if (cost == null || cost < 0) {
-                                Message.not_integer.msg(player);
-                            } else {
-                                craftData.setCost(cost);
-                                Craft.save(getId(), craftData);
-                            }
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                        }
+                Prompter.onChat(player, message -> {
+                    Integer cost = Utils.tryParseInt(message);
+                    if (cost == null || cost < 0) {
+                        Message.not_integer.msg(player);
+                    } else {
+                        craftData.setCost(cost);
+                        Craft.save(getId(), craftData);
                     }
-                }, CraftItem.getPlugin());
+                    open(player);
+                });
                 break;
             }
-            case 4: {
-                gui = Bukkit.createInventory(null, 9, Message.gui__edit_display_title.get());
-                gui.addItem(craftData.getDisplayItem());
-                player.openInventory(gui);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onInventoryClose(InventoryCloseEvent eventB) {
-                        if (eventB.getPlayer().equals(player)) {
-                            ItemStack item = eventB.getInventory().getItem(0);
-                            if (item == null || item.getType().equals(Material.AIR)) {
-                                Message.gui__edit_display_not_found.msg(player);
-                                HandlerList.unregisterAll(this);
-                                Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                                return;
-                            }
-                            craftData.setDisplayItem(item);
-                            Craft.save(getId(), craftData);
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                        }
+            case 4: { // 显示物品
+                Message title = Message.gui__edit_display_title;
+                ItemStack[] items = new ItemStack[] { craftData.getDisplayItem() };
+                Prompter.gui(player, 9, title, items, inv -> { // onClose
+                    ItemStack item = event.getInventory().getItem(0);
+                    if (item == null || item.getType().equals(Material.AIR)) {
+                        Message.gui__edit_display_not_found.msg(player);
+                    } else {
+                        craftData.setDisplayItem(item);
+                        Craft.save(getId(), craftData);
                     }
-                }, CraftItem.getPlugin());
+                    open(player);
+                });
                 break;
             }
-            case 5: {
-                gui = Bukkit.createInventory(null, 54, Message.gui__edit_item_title.get());
-                for (ItemStack item : craftData.getItems()) {
-                    gui.addItem(item);
-                }
-                player.openInventory(gui);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    @EventHandler
-                    public void onInventoryClose(InventoryCloseEvent eventB) {
-                        if (eventB.getPlayer().equals(player)) {
-                            List<ItemStack> list = new ArrayList<>();
-                            for (ItemStack content : eventB.getInventory().getContents()) {
-                                if (content != null && !content.getType().equals(Material.AIR))
-                                    list.add(content);
-                            }
-                            craftData.setItems(list);
-                            Craft.save(getId(), craftData);
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                        }
+            case 5: { // 奖励物品
+                Message title = Message.gui__edit_item_title;
+                List<ItemStack> items = craftData.getItems();
+                Prompter.gui(player, 54, title, items, inv -> { // onClose
+                    List<ItemStack> list = new ArrayList<>();
+                    for (ItemStack content : inv.getContents()) {
+                        if (content != null && !content.getType().equals(Material.AIR))
+                            list.add(content);
                     }
-                }, CraftItem.getPlugin());
+                    craftData.setItems(list);
+                    Craft.save(getId(), craftData);
+                    open(player);
+                });
                 break;
             }
-            case 6: {
-                loreGui = Bukkit.createInventory(null, 54, Message.gui__edit_command_title.get());
-                for (String line : craftData.getCommands()) {
-                    ItemStack itemStack = new ItemStack(Utils.getMaterial("PAPER"));
-                    ItemMeta meta = itemStack.getItemMeta();
-                    if (meta != null) meta.setDisplayName(line);
-                    itemStack.setItemMeta(meta);
-                    loreGui.addItem(itemStack);
-                }
-                player.openInventory(loreGui);
-                Bukkit.getPluginManager().registerEvents(new Listener() {
-                    boolean isChat = false;
+            case 6: { // 奖励命令
+                AtomicBoolean isChat = new AtomicBoolean(false);
+                Message title = Message.gui__edit_command_title;
+                Prompter.gui(player, 54, title, inv -> { // init
+                    for (String line : craftData.getCommands()) {
+                        inv.addItem(Utils.getItemStack(Material.PAPER, line));
+                    }
+                }, e -> { // onClick
+                    e.setCancelled(true);
+                    Inventory inv = e.getClickedInventory();
+                    if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
+                    if (!isAir(e.getCurrentItem())) return;
+                    else e.setCurrentItem(null);
+                    if (!isAir(e.getCursor())) return;
+                    isChat.set(true);
+                    player.closeInventory();
+                    Prompter.onChat(player, message -> {
+                        ItemStack itemStack = Utils.getItemStack(
+                                Material.PAPER,
+                                message.replace("&", "§")
+                        );
+                        inv.addItem(itemStack);
+                        open(player, inv);
+                        isChat.set(false);
+                    });
+                }, inv -> { // onClose
+                    if (isChat.get()) return false;
+                    List<String> commands = new ArrayList<>();
+                    for (ItemStack itemStack : inv) {
+                        if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
+                        ItemMeta meta = itemStack.getItemMeta();
+                        if (meta == null || !meta.hasDisplayName()) continue;
+                        commands.add(meta.getDisplayName());
+                    }
+                    craftData.setCommands(commands);
+                    Craft.save(getId(), craftData);
+                    open(player);
+                    return true;
+                });
 
-                    @EventHandler
-                    public void onInventoryClick(InventoryClickEvent e) {
-                        if (e.getWhoClicked().getName().equals(player.getName())) {
-                            if (e.getCurrentItem() != null && !e.getCurrentItem().getType().equals(Material.AIR))
-                                return;
-                            if (e.getCursor() != null && !e.getCursor().getType().equals(Material.AIR))
-                                return;
-                            this.isChat = true;
-                            player.closeInventory();
-                            Bukkit.getPluginManager().registerEvents(new Listener() {
-                                @EventHandler
-                                public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
-                                    if (e.getPlayer().equals(player)) {
-                                        e.setCancelled(true);
-                                        String id = e.getMessage();
-                                        ItemStack itemStack = new ItemStack(Utils.getMaterial("PAPER"));
-                                        ItemMeta meta = itemStack.getItemMeta();
-                                        if (meta != null) meta.setDisplayName(id.replace("&", "§"));
-                                        itemStack.setItemMeta(meta);
-                                        loreGui.addItem(itemStack);
-                                        Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(loreGui));
-                                        isChat = false;
-                                        HandlerList.unregisterAll(this);
-                                    }
-                                }
-                            }, CraftItem.getPlugin());
-                        }
-                    }
-
-                    @EventHandler
-                    public void onInventoryClose(InventoryCloseEvent e) {
-                        if (e.getPlayer().getName().equals(player.getName()) && !this.isChat) {
-                            List<String> lore = new ArrayList<>();
-                            for (ItemStack itemStack : e.getInventory()) {
-                                if (itemStack == null || itemStack.getType().equals(Material.AIR))
-                                    continue;
-                                ItemMeta meta = itemStack.getItemMeta();
-                                if (meta == null || !meta.hasDisplayName())
-                                    continue;
-                                lore.add(meta.getDisplayName());
-                            }
-                            craftData.setCommands(lore);
-                            Craft.save(getId(), craftData);
-                            HandlerList.unregisterAll(this);
-                            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                        }
-                    }
-                }, CraftItem.getPlugin());
                 break;
             }
-            case 7: {
+            case 7: { // 锻造时长
                 if (event.isLeftClick()) {
                     craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 600 : 60));
                     Craft.save(getId(), craftData);
@@ -394,37 +330,30 @@ public class EditHolder implements IHolder {
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     player.closeInventory();
                     Message.gui__edit_time_cost.msg(player);
-                    Bukkit.getPluginManager().registerEvents(new Listener() {
-                        @EventHandler
-                        public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
-                            if (eventB.getPlayer().equals(player)) {
-                                eventB.setCancelled(true);
-                                Integer cost = Utils.tryParseInt(eventB.getMessage());
-                                if (cost == null || cost < 0) {
-                                    Message.not_integer.msg(player);
-                                } else {
-                                    craftData.setTimeCost(cost);
-                                    Craft.save(getId(), craftData);
-                                }
-                                HandlerList.unregisterAll(this);
-                                Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(buildGui()));
-                            }
+                    Prompter.onChat(player, message -> {
+                        Integer cost = Utils.tryParseInt(message);
+                        if (cost == null || cost < 0) {
+                            Message.not_integer.msg(player);
+                        } else {
+                            craftData.setTimeCost(cost);
+                            Craft.save(getId(), craftData);
                         }
-                    }, CraftItem.getPlugin());
+                        open(player);
+                    });
                     break;
                 }
                 event.getView().getTopInventory().setItem(7, item7());
                 Utils.updateInventory(player);
                 break;
             }
-            case 8: {
+            case 8: { // 困难锻造
                 craftData.setDifficult(!craftData.isDifficult());
                 event.getView().getTopInventory().setItem(8, item8());
                 Utils.updateInventory(player);
                 Craft.save(getId(), craftData);
                 break;
             }
-            case 9: {
+            case 9: { // 保底次数
                 if (event.isLeftClick()) {
                     craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() + (event.isShiftClick() ? 10 : 1));
                     Craft.save(getId(), craftData);
@@ -436,7 +365,7 @@ public class EditHolder implements IHolder {
                 Utils.updateInventory(player);
                 break;
             }
-            case 10: {
+            case 10: { // 连击次数
                 if (event.isLeftClick()) {
                     craftData.setCombo(craftData.getCombo() + (event.isShiftClick() ? 10 : 1));
                     Craft.save(getId(), craftData);

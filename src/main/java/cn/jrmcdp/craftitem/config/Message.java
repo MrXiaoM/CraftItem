@@ -169,7 +169,7 @@ public enum Message {
     gui__edit_display_title("将要展示的物品放在第一格"),
     gui__edit_display_not_found("&c未找到第一格的物品"),
     gui__edit_item_title("奖励物品"),
-    gui__edit_command_title("奖励命令"),
+    gui__edit_command_title("奖励命令 (点击空格子添加)"),
     gui__edit_time_cost("&a请输入锻造时长金额 正整数"),
 
     gui__edit__status__on("&a开启"),

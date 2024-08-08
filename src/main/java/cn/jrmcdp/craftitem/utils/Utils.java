@@ -2,6 +2,7 @@ package cn.jrmcdp.craftitem.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 import cn.jrmcdp.craftitem.config.CraftMaterial;
@@ -42,6 +43,9 @@ public class Utils {
         player.updateInventory();
     }
 
+    public static ItemStack getItemStack(Material material, String name) {
+        return getItemStack(material, name, new ArrayList<>());
+    }
     public static ItemStack getItemStack(Material material, String name, List<String> lore) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta meta = itemStack.getItemMeta();
@@ -120,6 +124,10 @@ public class Utils {
             if (lower.startsWith("wooden_")) return valueOf(m, lower.replace("wooden_", "wood"));
         }
         return material;
+    }
+
+    public static boolean isAir(ItemStack item) {
+        return item == null || item.getType().equals(Material.AIR);
     }
 
     public static <T extends Enum<?>> Optional<T> valueOf(Class<T> clazz, String s) {
