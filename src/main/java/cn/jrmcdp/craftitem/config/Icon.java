@@ -14,6 +14,7 @@ import java.util.List;
 public class Icon {
     private final String key;
     private final org.bukkit.Material material;
+    private final int data;
     private final int amount;
     private final String name;
     private final List<String> lore;
@@ -23,9 +24,10 @@ public class Icon {
     private final List<String> shiftLeftClick;
     private final List<String> shiftRightClick;
 
-    public Icon(String key, org.bukkit.Material material, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
+    public Icon(String key, org.bukkit.Material material, int data, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
         this.key = key;
         this.material = material;
+        this.data = data;
         this.amount = amount;
         this.name = name;
         this.lore = lore;
@@ -38,7 +40,7 @@ public class Icon {
 
     @SafeVarargs
     public final ItemStack getItem(Player player, Pair<String, Object>... replacements) {
-        ItemStack item = new ItemStack(material, amount);
+        ItemStack item = data > 0 ? new ItemStack(material, amount, (short) data) : new ItemStack(material, amount);
         ItemMeta meta = item.getItemMeta();
         if (name != null) meta.setDisplayName(name);
         if (!lore.isEmpty()) {

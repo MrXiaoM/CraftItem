@@ -62,6 +62,7 @@ public class Gui {
             if (material == null) continue;
 
             String name = ColorHelper.parseColor(section.getString(key + ".Name"));
+            int data = section.getInt(key + ".Data", 0);
             int amount = section.getInt(key + ".Amount", 1);
             List<String> lore = ColorHelper.parseColor(section.getStringList(key + ".Lore"));
             Integer customModelData = section.contains(key + ".CustomModelData") ? section.getInt(key + ".CustomModelData") : null;
@@ -69,7 +70,6 @@ public class Gui {
             List<String> rightClick = ColorHelper.parseColor(section.getStringList(key + ".RightClick"));
             List<String> shiftLeftClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick"));
             List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
-            items.put(key, new Icon(key, material, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
         
         for (String s : Lists.newArrayList(
@@ -79,6 +79,7 @@ public class Gui {
             if (!items.containsKey(s)) {
                 CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 必要图标 '" + s + "' 的配置不存在，请从默认配置文件中导入");
             }
+            items.put(key, new Icon(key, material, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
 
         checkError(chest);
