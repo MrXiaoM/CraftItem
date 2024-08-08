@@ -15,7 +15,7 @@ public class Craft {
     private static final Map<String, CraftData> craftDataMap = new HashMap<>();
 
     public static void reload() {
-        config = FileConfig.Craft.getConfig();
+        config = FileConfig.Craft.loadConfig();
         craftDataMap.clear();
         for (String key : config.getKeys(false)) {
             Object object = config.get(key, null);

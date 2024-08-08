@@ -43,7 +43,7 @@ public class Category {
     }
 
     public static void reload() {
-        config = FileConfig.Category.getConfig();
+        config = FileConfig.Category.loadConfig();
         title = config.getString("Title");
         chest = new String[config.getStringList("Chest").size() * 9];
         StringBuilder info = new StringBuilder();

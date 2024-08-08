@@ -4,7 +4,6 @@ import cn.jrmcdp.craftitem.CraftItem;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum FileConfig {
@@ -27,7 +26,7 @@ public enum FileConfig {
         this.separator = separator;
     }
 
-    public YamlConfiguration getConfig() {
+    public YamlConfiguration loadConfig() {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(this.file);
         if (separator != '.') {
             config.options().pathSeparator(separator);
@@ -35,7 +34,7 @@ public enum FileConfig {
         return config;
     }
 
-    public YamlConfiguration getConfig(String path, String name) {
+    public YamlConfiguration loadConfig(String path, String name) {
         this.file = new File(CraftItem.getPlugin().getDataFolder(), path + File.separator + name + ".yml");
         if (!this.file.exists())
             try {
@@ -50,17 +49,6 @@ public enum FileConfig {
         return file.exists();
     }
 
-    public YamlConfiguration getOrCreateConfig(String path, String name) {
-        this.file = new File(CraftItem.getPlugin().getDataFolder(), path + File.separator + name + ".yml");
-        if (!this.file.exists())
-            try {
-                this.file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        return YamlConfiguration.loadConfiguration(this.file);
-    }
-
     public void saveConfig(YamlConfiguration config) {
         try {
             config.save(this.file);
@@ -71,10 +59,6 @@ public enum FileConfig {
 
     public void saveConfig(String path, String name, YamlConfiguration config) {
         this.file = new File(CraftItem.getPlugin().getDataFolder(), path + File.separator + name + ".yml");
-        try {
-            config.save(this.file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        saveConfig(config);
     }
 }

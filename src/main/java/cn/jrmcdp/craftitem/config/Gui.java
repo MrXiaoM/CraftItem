@@ -48,7 +48,7 @@ public class Gui {
     }
 
     public static void reload() {
-        config = FileConfig.Gui.getConfig();
+        config = FileConfig.Gui.loadConfig();
         title = ColorHelper.parseColor(config.getString("Title"));
 
         chest = String.join("", config.getStringList("Chest")).toCharArray();

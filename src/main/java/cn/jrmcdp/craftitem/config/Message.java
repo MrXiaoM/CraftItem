@@ -220,7 +220,7 @@ public enum Message {
     
     public static void reload() {
         save(!FileConfig.Message.exists());
-        FileConfiguration config = FileConfig.Message.getConfig();
+        FileConfiguration config = FileConfig.Message.loadConfig();
         Message.config.clear();
         for (Message m : values()) {
             List<String> list = config.getStringList(m.key);
@@ -234,7 +234,7 @@ public enum Message {
         save(true);
     }
     public static void save(boolean overwrite) {
-        YamlConfiguration config = FileConfig.Message.getConfig();
+        YamlConfiguration config = FileConfig.Message.loadConfig();
         boolean save = false;
         for (Message m : values()) {
             if (overwrite || !config.contains(m.key)) {

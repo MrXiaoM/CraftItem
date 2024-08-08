@@ -4,7 +4,6 @@ import cn.jrmcdp.craftitem.config.FileConfig;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,7 +20,7 @@ public class PlayerData {
 
     public PlayerData(Player player) {
         this.player = player;
-        this.config = FileConfig.Custom.getConfig("PlayerData", player.getName());
+        this.config = FileConfig.Custom.loadConfig("PlayerData", player.getName());
         this.scoreMap = new HashMap<>();
         this.timeMap = new HashMap<>();
         this.failMap = new HashMap<>();
