@@ -1,29 +1,26 @@
 package cn.jrmcdp.craftitem.minigames.utils;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 
 public class AdventureManagerImpl {
-    private final ProtocolManager protocolManager;
     private final BukkitAudiences adventure;
+    private final MiniMessage miniMessage;
     private static AdventureManagerImpl instance;
+    public static final boolean legacyColorSupport = false;
 
     private AdventureManagerImpl(JavaPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
-        this.protocolManager = ProtocolLibrary.getProtocolManager();
+        this.miniMessage = MiniMessage.builder().build();
         instance = this;
     }
 
@@ -36,52 +33,36 @@ public class AdventureManagerImpl {
     public static AdventureManagerImpl getInstance() {
         return instance;
     }
-    
-    public Component getComponentFromMiniMessage(String text) {
+
+    public Component miniMessage(String text) {
         if (text == null) {
             return Component.empty();
         }
-        if (CFConfig.legacyColorSupport) {
-            return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(text));
+        if (legacyColorSupport) {
+            return miniMessage.deserialize(legacyToMiniMessage(text));
         } else {
-            return MiniMessage.miniMessage().deserialize(text);
+            return miniMessage.deserialize(text);
         }
     }
 
     public void sendTitle(Player player, String title, String subtitle, int in, int duration, int out) {
-        sendTitle(player, getComponentFromMiniMessage(title), getComponentFromMiniMessage(subtitle), in, duration, out);
+        sendTitle(player, miniMessage(title), miniMessage(subtitle), in, duration, out);
     }
-
     
     public void sendTitle(Player player, Component title, Component subtitle, int in, int duration, int out) {
-        try {
-            PacketContainer titlePacket = new PacketContainer(PacketType.Play.Server.SET_TITLE_TEXT);
-            titlePacket.getModifier().write(0, getIChatComponent(componentToJson(title)));
-            PacketContainer subTitlePacket = new PacketContainer(PacketType.Play.Server.SET_SUBTITLE_TEXT);
-            subTitlePacket.getModifier().write(0, getIChatComponent(componentToJson(subtitle)));
-            PacketContainer timePacket = new PacketContainer(PacketType.Play.Server.SET_TITLES_ANIMATION);
-            timePacket.getIntegers().write(0, in);
-            timePacket.getIntegers().write(1, duration);
-            timePacket.getIntegers().write(2, out);
-            protocolManager.sendServerPacket(player, titlePacket);
-            protocolManager.sendServerPacket(player, subTitlePacket);
-            protocolManager.sendServerPacket(player, timePacket);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            LogUtils.warn("Error occurred when sending title");
-        }
+        Audience audience = adventure.player(player);
+        Title.Times times = Title.Times.times(
+                Duration.ofMillis(in * 50L),
+                Duration.ofMillis(duration * 50L),
+                Duration.ofMillis(out * 50L)
+        );
+        audience.showTitle(Title.title(title,subtitle, times));
     }
-
     
     public void sendActionbar(Player player, String s) {
-        try {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_ACTION_BAR_TEXT);
-            packet.getModifier().write(0, getIChatComponent(componentToJson(getComponentFromMiniMessage(s))));
-            protocolManager.sendServerPacket(player, packet);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            LogUtils.warn("Error occurred when sending actionbar");
-        }
+        Audience audience = adventure.player(player);
+        audience.sendActionBar(miniMessage(s));
     }
-
     
     public void sendSound(Player player, Sound.Source source, Key key, float volume, float pitch) {
         Sound sound = Sound.sound(key, source, volume, pitch);
@@ -157,17 +138,9 @@ public class AdventureManagerImpl {
         return stringBuilder.toString();
     }
 
-    
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isColorCode(char c) {
         return c == '§' || c == '&';
     }
 
-    public String componentToJson(Component component) {
-        return GsonComponentSerializer.gson().serialize(component);
-    }
-
-    public Object getIChatComponent(String json) throws InvocationTargetException, IllegalAccessException {
-        return ReflectionUtils.iChatComponentMethod.invoke(null, json);
-    }
 }

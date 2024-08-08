@@ -3,7 +3,7 @@ version: ${version}
 main: cn.jrmcdp.craftitem.CraftItem
 authors: [ ZhiBuMiao, MrXiaoM ]
 depend: [ Vault ]
-softdepend: [ PlaceholderAPI, ProtocolLib ]
+softdepend: [ PlaceholderAPI ]
 api-version: 1.13
 commands:
   CraftItem:

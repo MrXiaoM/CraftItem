@@ -38,7 +38,6 @@ public class GameManager implements Listener {
         GameManager.inst = this;
 
         this.versionManager = new VersionManager(plugin);
-        ReflectionUtils.load();
         AdventureManagerImpl.load(plugin);
         this.miniGames = new MiniGames(plugin);
         Bukkit.getPluginManager().registerEvents(this, plugin);
