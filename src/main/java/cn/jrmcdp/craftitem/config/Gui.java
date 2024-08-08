@@ -86,10 +86,12 @@ public class Gui {
         checkError(chestTime);
     }
 
-    private static void checkError(char[] chest) {
-        for (char c : chest) {
+    private static void checkError(char[] inv) {
+        for (int i = 0; i < inv.length; i++) {
+            char c = inv[i];
             String key = String.valueOf(c);
             if (!items.containsKey(key)) {
+                inv[i] = '　';
                 CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 无法找到图标 '" + key + "'");
             }
         }
