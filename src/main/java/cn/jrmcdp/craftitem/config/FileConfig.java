@@ -9,20 +9,30 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum FileConfig {
     Message(new File(CraftItem.getPlugin().getDataFolder(), "Message.yml")),
-    Craft(new File(CraftItem.getPlugin().getDataFolder(), "Craft.yml")),
+    Craft(new File(CraftItem.getPlugin().getDataFolder(), "Craft.yml"), ' '),
     Gui(new File(CraftItem.getPlugin().getDataFolder(), "Gui.yml")),
     Category(new File(CraftItem.getPlugin().getDataFolder(), "Category.yml")),
     Material(new File(CraftItem.getPlugin().getDataFolder(), "Material.yml")),
     Custom(null);
 
     private File file;
-
+    private final char separator;
     FileConfig(File file) {
         this.file = file;
+        this.separator = '.';
+    }
+
+    FileConfig(File file, char separator) {
+        this.file = file;
+        this.separator = separator;
     }
 
     public YamlConfiguration getConfig() {
-        return YamlConfiguration.loadConfiguration(this.file);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(this.file);
+        if (separator != '.') {
+            config.options().pathSeparator(separator);
+        }
+        return config;
     }
 
     public YamlConfiguration getConfig(String path, String name) {
