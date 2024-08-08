@@ -12,6 +12,7 @@ import java.util.*;
 import cn.jrmcdp.craftitem.minigames.utils.Pair;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -54,12 +55,25 @@ public class Gui {
         chestTime = String.join("", config.getStringList("ChestTime")).toCharArray();
 
         items.clear();
+        List<String> necessaryItems = Lists.newArrayList(
+                "材", "物", "锻", "锻_连击", "锻_困难",
+                "时", "时_未开启", "时_条件不足", "时_进行中", "时_完成"
+        );
         ConfigurationSection section = config.getConfigurationSection("Item");
         if (section != null) for (String key : section.getKeys(false)) {
-            org.bukkit.Material material = Utils
-                    .parseMaterial(section.getString(key + ".Type", "STONE"))
+            String rawMaterial = section.getString(key + ".Type", "STONE");
+            Material material = Utils
+                    .parseMaterial(rawMaterial)
                     .orElse(null);
-            if (material == null) continue;
+            if (material == null) {
+                if (necessaryItems.contains(key)) {
+                    material = Material.STONE;
+                    CraftItem.getPlugin().getLogger().warning("Gui.yml 找不到图标 " + key + " 设定的物品类型 " + rawMaterial + "，使用默认图标");
+                } else {
+                    CraftItem.getPlugin().getLogger().warning("Gui.yml 找不到图标 " + key + " 设定的物品类型 " + rawMaterial);
+                    continue;
+                }
+            }
 
             String name = ColorHelper.parseColor(section.getString(key + ".Name"));
             int data = section.getInt(key + ".Data", 0);
@@ -70,15 +84,6 @@ public class Gui {
             List<String> rightClick = ColorHelper.parseColor(section.getStringList(key + ".RightClick"));
             List<String> shiftLeftClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick"));
             List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
-        }
-        
-        for (String s : Lists.newArrayList(
-                "材", "物", "锻", "锻_连击", "锻_困难",
-                "时", "时_未开启", "时_条件不足", "时_进行中", "时_完成"
-        )) {
-            if (!items.containsKey(s)) {
-                CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 必要图标 '" + s + "' 的配置不存在，请从默认配置文件中导入");
-            }
             items.put(key, new Icon(key, material, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
 
