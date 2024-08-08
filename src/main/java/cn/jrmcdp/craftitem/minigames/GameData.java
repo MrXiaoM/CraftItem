@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.minigames;
 
+import cn.jrmcdp.craftitem.config.Craft;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
 import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
 import org.bukkit.entity.Player;
@@ -19,13 +20,13 @@ public class GameData {
 
     public void success(GamingPlayer gamingPlayer) {
         if (gamingPlayer.getPlayer().getName().equals(player.getName())) {
-            holder.doForgeResult(player, win, multiple, () -> {});
+            Craft.doForgeResult(holder, player, win, multiple, () -> {});
         }
     }
 
     public void fail(GamingPlayer gamingPlayer) {
         if (gamingPlayer.getPlayer().getName().equals(player.getName())) {
-            holder.doForgeResult(player, false, multiple, () -> {});
+            Craft.doForgeResult(holder, player, false, multiple, () -> {});
         }
     }
 }
