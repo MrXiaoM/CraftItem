@@ -1,4 +1,4 @@
-package cn.jrmcdp.craftitem.config;
+package cn.jrmcdp.craftitem.config.data;
 
 import cn.jrmcdp.craftitem.ColorHelper;
 import org.bukkit.entity.Player;
