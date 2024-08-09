@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.minigames;
 
 import cn.jrmcdp.craftitem.config.Craft;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
-import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
+import cn.jrmcdp.craftitem.minigames.game.GamingPlayer;
 import org.bukkit.entity.Player;
 
 public class GameData {

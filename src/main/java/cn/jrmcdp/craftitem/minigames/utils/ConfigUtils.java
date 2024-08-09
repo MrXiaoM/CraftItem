@@ -3,7 +3,9 @@ package cn.jrmcdp.craftitem.minigames.utils;
 import cn.jrmcdp.craftitem.utils.Pair;
 import com.google.common.collect.Lists;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Utility class for configuration-related operations.

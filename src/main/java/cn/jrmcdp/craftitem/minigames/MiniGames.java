@@ -1,5 +1,10 @@
 package cn.jrmcdp.craftitem.minigames;
 
+import cn.jrmcdp.craftitem.minigames.game.AbstractGamingPlayer;
+import cn.jrmcdp.craftitem.minigames.game.BasicGameConfig;
+import cn.jrmcdp.craftitem.minigames.game.GameFactory;
+import cn.jrmcdp.craftitem.minigames.game.GameInstance;
+import cn.jrmcdp.craftitem.minigames.utils.*;
 import cn.jrmcdp.craftitem.utils.Pair;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -8,11 +13,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-import cn.jrmcdp.craftitem.minigames.utils.*;
-import cn.jrmcdp.craftitem.minigames.utils.game.AbstractGamingPlayer;
-import cn.jrmcdp.craftitem.minigames.utils.game.BasicGameConfig;
-import cn.jrmcdp.craftitem.minigames.utils.game.GameFactory;
-import cn.jrmcdp.craftitem.minigames.utils.game.GameInstance;
 
 import java.io.File;
 import java.util.*;

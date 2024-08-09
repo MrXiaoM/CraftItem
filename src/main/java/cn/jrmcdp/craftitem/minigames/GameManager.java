@@ -1,12 +1,14 @@
 package cn.jrmcdp.craftitem.minigames;
 
-import cn.jrmcdp.craftitem.minigames.utils.game.GameSettings;
+import cn.jrmcdp.craftitem.minigames.game.BasicGameConfig;
+import cn.jrmcdp.craftitem.minigames.game.GameInstance;
+import cn.jrmcdp.craftitem.minigames.game.GameSettings;
+import cn.jrmcdp.craftitem.minigames.game.GamingPlayer;
+import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
+import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
+import cn.jrmcdp.craftitem.minigames.utils.OffsetUtils;
 import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.Utils;
-import cn.jrmcdp.craftitem.minigames.utils.*;
-import cn.jrmcdp.craftitem.minigames.utils.game.BasicGameConfig;
-import cn.jrmcdp.craftitem.minigames.utils.game.GameInstance;
-import cn.jrmcdp.craftitem.minigames.utils.game.GamingPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -30,14 +32,12 @@ public class GameManager implements Listener {
         return inst;
     }
     public final MiniGames miniGames;
-    public final VersionManager versionManager;
     protected final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap = new ConcurrentHashMap<>();
     public GameManager(JavaPlugin plugin) {
         if (GameManager.inst != null) throw new IllegalStateException("GameManager is already loaded");
         GameManager.plugin = plugin;
         GameManager.inst = this;
 
-        this.versionManager = new VersionManager(plugin);
         AdventureManagerImpl.load(plugin);
         this.miniGames = new MiniGames(plugin);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -46,10 +46,6 @@ public class GameManager implements Listener {
         } else {
             plugin.getLogger().warning("当前服务端非 Paper 服务端，困难锻造中 dance 类型的小游戏（默认配置不使用）将无法正常使用");
         }
-    }
-
-    public VersionManager getVersionManager() {
-        return versionManager;
     }
 
     public void reloadConfig() {

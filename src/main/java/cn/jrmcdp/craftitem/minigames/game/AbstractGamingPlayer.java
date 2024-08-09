@@ -1,4 +1,4 @@
-package cn.jrmcdp.craftitem.minigames.utils.game;
+package cn.jrmcdp.craftitem.minigames.game;
 
 import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.minigames.GameManager;

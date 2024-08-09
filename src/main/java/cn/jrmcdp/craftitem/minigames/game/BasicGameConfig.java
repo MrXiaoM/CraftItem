@@ -1,4 +1,4 @@
-package cn.jrmcdp.craftitem.minigames.utils.game;
+package cn.jrmcdp.craftitem.minigames.game;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
