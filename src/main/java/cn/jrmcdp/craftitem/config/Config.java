@@ -9,10 +9,7 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static cn.jrmcdp.craftitem.utils.Utils.valueOf;
 
@@ -26,6 +23,7 @@ public class Config {
     private static Sound soundForgeTitle;
     private static List<String> randomGames;
     private static final List<Condition> timeForgeConditions = new ArrayList<>();
+    private static String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
         FileConfiguration config = CraftItem.getPlugin().getConfig();
@@ -55,13 +53,20 @@ public class Config {
         }
         randomGames = config.getStringList("RandomGames");
         timeForgeConditions.clear();
-        ConfigurationSection tfcSection = config.getConfigurationSection("TimeForgeConditions");
-        if (tfcSection != null) for (String key : tfcSection.getKeys(false)) {
-            String input = tfcSection.getString(key + ".input");
-            String type = tfcSection.getString(key + ".type");
-            String output = tfcSection.getString(key + ".output");
+        ConfigurationSection section = config.getConfigurationSection("TimeForgeConditions");
+        if (section != null) for (String key : section.getKeys(false)) {
+            String input = section.getString(key + ".input");
+            String type = section.getString(key + ".type");
+            String output = section.getString(key + ".output");
             timeForgeConditions.add(new Condition(input, type, output));
         }
+
+        timeFormatHour = config.getString("TimeFormat.Hour", "时");
+        timeFormatHours = config.getString("TimeFormat.Hours", "时");
+        timeFormatMinute = config.getString("TimeFormat.Minute", "分");
+        timeFormatMinutes = config.getString("TimeFormat.Minutes", "分");
+        timeFormatSecond = config.getString("TimeFormat.Second", "秒");
+        timeFormatSeconds = config.getString("TimeFormat.Seconds", "秒");
     }
 
     public static Sound getSoundClickInventory() {
@@ -100,6 +105,17 @@ public class Config {
         return true;
     }
 
+    public static String formatTime(int hour, int minute, int second, String noneTips) {
+        if (hour <= 0 && minute <= 0 && second <= 0) return noneTips;
+        StringBuilder sb = new StringBuilder();
+        String hourUnit = hour > 1 ? timeFormatHours : timeFormatHour;
+        String minuteUnit = minute > 1 ? timeFormatMinutes : timeFormatMinute;
+        String secondUnit = second > 1 ? timeFormatSeconds : timeFormatSecond;
+        if (hour > 0) sb.append(hour).append(hourUnit);
+        if (minute > 0) sb.append(minute).append(minuteUnit);
+        if (second >= 0) sb.append(second).append(secondUnit);
+        return sb.toString();
+    }
     public static String getChanceName(int chance) {
         ConfigurationSection section = setting.getConfigurationSection("ChanceName");
         if (section != null) for (String key : section.getKeys(false)) {

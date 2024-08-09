@@ -82,9 +82,7 @@ public class CraftData implements ConfigurationSerializable {
             second -= 60;
             minute++;
         }
-        return (hour > 0 ? (hour + "时 ") : "")
-                + (minute > 0 ? (minute + "分 ") : "")
-                + (second > 0 ? (second + "秒") : (minute > 0 || hour > 0 ? "" : noneTips));
+        return Config.formatTime(hour, minute, (int) second, noneTips);
     }
 
     public long getTime() {
