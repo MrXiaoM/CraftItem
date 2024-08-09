@@ -160,7 +160,7 @@ public class Craft {
                 if (cancel != null) cancel.run();
                 return;
             }
-            Gui.openGui(playerData, id, craftData);
+            ForgeGui.openGui(playerData, id, craftData);
         }, 10);
         return true;
     }

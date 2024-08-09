@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.Gui;
+import cn.jrmcdp.craftitem.config.ForgeGui;
 import cn.jrmcdp.craftitem.utils.Prompter;
 import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.config.Config;
@@ -167,8 +167,8 @@ public class EditHolder implements IHolder {
     private void checkMaterialSlots(Player player, int size) {
 
         int count1 = 0, count2 = 0;
-        for (char c : Gui.getChest()) if (c == '材') count1++;
-        for (char c : Gui.getChestTime()) if (c == '材') count2++;
+        for (char c : ForgeGui.getChest()) if (c == '材') count1++;
+        for (char c : ForgeGui.getChestTime()) if (c == '材') count2++;
         if (size > count1 || size > count2) {
             Message.gui__edit__item__material__too_much.msg(player);
         }

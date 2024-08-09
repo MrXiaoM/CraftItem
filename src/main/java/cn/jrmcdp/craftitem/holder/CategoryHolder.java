@@ -89,7 +89,7 @@ public class CategoryHolder implements IHolder {
             case "方" : {
                 String name = getSlot()[event.getRawSlot()];
                 if (name == null) return;
-                Gui.openGui(getPlayerData(), name, Craft.getCraftData(name));
+                ForgeGui.openGui(getPlayerData(), name, Craft.getCraftData(name));
             }
         }
     }

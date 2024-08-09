@@ -141,7 +141,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
         if (craftData == null) {
             return Message.craft__not_found.msg(player, args[1]);
         }
-        Bukkit.getScheduler().runTaskLater(CraftItem.getPlugin(), () -> player.openInventory(Gui.buildGui(DataManager.getOrCreatePlayerData(player), args[1], craftData)), 1);
+        Bukkit.getScheduler().runTaskLater(CraftItem.getPlugin(), () -> player.openInventory(ForgeGui.buildGui(DataManager.getOrCreatePlayerData(player), args[1], craftData)), 1);
         return false;
     }
 
@@ -215,7 +215,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
         CraftMaterial.reload();
         Config.reload();
         Craft.reload();
-        Gui.reload();
+        ForgeGui.reload();
         Category.reload();
         return Message.reload.msg(sender);
     }

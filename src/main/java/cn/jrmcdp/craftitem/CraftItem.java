@@ -58,7 +58,7 @@ public class CraftItem extends JavaPlugin {
         CraftMaterial.reload();
         Config.reload();
         Craft.reload();
-        Gui.reload();
+        ForgeGui.reload();
         Category.reload();
         regListener(
                 guiListener = new GuiListener(this),

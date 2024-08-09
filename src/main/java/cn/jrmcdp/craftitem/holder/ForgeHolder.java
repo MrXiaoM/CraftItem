@@ -39,7 +39,7 @@ public class ForgeHolder implements IHolder {
         this.endTime = playerData.getEndTime(id);
         this.done = endTime != null && System.currentTimeMillis() >= endTime;
         this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
-        this.chest = processing || done ? Gui.getChestTime() : Gui.getChest();
+        this.chest = processing || done ? ForgeGui.getChestTime() : ForgeGui.getChest();
     }
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
@@ -55,17 +55,17 @@ public class ForgeHolder implements IHolder {
         if (craftData.getTime() > 0) {
             if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
-                    icon = Gui.items.get("时_完成");
+                    icon = ForgeGui.items.get("时_完成");
                 } else if (processing) {
-                    icon = Gui.items.get("时_进行中");
+                    icon = ForgeGui.items.get("时_进行中");
                 } else {
-                    icon = Gui.items.get("时");
+                    icon = ForgeGui.items.get("时");
                 }
             } else {
-                icon = Gui.items.get("时_条件不足");
+                icon = ForgeGui.items.get("时_条件不足");
             }
         } else {
-            icon = Gui.items.get("时_未开启");
+            icon = ForgeGui.items.get("时_未开启");
         }
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
         double progress = endTime == null ? 0.0d : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
@@ -147,7 +147,7 @@ public class ForgeHolder implements IHolder {
             return;
         }
         // 其它图标
-        Icon icon = Gui.items.get(key);
+        Icon icon = ForgeGui.items.get(key);
         if (icon == null) return;
         if (!event.isShiftClick()) {
             if (event.isLeftClick()) {
@@ -239,21 +239,23 @@ public class ForgeHolder implements IHolder {
      * 点击进行 时长锻造
      */
     private void clickForgeTime(Player player) {
+        // 检查是否满足时长锻造条件
         if (!Config.isMeetTimeForgeCondition(playerData.getPlayer())) return;
         CraftData craftData = getCraftData();
+        // 检查是否已开启时长锻造
         if (craftData.getTime() <= 0) return;
-        if (done) {
+        String key = getId();
+        if (done) { // 如果时长锻造已完成
+            player.closeInventory();
             long now = System.currentTimeMillis();
-            Long endTime = playerData.getEndTime(getId());
+            Long endTime = playerData.getEndTime(key);
             if (endTime == null || now < endTime) {
-                player.closeInventory();
                 return;
             }
-            player.closeInventory();
-            playerData.clearScore(getId());
-            playerData.clearFailTimes(getId());
-            playerData.removeTime(getId());
-            playerData.save();
+            playerData.clearScore(key);
+            playerData.clearFailTimes(key);
+            playerData.removeTime(key);
+            playerData.save(); // 锻造结束，给予奖励
             Message.craft__success.msg(player, craftData.getDisplayItem());
             for (ItemStack item : craftData.getItems()) {
                 for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
@@ -267,7 +269,7 @@ public class ForgeHolder implements IHolder {
             }
             return;
         }
-        if (!processing) {
+        if (!processing) { // 如果时长锻造未开始
             int cost = craftData.getTimeCost();
             if (!CraftItem.getEcon().has(player, cost)) {
                 Message.craft__not_enough_money.msg(player);
@@ -278,8 +280,9 @@ public class ForgeHolder implements IHolder {
             player.closeInventory();
             CraftItem.getEcon().withdrawPlayer(player, cost);
             craftData.takeAllMaterial(player.getInventory());
-            playerData.setTime(getId(), System.currentTimeMillis() + craftData.getTime() * 1000L);
-            playerData.save();
+            long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
+            playerData.setTime(key, endTime);
+            playerData.save(); // 开始时长锻造
             Message.craft__time_start.msg(player);
         }
     }
