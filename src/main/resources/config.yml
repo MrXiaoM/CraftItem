@@ -60,6 +60,24 @@ TimeForgeConditions:
 #    type: '>='
 #    output: 30
 
+TimeFormat:
+  Hour: '时 '
+  Hours: '时 '
+  Minute: '分 '
+  Minutes: '分 '
+  Second: '秒'
+  Seconds: '秒'
+
+# 时长锻造次数限制组
+# 锻造配方设置中填写这里的组名来使用相关组的限制次数
+TimeForgeCountLimitGroups:
+  # 组名，任意取定，可添加多个组
+  group1:
+    # 拥有 craftitem.time.default 权限的玩家限制 10 次
+    default: 10
+    # 拥有 craftitem.time.vip 权限的玩家限制 20 次，以此类推
+    vip: 20
+
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
 # 贴图位移字符配置

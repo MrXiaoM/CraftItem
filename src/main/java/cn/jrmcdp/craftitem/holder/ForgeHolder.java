@@ -70,12 +70,19 @@ public class ForgeHolder implements IHolder {
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
         double progress = endTime == null ? 0.0d : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
         String remainTime = endTime == null ? "" : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒");
+
+        int count = playerData.getTimeForgeCount(getId());
+        int limit = craftData.getTimeForgeCountLimit(playerData.getPlayer());
+
         ItemStack item = icon.getItem(
                 playerData.getPlayer(),
                 Pair.of("<Progress>", String.format("%.2f%%", progress * 100)),
                 Pair.of("<RemainTime>", remainTime),
                 Pair.of("<Time>", craftData.getTimeDisplay()),
-                Pair.of("<Cost>", craftData.getTimeCost())
+                Pair.of("<Cost>", craftData.getTimeCost()),
+                Pair.of("<LimitCountCurrent>", count),
+                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.get()),
+                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
         );
         ItemMeta meta = item.getItemMeta();
         if (meta instanceof Damageable) {
@@ -255,6 +262,7 @@ public class ForgeHolder implements IHolder {
             playerData.clearScore(key);
             playerData.clearFailTimes(key);
             playerData.removeTime(key);
+            playerData.addTimeForgeCount(key, 1);
             playerData.save(); // 锻造结束，给予奖励
             Message.craft__success.msg(player, craftData.getDisplayItem());
             for (ItemStack item : craftData.getItems()) {
@@ -276,6 +284,11 @@ public class ForgeHolder implements IHolder {
                 return;
             }
             if (craftData.isNotEnoughMaterial(player)) return;
+            int limit = craftData.getTimeForgeCountLimit(player);
+            if (limit < 0 || (limit > 0 && playerData.getTimeForgeCount(key) >= limit)) {
+                Message.craft__time_forge_limit.msg(player, Math.max(limit, 0));
+                return;
+            }
 
             player.closeInventory();
             CraftItem.getEcon().withdrawPlayer(player, cost);

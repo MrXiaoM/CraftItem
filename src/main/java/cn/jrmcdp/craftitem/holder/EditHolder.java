@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,7 @@ public class EditHolder implements IHolder {
         items[8] = item8();
         items[9] = item9();
         items[10] = item10();
+        items[11] = item11();
         return items;
     }
 
@@ -140,19 +142,26 @@ public class EditHolder implements IHolder {
     }
 
     private ItemStack item8() {
+        String group = craftData.getTimeCountLimit();
+        if (group.trim().isEmpty()) group = Message.gui__edit__unset.get();
+        return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time_count_limit__name.get(),
+                Message.gui__edit__item__time_count_limit__lore.list(group));
+    }
+
+    private ItemStack item9() {
         return getItemStack(getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.get(),
                 Message.gui__edit__item__difficult__lore.list(
                         (craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).get()
                 ));
     }
-    private ItemStack item9() {
+    private ItemStack item10() {
         return getItemStack(getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.get(),
                 Message.gui__edit__item__fail_times__lore.list(
                         craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.get()
                 ));
     }
 
-    private ItemStack item10() {
+    private ItemStack item11() {
         return getItemStack(getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.get(),
                 Message.gui__edit__item__combo__lore.list(
                         craftData.getCombo() > 0 ? String.valueOf(craftData.getCombo()) : Message.gui__edit__unset.get()
@@ -346,14 +355,62 @@ public class EditHolder implements IHolder {
                 Utils.updateInventory(player);
                 break;
             }
-            case 8: { // 困难锻造
+            case 8: { // 时长锻造次数限制
+                if (!event.isShiftClick()) {
+                    if (event.isLeftClick()) {
+                        int size = 9;
+                        List<ItemStack> items = new ArrayList<>();
+                        Map<String, Map<String, Integer>> groups = Config.getTimeForgeCountLimitGroups();
+                        for (Map.Entry<String, Map<String, Integer>> entry : groups.entrySet()) {
+                            String group = entry.getKey();
+                            Map<String, Integer> map = entry.getValue();
+                            List<String> lore = new ArrayList<>();
+                            lore.add("");
+                            for (Map.Entry<String, Integer> e : map.entrySet()) {
+                                lore.add("§f" + e.getKey() + "§7 : §e" + e.getValue());
+                            }
+                            items.add(Utils.getItemStack(Material.PAPER, group, lore));
+                        }
+                        Prompter.gui(player, size, Message.gui__edit_time_limit_count_title, inv -> {
+                            int invSize = inv.getSize();
+                            for (int i = 0; i < invSize && i < items.size(); i++) {
+                                inv.setItem(i, items.get(i));
+                            }
+                        }, e -> {
+                            Inventory inv = e.getClickedInventory();
+                            if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
+                            ItemStack item = e.getCurrentItem();
+                            if (item == null || !item.getType().equals(Material.PAPER)) return;
+                            ItemMeta meta = item.getItemMeta();
+                            if (meta == null) return;
+                            String group = meta.getDisplayName();
+                            if (!groups.containsKey(group)) return;
+
+                            craftData.setTimeCountLimit(group);
+                            Craft.save(getId(), craftData);
+                            player.closeInventory();
+                        }, inv -> {
+                            open(player);
+                        });
+                        return;
+                    }
+                    if (event.isRightClick()) {
+                        craftData.setTimeCountLimit("");
+                        Craft.save(getId(), craftData);
+                        event.getView().getTopInventory().setItem(8, item8());
+                        Utils.updateInventory(player);
+                    }
+                }
+                break;
+            }
+            case 9: { // 困难锻造
                 craftData.setDifficult(!craftData.isDifficult());
-                event.getView().getTopInventory().setItem(8, item8());
+                event.getView().getTopInventory().setItem(9, item9());
                 Utils.updateInventory(player);
                 Craft.save(getId(), craftData);
                 break;
             }
-            case 9: { // 保底次数
+            case 10: { // 保底次数
                 if (event.isLeftClick()) {
                     craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() + (event.isShiftClick() ? 10 : 1));
                     Craft.save(getId(), craftData);
@@ -361,11 +418,11 @@ public class EditHolder implements IHolder {
                     craftData.setGuaranteeFailTimes(Math.max(0, craftData.getGuaranteeFailTimes() - (event.isShiftClick() ? 10 : 1)));
                     Craft.save(getId(), craftData);
                 }
-                event.getView().getTopInventory().setItem(9, item9());
+                event.getView().getTopInventory().setItem(10, item10());
                 Utils.updateInventory(player);
                 break;
             }
-            case 10: { // 连击次数
+            case 11: { // 连击次数
                 if (event.isLeftClick()) {
                     craftData.setCombo(craftData.getCombo() + (event.isShiftClick() ? 10 : 1));
                     Craft.save(getId(), craftData);
@@ -373,7 +430,7 @@ public class EditHolder implements IHolder {
                     craftData.setCombo(Math.max(0, craftData.getCombo() - (event.isShiftClick() ? 10 : 1)));
                     Craft.save(getId(), craftData);
                 }
-                event.getView().getTopInventory().setItem(10, item10());
+                event.getView().getTopInventory().setItem(11, item11());
                 Utils.updateInventory(player);
                 break;
             }

@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Condition;
 import cn.jrmcdp.craftitem.config.data.Title;
+import com.google.common.collect.Lists;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -23,6 +24,7 @@ public class Config {
     private static Sound soundForgeTitle;
     private static List<String> randomGames;
     private static final List<Condition> timeForgeConditions = new ArrayList<>();
+    private static final Map<String, Map<String, Integer>> timeForgeCountLimitGroups = new HashMap<>();
     private static String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
@@ -67,6 +69,20 @@ public class Config {
         timeFormatMinutes = config.getString("TimeFormat.Minutes", "分");
         timeFormatSecond = config.getString("TimeFormat.Second", "秒");
         timeFormatSeconds = config.getString("TimeFormat.Seconds", "秒");
+
+        timeForgeCountLimitGroups.clear();
+        section = config.getConfigurationSection("TimeForgeCountLimitGroups");
+        if (section != null) for (String key : section.getKeys(false)) {
+            ConfigurationSection sec = section.getConfigurationSection(key);
+            Map<String, Integer> map = new HashMap<>();
+            if (sec != null) for (String perm : sec.getKeys(false)) {
+                int count = sec.getInt(perm);
+                map.put(perm, Math.max(count, 0));
+            }
+            if (!map.isEmpty()) {
+                timeForgeCountLimitGroups.put(key, map);
+            }
+        }
     }
 
     public static Sound getSoundClickInventory() {
@@ -116,6 +132,36 @@ public class Config {
         if (second >= 0) sb.append(second).append(secondUnit);
         return sb.toString();
     }
+
+    public static Map<String, Map<String, Integer>> getTimeForgeCountLimitGroups() {
+        return timeForgeCountLimitGroups;
+    }
+
+    /**
+     * 获取玩家在某个限制组中的限制数量
+     * @param player 玩家
+     * @param group 组名
+     * @return 0 为无限制，-1 为匹配失败
+     */
+    public static int getTimeForgeCountLimit(Player player, String group) {
+        if (group.isEmpty()) return 0;
+        Map<String, Integer> map = timeForgeCountLimitGroups.get(group);
+        if (map == null || map.isEmpty()) return 0;
+        List<Map.Entry<String, Integer>> list = Lists.newArrayList(map.entrySet());
+        list.sort(Collections.reverseOrder(Comparator.comparingInt(Map.Entry::getValue)));
+        int limit = -1;
+        for (Map.Entry<String, Integer> entry : list) {
+            if (entry.getValue() == 0 && player.hasPermission("craftitem.time." + entry.getKey())) {
+                limit = 0;
+                break;
+            }
+            if (entry.getValue() > limit && player.hasPermission("craftitem.time." + entry.getKey())) {
+                limit = entry.getValue();
+            }
+        }
+        return limit;
+    }
+
     public static String getChanceName(int chance) {
         ConfigurationSection section = setting.getConfigurationSection("ChanceName");
         if (section != null) for (String key : section.getKeys(false)) {

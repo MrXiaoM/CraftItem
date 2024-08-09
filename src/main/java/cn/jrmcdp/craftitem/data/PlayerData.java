@@ -12,20 +12,31 @@ import org.bukkit.entity.Player;
 public class PlayerData {
     private final YamlConfiguration config;
 
-    private final Player player;
+    public final Player player;
 
-    private final HashMap<String, Integer> scoreMap;
-    private final HashMap<String, Long> timeMap;
-    private final HashMap<String, Integer> failMap;
+    /**
+     * 各配方的进度，用于 普通锻造 困难锻造
+     */
+    public final Map<String, Integer> scoreMap = new HashMap<>();
+    /**
+     * 各配方的时长锻造结束时间 (毫秒级时间戳)
+     */
+    public final Map<String, Long> timeMap = new HashMap<>();
+    /**
+     * 各配方的时长锻造进行过的次数
+     */
+    public final Map<String, Integer> timeCountMap = new HashMap<>();
+    /**
+     * 各配方的锻造失败次数，用于保底
+     */
+    public final Map<String, Integer> failMap = new HashMap<>();
 
     public PlayerData(Player player) {
         this.player = player;
         this.config = FileConfig.Custom.loadConfig("PlayerData", player.getName());
-        this.scoreMap = new HashMap<>();
-        this.timeMap = new HashMap<>();
-        this.failMap = new HashMap<>();
         load("ForgeData", (section, key) -> this.scoreMap.put(key, section.getInt(key)));
         load("TimeForgeData", (section, key) -> this.timeMap.put(key, section.getLong(key)));
+        load("TimeForgeCountData", (section, key) -> this.timeCountMap.put(key, section.getInt(key)));
         load("FailForgeData", (section, key) -> this.failMap.put(key, section.getInt(key)));
     }
 
@@ -79,6 +90,15 @@ public class PlayerData {
         this.timeMap.remove(key);
     }
 
+    public void addTimeForgeCount(String key, int add) {
+        int count = getTimeForgeCount(key) + add;
+        this.timeCountMap.put(key, count);
+    }
+
+    public int getTimeForgeCount(String key) {
+        return this.timeCountMap.getOrDefault(key, 0);
+    }
+
     public void clearScore(String key) {
         setScore(key, 0);
     }
@@ -104,6 +124,7 @@ public class PlayerData {
     public void save() {
         save("ForgeData", this.scoreMap);
         save("TimeForgeData", this.timeMap);
+        save("TimeForgeCountData", this.timeCountMap);
         save("FailForgeData", this.failMap);
         FileConfig.Custom.saveConfig("PlayerData", this.player.getName(), this.config);
     }

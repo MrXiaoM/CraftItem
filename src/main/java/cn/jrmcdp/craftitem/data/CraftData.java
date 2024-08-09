@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.data;
 
+import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.utils.Triple;
 import cn.jrmcdp.craftitem.utils.Utils;
@@ -39,11 +40,12 @@ public class CraftData implements ConfigurationSerializable {
     private boolean difficult;
     private int guaranteeFailTimes;
     private int combo;
+    private String timeCountLimit;
     public CraftData() {
-        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0, 0);
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0, 0, "");
     }
 
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo) {
+    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String timeCountLimit) {
         this.material = material;
         this.chance = chance;
         this.multiple = multiple;
@@ -64,6 +66,7 @@ public class CraftData implements ConfigurationSerializable {
         this.difficult = difficult;
         this.guaranteeFailTimes = guaranteeFailTimes;
         this.combo = combo;
+        this.timeCountLimit = timeCountLimit;
     }
 
     public String getTimeDisplay() {
@@ -123,6 +126,14 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setCombo(int combo) {
         this.combo = combo;
+    }
+
+    public String getTimeCountLimit() {
+        return timeCountLimit;
+    }
+
+    public void setTimeCountLimit(String timeCountLimit) {
+        this.timeCountLimit = timeCountLimit;
     }
 
     public List<ItemStack> getMaterial() {
@@ -193,6 +204,11 @@ public class CraftData implements ConfigurationSerializable {
         this.displayItem = displayItem;
     }
 
+    public int getTimeForgeCountLimit(Player player) {
+        return Config.getTimeForgeCountLimit(player, getTimeCountLimit());
+    }
+
+    @SuppressWarnings({"unused"})
     public boolean hasAllMaterial(Inventory gui) {
         Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
         for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
@@ -250,6 +266,7 @@ public class CraftData implements ConfigurationSerializable {
     }
     @NotNull
     public Map<String, Object> serialize() {
+        // 注: 配置路径分隔符是 ' '(空格) 不是 '.'(点)
         Map<String, Object> map = new HashMap<>();
         map.put("Material", this.material);
         map.put("Chance", this.chance);
@@ -263,28 +280,34 @@ public class CraftData implements ConfigurationSerializable {
         map.put("Difficult", this.difficult);
         map.put("GuaranteeFailTimes", this.guaranteeFailTimes);
         map.put("Combo", this.combo);
+        map.put("TimeCountLimit", this.timeCountLimit);
         return map;
     }
 
     @NotNull
     @SuppressWarnings("unused")
     public static CraftData deserialize(Map<String, Object> map) {
+        // 注: 配置路径分隔符是 ' '(空格) 不是 '.'(点)
         return new CraftData(
                 get(map, "Material", ArrayList::new), // List<ItemStack>
-                get(map, "Chance", () -> 0),
+                get(map, "Chance", 0),
                 get(map, "Multiple", ArrayList::new), // List<Integer>
-                get(map, "Cost", () -> 0),
+                get(map, "Cost", 0),
                 get(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
                 get(map, "Items", ArrayList::new), // List<ItemStack>
                 get(map, "Commands", ArrayList::new), // List<String>
-                Long.parseLong(String.valueOf(get(map, "TimeSecond", () -> (Object) "0"))),
-                get(map, "TimeCost", () -> 0),
-                get(map, "Difficult", () -> false),
-                get(map, "GuaranteeFailTimes", () -> 0),
-                get(map, "Combo", () -> 0)
+                Long.parseLong(String.valueOf(get(map, "TimeSecond", "0"))),
+                get(map, "TimeCost", 0),
+                get(map, "Difficult", false),
+                get(map, "GuaranteeFailTimes", 0),
+                get(map, "Combo", 0),
+                get(map, "TimeCountLimit", "")
         );
     }
-    
+
+    private static <T> T get(Map<String, Object> map, String key, T def) {
+        return get(map, key, () -> def);
+    }
     @SuppressWarnings("unchecked")
     private static <T> T get(Map<String, Object> map, String key, Supplier<T> def) {
         return map.get(key) == null ? def.get() : (T) map.get(key);

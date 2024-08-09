@@ -11,3 +11,7 @@ commands:
     - ci
     - dz
     description: Main Command
+
+permissions:
+  craftitem.time.default:
+    default: true
