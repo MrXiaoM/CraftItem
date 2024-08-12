@@ -84,8 +84,10 @@ public class ForgeHolder implements IHolder {
                 Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
         );
 
-        short damage = (short)((1.0d - progress) * item.getType().getMaxDurability());
-        item.setDurability(damage); // 不用 Damageable，兼容 1.12.2 或以下
+        if (item.getType().getMaxDurability() > 1) {
+            short damage = (short) ((1.0d - progress) * item.getType().getMaxDurability());
+            item.setDurability(damage); // 不用 Damageable，兼容 1.12.2 或以下
+        }
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
