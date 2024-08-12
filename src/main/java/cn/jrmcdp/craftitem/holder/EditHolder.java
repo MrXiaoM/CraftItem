@@ -145,10 +145,12 @@ public class EditHolder implements IHolder {
     }
 
     private ItemStack item8() {
-        String group = craftData.getTimeCountLimit();
-        if (group.trim().isEmpty()) group = Message.gui__edit__unset.get();
-        return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time_count_limit__name.get(),
-                Message.gui__edit__item__time_count_limit__lore.list(group));
+        String groupTime = craftData.getTimeCountLimit();
+        if (groupTime.trim().isEmpty()) groupTime = Message.gui__edit__unset.get();
+        String groupNormal = craftData.getCountLimit();
+        if (groupNormal.trim().isEmpty()) groupNormal = Message.gui__edit__unset.get();
+        return getItemStack(getMaterial("BUCKET"), Message.gui__edit__item__time_count_limit__name.get(),
+                Message.gui__edit__item__time_count_limit__lore.list(groupNormal, groupTime));
     }
 
     private ItemStack item9() {
@@ -358,51 +360,64 @@ public class EditHolder implements IHolder {
                 Utils.updateInventory(player);
                 break;
             }
-            case 8: { // 时长锻造次数限制
-                if (!event.isShiftClick()) {
-                    if (event.isLeftClick()) {
-                        int size = 9;
-                        List<ItemStack> items = new ArrayList<>();
-                        Map<String, Map<String, Integer>> groups = Config.getTimeForgeCountLimitGroups();
-                        for (Map.Entry<String, Map<String, Integer>> entry : groups.entrySet()) {
-                            String group = entry.getKey();
-                            Map<String, Integer> map = entry.getValue();
-                            List<String> lore = new ArrayList<>();
-                            lore.add("");
-                            for (Map.Entry<String, Integer> e : map.entrySet()) {
-                                lore.add("§f" + e.getKey() + "§7 : §e" + e.getValue());
-                            }
-                            items.add(Utils.getItemStack(Material.PAPER, group, lore));
+            case 8: { // 锻造次数限制
+                if (event.isLeftClick()) {
+                    int size = 9;
+                    List<ItemStack> items = new ArrayList<>();
+                    Map<String, Map<String, Integer>> groups = Config.getCountLimitGroups();
+                    for (Map.Entry<String, Map<String, Integer>> entry : groups.entrySet()) {
+                        String group = entry.getKey();
+                        Map<String, Integer> map = entry.getValue();
+                        List<String> lore = new ArrayList<>();
+                        lore.add("");
+                        for (Map.Entry<String, Integer> e : map.entrySet()) {
+                            lore.add("§f" + e.getKey() + "§7 : §e" + e.getValue());
                         }
-                        Prompter.gui(player, size, Message.gui__edit_time_limit_count_title, inv -> {
-                            int invSize = inv.getSize();
-                            for (int i = 0; i < invSize && i < items.size(); i++) {
-                                inv.setItem(i, items.get(i));
-                            }
-                        }, e -> {
-                            Inventory inv = e.getClickedInventory();
-                            if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
-                            ItemStack item = e.getCurrentItem();
-                            if (item == null || !item.getType().equals(Material.PAPER)) return;
-                            ItemMeta meta = item.getItemMeta();
-                            if (meta == null) return;
-                            String group = meta.getDisplayName();
-                            if (!groups.containsKey(group)) return;
+                        items.add(Utils.getItemStack(Material.PAPER, group, lore));
+                    }
+                    while (size < items.size()) {
+                        size += 9;
+                        if (size >= 54) break;
+                    }
+                    Message title = event.isShiftClick()
+                            ? Message.gui__edit_time_limit_count_title_time
+                            : Message.gui__edit_time_limit_count_title_normal;
+                    Prompter.gui(player, size, title, inv -> {
+                        int invSize = inv.getSize();
+                        for (int i = 0; i < invSize && i < items.size(); i++) {
+                            inv.setItem(i, items.get(i));
+                        }
+                    }, e -> {
+                        Inventory inv = e.getClickedInventory();
+                        if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
+                        ItemStack item = e.getCurrentItem();
+                        if (item == null || !item.getType().equals(Material.PAPER)) return;
+                        ItemMeta meta = item.getItemMeta();
+                        if (meta == null) return;
+                        String group = meta.getDisplayName();
+                        if (!groups.containsKey(group)) return;
 
+                        if (event.isShiftClick()) {
                             craftData.setTimeCountLimit(group);
-                            Craft.save(getId(), craftData);
-                            player.closeInventory();
-                        }, inv -> {
-                            open(player);
-                        });
-                        return;
-                    }
-                    if (event.isRightClick()) {
-                        craftData.setTimeCountLimit("");
+                        } else {
+                            craftData.setCountLimit(group);
+                        }
                         Craft.save(getId(), craftData);
-                        event.getView().getTopInventory().setItem(8, item8());
-                        Utils.updateInventory(player);
+                        player.closeInventory();
+                    }, inv -> {
+                        open(player);
+                    });
+                    return;
+                }
+                if (event.isRightClick()) {
+                    if (event.isShiftClick()) {
+                        craftData.setTimeCountLimit("");
+                    } else {
+                        craftData.setCountLimit("");
                     }
+                    Craft.save(getId(), craftData);
+                    event.getView().getTopInventory().setItem(8, item8());
+                    Utils.updateInventory(player);
                 }
                 break;
             }

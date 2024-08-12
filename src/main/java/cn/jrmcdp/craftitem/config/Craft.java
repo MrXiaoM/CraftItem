@@ -99,6 +99,7 @@ public class Craft {
                 String failTimes = String.valueOf(playerData.getFailTimes(id));
                 playerData.clearScore(id);
                 playerData.clearFailTimes(id);
+                playerData.addForgeCount(id, 1);
                 Message.craft__success.msg(player, craftData.getDisplayItem());
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {

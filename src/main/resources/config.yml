@@ -70,7 +70,7 @@ TimeFormat:
 
 # 时长锻造次数限制组
 # 锻造配方设置中填写这里的组名来使用相关组的限制次数
-TimeForgeCountLimitGroups:
+CountLimitGroups:
   # 组名，任意取定，可添加多个组
   group1:
     # 拥有 craftitem.time.default 权限的玩家限制 10 次

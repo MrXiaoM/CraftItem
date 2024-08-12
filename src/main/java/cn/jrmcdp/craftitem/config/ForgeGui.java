@@ -146,12 +146,17 @@ public class ForgeGui {
                             ? "锻_困难"
                             : (craftData.getCombo() > 0 ? "锻_连击" : "锻"));
                     if (icon != null) {
+                        int count = playerData.getForgeCount(id);
+                        int limit = craftData.getForgeCountLimit(player);
                         is[i] = icon.getItem(
                                 player,
                                 Pair.of("<ChanceName>", Config.getChanceName(craftData.getChance())),
                                 Pair.of("<Score>", playerData.getScore(id)),
                                 Pair.of("<Cost>", craftData.getCost()),
-                                Pair.of("<Combo>", craftData.getCombo())
+                                Pair.of("<Combo>", craftData.getCombo()),
+                                Pair.of("<LimitCountCurrent>", count),
+                                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.get()),
+                                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
                         );
                     }
                     break;

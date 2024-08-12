@@ -187,6 +187,12 @@ public class ForgeHolder implements IHolder {
             return;
         }
         if (craftData.isNotEnoughMaterial(player)) return;
+        String key = getId();
+        int limit = craftData.getForgeCountLimit(player);
+        if (limit < 0 || (limit > 0 && playerData.getForgeCount(key) >= limit)) {
+            Message.craft__forge_limit.msg(player, Math.max(limit, 0));
+            return;
+        }
 
         CraftItem.getEcon().withdrawPlayer(player, cost);
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
@@ -221,6 +227,12 @@ public class ForgeHolder implements IHolder {
             return;
         }
         if (craftData.isNotEnoughMaterial(player)) return;
+        String key = getId();
+        int limit = craftData.getForgeCountLimit(player);
+        if (limit < 0 || (limit > 0 && playerData.getForgeCount(key) + combo - 1 >= limit)) {
+            Message.craft__forge_limit.msg(player, Math.max(limit, 0));
+            return;
+        }
 
         player.closeInventory();
         Craft.playForgeAnimate(player, (clear, cancel) -> {

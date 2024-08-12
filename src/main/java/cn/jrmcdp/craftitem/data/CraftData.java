@@ -40,12 +40,13 @@ public class CraftData implements ConfigurationSerializable {
     private boolean difficult;
     private int guaranteeFailTimes;
     private int combo;
+    private String countLimit;
     private String timeCountLimit;
     public CraftData() {
-        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0, 0, "");
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0, 0, "", "");
     }
 
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String timeCountLimit) {
+    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.material = material;
         this.chance = chance;
         this.multiple = multiple;
@@ -66,6 +67,7 @@ public class CraftData implements ConfigurationSerializable {
         this.difficult = difficult;
         this.guaranteeFailTimes = guaranteeFailTimes;
         this.combo = combo;
+        this.countLimit = countLimit;
         this.timeCountLimit = timeCountLimit;
     }
 
@@ -126,6 +128,14 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setCombo(int combo) {
         this.combo = combo;
+    }
+
+    public String getCountLimit() {
+        return countLimit;
+    }
+
+    public void setCountLimit(String countLimit) {
+        this.countLimit = countLimit;
     }
 
     public String getTimeCountLimit() {
@@ -205,7 +215,11 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public int getTimeForgeCountLimit(Player player) {
-        return Config.getTimeForgeCountLimit(player, getTimeCountLimit());
+        return Config.getCountLimit(player, getTimeCountLimit());
+    }
+
+    public int getForgeCountLimit(Player player) {
+        return Config.getCountLimit(player, getCountLimit());
     }
 
     @SuppressWarnings({"unused"})
@@ -280,6 +294,7 @@ public class CraftData implements ConfigurationSerializable {
         map.put("Difficult", this.difficult);
         map.put("GuaranteeFailTimes", this.guaranteeFailTimes);
         map.put("Combo", this.combo);
+        map.put("CountLimit", this.countLimit);
         map.put("TimeCountLimit", this.timeCountLimit);
         return map;
     }
@@ -301,6 +316,7 @@ public class CraftData implements ConfigurationSerializable {
                 get(map, "Difficult", false),
                 get(map, "GuaranteeFailTimes", 0),
                 get(map, "Combo", 0),
+                get(map, "CountLimit", ""),
                 get(map, "TimeCountLimit", "")
         );
     }

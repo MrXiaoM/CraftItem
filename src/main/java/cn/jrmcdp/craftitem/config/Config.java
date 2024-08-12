@@ -24,7 +24,7 @@ public class Config {
     private static Sound soundForgeTitle;
     private static List<String> randomGames;
     private static final List<Condition> timeForgeConditions = new ArrayList<>();
-    private static final Map<String, Map<String, Integer>> timeForgeCountLimitGroups = new HashMap<>();
+    private static final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
     private static String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
@@ -70,8 +70,8 @@ public class Config {
         timeFormatSecond = config.getString("TimeFormat.Second", "秒");
         timeFormatSeconds = config.getString("TimeFormat.Seconds", "秒");
 
-        timeForgeCountLimitGroups.clear();
-        section = config.getConfigurationSection("TimeForgeCountLimitGroups");
+        countLimitGroups.clear();
+        section = config.getConfigurationSection("CountLimitGroups");
         if (section != null) for (String key : section.getKeys(false)) {
             ConfigurationSection sec = section.getConfigurationSection(key);
             Map<String, Integer> map = new HashMap<>();
@@ -80,7 +80,7 @@ public class Config {
                 map.put(perm, Math.max(count, 0));
             }
             if (!map.isEmpty()) {
-                timeForgeCountLimitGroups.put(key, map);
+                countLimitGroups.put(key, map);
             }
         }
     }
@@ -133,8 +133,8 @@ public class Config {
         return sb.toString();
     }
 
-    public static Map<String, Map<String, Integer>> getTimeForgeCountLimitGroups() {
-        return timeForgeCountLimitGroups;
+    public static Map<String, Map<String, Integer>> getCountLimitGroups() {
+        return countLimitGroups;
     }
 
     /**
@@ -143,9 +143,9 @@ public class Config {
      * @param group 组名
      * @return 0 为无限制，-1 为匹配失败
      */
-    public static int getTimeForgeCountLimit(Player player, String group) {
+    public static int getCountLimit(Player player, String group) {
         if (group.isEmpty()) return 0;
-        Map<String, Integer> map = timeForgeCountLimitGroups.get(group);
+        Map<String, Integer> map = countLimitGroups.get(group);
         if (map == null || map.isEmpty()) return 0;
         List<Map.Entry<String, Integer>> list = Lists.newArrayList(map.entrySet());
         list.sort(Collections.reverseOrder(Comparator.comparingInt(Map.Entry::getValue)));

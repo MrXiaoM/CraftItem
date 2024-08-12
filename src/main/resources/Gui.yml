@@ -35,6 +35,7 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6可用次数 &e<LimitCount>'
   锻_连击:
     Type: ANVIL
     Name: '&a点击锻造'
@@ -44,6 +45,7 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6可用次数 &e<LimitCount>'
       - ''
       - '&a左键 &7| &f锻造一次'
       - '&b右键 &7| &f连续锻造 &e<Combo> &f次'
@@ -57,6 +59,7 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6可用次数 &e<LimitCount>'
   时:
     Type: CLOCK
     Name: '&a时长锻造'

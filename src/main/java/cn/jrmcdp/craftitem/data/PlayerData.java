@@ -17,27 +17,32 @@ public class PlayerData {
     /**
      * 各配方的进度，用于 普通锻造 困难锻造
      */
-    public final Map<String, Integer> scoreMap = new HashMap<>();
+    public final Map<String, Integer> normalScoreMap = new HashMap<>();
+    /**
+     * 各配方的普通/困难锻造进行过的次数
+     */
+    public final Map<String, Integer> normalCountMap = new HashMap<>();
+    /**
+     * 各配方的锻造失败次数，用于保底
+     */
+    public final Map<String, Integer> normalFailMap = new HashMap<>();
     /**
      * 各配方的时长锻造结束时间 (毫秒级时间戳)
      */
-    public final Map<String, Long> timeMap = new HashMap<>();
+    public final Map<String, Long> timeEndMap = new HashMap<>();
     /**
      * 各配方的时长锻造进行过的次数
      */
     public final Map<String, Integer> timeCountMap = new HashMap<>();
-    /**
-     * 各配方的锻造失败次数，用于保底
-     */
-    public final Map<String, Integer> failMap = new HashMap<>();
 
     public PlayerData(Player player) {
         this.player = player;
         this.config = FileConfig.Custom.loadConfig("PlayerData", player.getName());
-        load("ForgeData", (section, key) -> this.scoreMap.put(key, section.getInt(key)));
-        load("TimeForgeData", (section, key) -> this.timeMap.put(key, section.getLong(key)));
+        load("ForgeData", (section, key) -> this.normalScoreMap.put(key, section.getInt(key)));
+        load("ForgeCountData", (section, key) -> this.normalCountMap.put(key, section.getInt(key)));
+        load("FailForgeData", (section, key) -> this.normalFailMap.put(key, section.getInt(key)));
+        load("TimeForgeData", (section, key) -> this.timeEndMap.put(key, section.getLong(key)));
         load("TimeForgeCountData", (section, key) -> this.timeCountMap.put(key, section.getInt(key)));
-        load("FailForgeData", (section, key) -> this.failMap.put(key, section.getInt(key)));
     }
 
     public Player getPlayer() {
@@ -45,15 +50,15 @@ public class PlayerData {
     }
 
     public Integer getScore(String key) {
-        return this.scoreMap.getOrDefault(key, 0);
+        return this.normalScoreMap.getOrDefault(key, 0);
     }
 
     public Integer getFailTimes(String key) {
-        return this.failMap.getOrDefault(key, 0);
+        return this.normalFailMap.getOrDefault(key, 0);
     }
 
     public Long getEndTime(String key) {
-        return this.timeMap.getOrDefault(key, null);
+        return this.timeEndMap.getOrDefault(key, null);
     }
 
     public Integer addScore(String key, int add) {
@@ -61,33 +66,33 @@ public class PlayerData {
         if (score == null)
             score = 0;
         score = Math.min(100, Math.max(0, score + add));
-        this.scoreMap.put(key, score);
+        this.normalScoreMap.put(key, score);
         return score;
     }
 
     public Integer setScore(String key, int score) {
         score = Math.min(100, Math.max(0, score));
-        this.scoreMap.put(key, score);
+        this.normalScoreMap.put(key, score);
         return score;
     }
 
     public Integer addFailTimes(String key, int add) {
         Integer score = getFailTimes(key) + add;
-        this.failMap.put(key, score);
+        this.normalFailMap.put(key, score);
         return score;
     }
 
     public void setFailTimes(String key, int score) {
-        this.failMap.put(key, score);
+        this.normalFailMap.put(key, score);
     }
 
     public void setTime(String key, long endTime) {
         endTime = Math.max(System.currentTimeMillis(), endTime);
-        this.timeMap.put(key, endTime);
+        this.timeEndMap.put(key, endTime);
     }
 
     public void removeTime(String key) {
-        this.timeMap.remove(key);
+        this.timeEndMap.remove(key);
     }
 
     public void addTimeForgeCount(String key, int add) {
@@ -96,6 +101,15 @@ public class PlayerData {
     }
 
     public int getTimeForgeCount(String key) {
+        return this.timeCountMap.getOrDefault(key, 0);
+    }
+
+    public void addForgeCount(String key, int add) {
+        int count = getForgeCount(key) + add;
+        this.timeCountMap.put(key, count);
+    }
+
+    public int getForgeCount(String key) {
         return this.timeCountMap.getOrDefault(key, 0);
     }
 
@@ -122,10 +136,11 @@ public class PlayerData {
     }
 
     public void save() {
-        save("ForgeData", this.scoreMap);
-        save("TimeForgeData", this.timeMap);
+        save("ForgeData", this.normalScoreMap);
+        save("ForgeCountData", this.normalCountMap);
+        save("FailForgeData", this.normalFailMap);
+        save("TimeForgeData", this.timeEndMap);
         save("TimeForgeCountData", this.timeCountMap);
-        save("FailForgeData", this.failMap);
         FileConfig.Custom.saveConfig("PlayerData", this.player.getName(), this.config);
     }
 }

@@ -41,6 +41,7 @@ public enum Message {
     craft__not_enough_money("&e没有足够的金币来锻造."),
     craft__not_enough_material("&e身上没有足够的材料."),
     craft__not_enough_material_details("&7需要 %s&7 (&f%d &7/ &f%d&7)."),
+    craft__forge_limit("&e当前已到达锻造次数上限&7 (%d)"),
     craft__time_forge_limit("&e当前已到达时长锻造次数上限&7 (%d)"),
     craft__process_success_small("&a锻造 小成功 ！！！ &f&l[ &a+ &e%d%% &f&l]"),
     craft__process_success_medium("&a锻造 成功 ！！！ &f&l[ &a+ &e%d%% &f&l]"),
@@ -127,16 +128,20 @@ public enum Message {
             "&7当前时长: &f%s",
             "&7花费金币: &f%s"
     ),
-    gui__edit__item__time_count_limit__name("&a时长锻造次数限制"),
+    gui__edit__item__time_count_limit__name("&a锻造次数限制"),
     gui__edit__item__time_count_limit__lore(
-            "&7左键点击 选择限制组",
-            "&7右键点击 移除限制组",
+            "&7左键点击 选择限制组 普通/困难锻造",
+            "&7右键点击 移除限制组 普通/困难锻造",
             "",
-            "&7设置时长锻造次数限制后，玩家被限制只能进行",
-            "&7指定次数的时长锻造，超过次数无法再进行时长锻造。",
+            "&7Shift+左键点击 选择限制组 时长锻造",
+            "&7Shift+右键点击 移除限制组 时长锻造",
+            "",
+            "&7设置锻造次数限制后，玩家被限制只能进行指定次数",
+            "&7的指定类型锻造，超过次数无法再进行该类型锻造。",
             "&7限制组的详细设定详见配置文件 config.yml",
             "",
-            "&7限制组: &e%s"
+            "&7普通/困难锻造 限制组: &e%s",
+            "&7时长锻造 限制组: &e%s"
     ),
     gui__edit__item__difficult__name("&a困难锻造"),
     gui__edit__item__difficult__lore(
@@ -184,7 +189,8 @@ public enum Message {
     gui__edit_display_not_found("&c未找到第一格的物品"),
     gui__edit_item_title("奖励物品"),
     gui__edit_command_title("奖励命令 (点击空格子添加)"),
-    gui__edit_time_limit_count_title("选择 时长锻造限制组"),
+    gui__edit_time_limit_count_title_normal("选择 普通/困难锻造限制组"),
+    gui__edit_time_limit_count_title_time("选择 时长锻造限制组"),
     gui__edit_time_cost("&a请输入锻造时长金额 正整数"),
 
     gui__edit__status__on("&a开启"),
