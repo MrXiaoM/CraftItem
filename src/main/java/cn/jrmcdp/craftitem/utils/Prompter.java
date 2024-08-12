@@ -30,9 +30,6 @@ public class Prompter implements InventoryHolder {
         return inventory;
     }
 
-    public static void gui(Player player, int size, Message title, Consumer<Inventory> consumer) {
-        gui(player, size, title, null, null, consumer);
-    }
     public static void gui(Player player, int size, Message title, ItemStack[] items, Consumer<Inventory> consumer) {
         gui(player, size, title, inv -> inv.addItem(items), null, consumer);
     }
@@ -64,16 +61,18 @@ public class Prompter implements InventoryHolder {
                 }
             }
             @EventHandler
-            public void onInventoryClose(InventoryCloseEvent event) {
-                if (event.getPlayer().equals(player)) {
-                    if (close.apply(event.getInventory())) {
+            public void onInventoryClose(InventoryCloseEvent e) {
+                if (e.getPlayer().getName().equals(player.getName())) {
+                    if (close.apply(e.getInventory())) {
                         HandlerList.unregisterAll(this);
                     }
                 }
             }
             @EventHandler
-            public void onQuit(PlayerQuitEvent event) {
-                HandlerList.unregisterAll(this);
+            public void onQuit(PlayerQuitEvent e) {
+                if (e.getPlayer().getName().equals(player.getName())) {
+                    HandlerList.unregisterAll(this);
+                }
             }
         }, CraftItem.getPlugin());
     }
@@ -81,16 +80,18 @@ public class Prompter implements InventoryHolder {
     public static void onChat(Player player, Consumer<String> consumer) {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
-            public void onAsyncPlayerChat(AsyncPlayerChatEvent eventB) {
-                if (eventB.getPlayer().equals(player)) {
-                    eventB.setCancelled(true);
-                    consumer.accept(eventB.getMessage());
+            public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
+                if (e.getPlayer().getName().equals(player.getName())) {
+                    e.setCancelled(true);
+                    consumer.accept(e.getMessage());
                     HandlerList.unregisterAll(this);
                 }
             }
             @EventHandler
-            public void onQuit(PlayerQuitEvent event) {
-                HandlerList.unregisterAll(this);
+            public void onQuit(PlayerQuitEvent e) {
+                if (e.getPlayer().getName().equals(player.getName())) {
+                    HandlerList.unregisterAll(this);
+                }
             }
         }, CraftItem.getPlugin());
     }

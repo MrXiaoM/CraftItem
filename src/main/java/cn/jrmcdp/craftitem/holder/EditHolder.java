@@ -65,7 +65,10 @@ public class EditHolder implements IHolder {
         open(player, buildGui());
     }
     public void open(Player player, Inventory inv) {
-        Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> player.openInventory(inv));
+        Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> {
+            player.closeInventory();
+            player.openInventory(inv);
+        });
     }
 
     private ItemStack[] getItems() {
@@ -261,7 +264,7 @@ public class EditHolder implements IHolder {
                 Message title = Message.gui__edit_display_title;
                 ItemStack[] items = new ItemStack[] { craftData.getDisplayItem() };
                 Prompter.gui(player, 9, title, items, inv -> { // onClose
-                    ItemStack item = event.getInventory().getItem(0);
+                    ItemStack item = inv.getItem(0);
                     if (item == null || item.getType().equals(Material.AIR)) {
                         Message.gui__edit_display_not_found.msg(player);
                     } else {
