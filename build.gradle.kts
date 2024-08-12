@@ -34,9 +34,9 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.2")
 
-    impl("net.kyori:adventure-api:4.15.0")
-    impl("net.kyori:adventure-platform-bukkit:4.3.2")
-    impl("net.kyori:adventure-text-minimessage:4.14.0")
+    impl("net.kyori:adventure-api:4.17.0")
+    impl("net.kyori:adventure-platform-bukkit:4.3.4")
+    impl("net.kyori:adventure-text-minimessage:4.17.0")
     impl("net.objecthunter:exp4j:0.4.8")
     impl(project(":paper"))
 }
