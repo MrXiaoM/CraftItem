@@ -130,7 +130,7 @@ public enum Message {
     gui__edit__item__time_count_limit__name("&a时长锻造次数限制"),
     gui__edit__item__time_count_limit__lore(
             "&7左键点击 选择限制组",
-            "&7邮件点击 移除限制组",
+            "&7右键点击 移除限制组",
             "",
             "&7设置时长锻造次数限制后，玩家被限制只能进行",
             "&7指定次数的时长锻造，超过次数无法再进行时长锻造。",
