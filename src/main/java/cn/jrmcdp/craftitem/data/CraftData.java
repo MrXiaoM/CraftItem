@@ -262,6 +262,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public ItemStack takeRandomMaterial(Player player, Inventory gui) {
+        if (this.material.isEmpty()) return null;
         ItemStack item = this.material.get(RandomUtils.nextInt(this.material.size()));
         ItemStack clone = item.clone();
         clone.setAmount(1);
