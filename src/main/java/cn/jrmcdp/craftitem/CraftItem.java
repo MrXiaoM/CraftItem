@@ -91,8 +91,9 @@ public class CraftItem extends JavaPlugin {
         };
         for (String filename : files) {
             File file = new File(getDataFolder(), filename);
-            if (!file.exists())
+            if (!file.exists()) {
                 saveResource(filename, false);
+            }
         }
     }
 

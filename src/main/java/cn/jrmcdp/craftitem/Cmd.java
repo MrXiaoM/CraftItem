@@ -198,6 +198,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
     }
 
     private boolean runReload(CommandSender sender, String[] args) {
+        CraftItem.getPlugin().saveDefaultConfig();
         if (args.length == 2 && args[1].equalsIgnoreCase("messages")) {
             YamlConfiguration cfg = new YamlConfiguration();
             for (Message message : Message.values()) {

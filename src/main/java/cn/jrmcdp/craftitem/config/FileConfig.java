@@ -38,9 +38,9 @@ public enum FileConfig {
 
     public YamlConfiguration loadConfig(String path, String name) {
         File parent = CraftItem.getPlugin().getDataFolder();
-        this.file = new File(parent, path + File.separator + name + ".yml");
-        Utils.createNewFile(this.file);
-        return YamlConfiguration.loadConfiguration(this.file);
+        File file = new File(parent, path + File.separator + name + ".yml");
+        Utils.createNewFile(file);
+        return YamlConfiguration.loadConfiguration(file);
     }
 
     public boolean exists() {
@@ -48,8 +48,12 @@ public enum FileConfig {
     }
 
     public void saveConfig(YamlConfiguration config) {
+        saveConfig(config, this.file);
+    }
+
+    public void saveConfig(YamlConfiguration config, File file) {
         try {
-            config.save(this.file);
+            config.save(file);
         } catch (IOException e) {
             LogUtils.warn("保存 " + file.getName() + " 时出现一个错误", e);
         }
@@ -57,7 +61,7 @@ public enum FileConfig {
 
     public void saveConfig(String path, String name, YamlConfiguration config) {
         File parent = CraftItem.getPlugin().getDataFolder();
-        this.file = new File(parent, path + File.separator + name + ".yml");
-        saveConfig(config);
+        File file = new File(parent, path + File.separator + name + ".yml");
+        saveConfig(config, file);
     }
 }
