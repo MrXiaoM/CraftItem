@@ -48,9 +48,7 @@ public class CraftItem extends JavaPlugin {
             return;
         }
         PlaceholderSupport.init();
-        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            miniGames = new GameManager(this);
-        }
+        miniGames = new GameManager(this);
         saveDefaultConfig();
         plugin = this;
         ConfigurationSerialization.registerClass(CraftData.class);

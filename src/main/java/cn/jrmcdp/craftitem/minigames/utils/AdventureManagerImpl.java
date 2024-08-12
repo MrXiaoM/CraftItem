@@ -56,7 +56,7 @@ public class AdventureManagerImpl {
                 Duration.ofMillis(duration * 50L),
                 Duration.ofMillis(out * 50L)
         );
-        audience.showTitle(Title.title(title,subtitle, times));
+        audience.showTitle(Title.title(title, subtitle, times));
     }
     
     public void sendActionbar(Player player, String s) {
