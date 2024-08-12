@@ -15,7 +15,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,11 +83,11 @@ public class ForgeHolder implements IHolder {
                 Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.get()),
                 Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
         );
+
+        short damage = (short)((1.0d - progress) * item.getType().getMaxDurability());
+        item.setDurability(damage); // 不用 Damageable，兼容 1.12.2 或以下
+
         ItemMeta meta = item.getItemMeta();
-        if (meta instanceof Damageable) {
-            Damageable damageable = (Damageable) meta;
-            damageable.setDamage((short)((1.0d - progress) * item.getType().getMaxDurability()));
-        }
         if (meta != null) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
         item.setItemMeta(meta);
         return item;
