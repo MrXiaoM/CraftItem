@@ -8,6 +8,7 @@ import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
+import cn.jrmcdp.craftitem.utils.Utils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -90,8 +91,11 @@ public class ForgeHolder implements IHolder {
         }
 
         ItemMeta meta = item.getItemMeta();
-        if (meta != null) meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
-        item.setItemMeta(meta);
+        if (meta != null) {
+            Utils.valueOf(ItemFlag.class, "HIDE_DYE").ifPresent(meta::addItemFlags);
+            Utils.valueOf(ItemFlag.class, "HIDE_ATTRIBUTES").ifPresent(meta::addItemFlags);
+            item.setItemMeta(meta);
+        }
         return item;
     }
 
