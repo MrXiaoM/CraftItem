@@ -86,7 +86,7 @@ public class Craft {
         int score = craftData.getMultiple().get(multiple);
         int oldValue = playerData.getScore(id);
         if (win) {
-            player.playSound(player.getLocation(), Config.getSoundForgeSuccess(), 1.0F, 1.0F);
+            Config.playSoundForgeSuccess(player);
             int value = playerData.addScore(id, score);
             CraftSuccessEvent e = new CraftSuccessEvent(player, holder, oldValue, value, multiple);
             Bukkit.getPluginManager().callEvent(e);
@@ -128,7 +128,7 @@ public class Craft {
                 }
             }
         } else {
-            player.playSound(player.getLocation(), Config.getSoundForgeFail(), 1.0F, 1.0F);
+            Config.playSoundForgeFail(player);
             int value = playerData.addScore(id, -score);
             CraftFailEvent e = new CraftFailEvent(player, holder, oldValue, value, multiple);
             Bukkit.getPluginManager().callEvent(e);
@@ -194,7 +194,7 @@ public class Craft {
                             return;
                         }
                         Config.getForgeTitle().send(player);
-                        player.playSound(player.getLocation(), Config.getSoundForgeTitle(), 1.0F, 0.8F);
+                        Config.playSoundForgeTitle(player);
                         this.counter++;
                     }
                 }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);

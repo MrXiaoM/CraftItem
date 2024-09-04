@@ -136,7 +136,7 @@ public class ForgeHolder implements IHolder {
     public void onClick(InventoryClickEvent event) {
         final PlayerData playerData = getPlayerData();
         final Player player = playerData.getPlayer();
-        player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
+        Config.playSoundClickInventory(player);
 
         if (!event.getClick().isRightClick() && !event.getClick().isLeftClick()) return;
         if (event.getRawSlot() < 0 || event.getRawSlot() >= chest.length) return;

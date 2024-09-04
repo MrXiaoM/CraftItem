@@ -190,7 +190,7 @@ public class EditHolder implements IHolder {
 
     public void onClick(InventoryClickEvent event) {
         final Player player = (Player)event.getWhoClicked();
-        player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
+        Config.playSoundClickInventory(player);
         if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();
         switch (event.getRawSlot()) {

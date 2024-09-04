@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -18,10 +19,10 @@ public class Config {
     private static ConfigurationSection setting;
     private static HashMap<String, List<String>> category;
     private static Title forgeTitle;
-    private static Sound soundClickInventory;
-    private static Sound soundForgeSuccess;
-    private static Sound soundForgeFail;
-    private static Sound soundForgeTitle;
+    private static @Nullable Sound soundClickInventory;
+    private static @Nullable Sound soundForgeSuccess;
+    private static @Nullable Sound soundForgeFail;
+    private static @Nullable Sound soundForgeTitle;
     private static List<String> randomGames;
     private static final List<Condition> timeForgeConditions = new ArrayList<>();
     private static final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
@@ -48,10 +49,18 @@ public class Config {
             int fadeOut = setting.getInt("ForgeTitle.FadeOut", 10);
             forgeTitle = new Title(title, subtitle, fadeIn, time, fadeOut);
 
-            soundClickInventory = valueOf(Sound.class, setting.getString("Sounds.ClickInventory")).orElse(Sound.UI_BUTTON_CLICK);
-            soundForgeSuccess = valueOf(Sound.class, setting.getString("Sounds.ForgeSuccess")).orElse(Sound.BLOCK_ANVIL_USE);
-            soundForgeFail = valueOf(Sound.class, setting.getString("Sounds.ForgeFail")).orElse(Sound.BLOCK_GLASS_BREAK);
-            soundForgeTitle = valueOf(Sound.class, setting.getString("Sounds.ForgeTitle")).orElse(Sound.BLOCK_ANVIL_LAND);
+            soundClickInventory = valueOf(Sound.class, setting.getString("Sounds.ClickInventory"))
+                    .orElseGet(() -> valueOf(Sound.class, "UI_BUTTON_CLICK")
+                            .orElseGet(() -> valueOf(Sound.class, "CLICK").orElse(null)));
+            soundForgeSuccess = valueOf(Sound.class, setting.getString("Sounds.ForgeSuccess"))
+                    .orElseGet(() -> valueOf(Sound.class, "BLOCK_ANVIL_USE")
+                            .orElseGet(() -> valueOf(Sound.class, "ANVIL_USE").orElse(null)));
+            soundForgeFail = valueOf(Sound.class, setting.getString("Sounds.ForgeFail"))
+                    .orElseGet(() -> valueOf(Sound.class, "BLOCK_GLASS_BREAK")
+                            .orElseGet(() -> valueOf(Sound.class, "GLASS").orElse(null)));
+            soundForgeTitle = valueOf(Sound.class, setting.getString("Sounds.ForgeTitle"))
+                    .orElseGet(() -> valueOf(Sound.class, "BLOCK_ANVIL_LAND")
+                            .orElseGet(() -> valueOf(Sound.class, "ANVIL_LAND").orElse(null)));
         }
         randomGames = config.getStringList("RandomGames");
         timeForgeConditions.clear();
@@ -85,17 +94,21 @@ public class Config {
         }
     }
 
-    public static Sound getSoundClickInventory() {
-        return soundClickInventory;
+    public static void playSoundClickInventory(Player player) {
+        if (soundClickInventory == null) return;
+        player.playSound(player.getLocation(), soundClickInventory, 1.0f, 2.0f);
     }
-    public static Sound getSoundForgeSuccess() {
-        return soundForgeSuccess;
+    public static void playSoundForgeSuccess(Player player) {
+        if (soundForgeSuccess == null) return;
+        player.playSound(player.getLocation(), soundForgeSuccess, 1.0f, 1.0f);
     }
-    public static Sound getSoundForgeFail() {
-        return soundForgeFail;
+    public static void playSoundForgeFail(Player player) {
+        if (soundForgeFail == null) return;
+        player.playSound(player.getLocation(), soundForgeFail, 1.0f, 1.0f);
     }
-    public static Sound getSoundForgeTitle() {
-        return soundForgeTitle;
+    public static void playSoundForgeTitle(Player player) {
+        if (soundForgeTitle == null) return;
+        player.playSound(player.getLocation(), soundForgeTitle, 1.0f, 0.8f);
     }
     public static Title getForgeTitle() {
         return forgeTitle;

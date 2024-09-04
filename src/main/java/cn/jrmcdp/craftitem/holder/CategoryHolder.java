@@ -75,7 +75,7 @@ public class CategoryHolder implements IHolder {
     public void onClick(InventoryClickEvent event) {
         final Player player = (Player)event.getWhoClicked();
         if (event.getRawSlot() < 0 || event.getRawSlot() >= getChest().length) return;
-        player.playSound(player.getLocation(), Config.getSoundClickInventory(), 1.0F, 2.0F);
+        Config.playSoundClickInventory(player);
         String key = getChest()[event.getRawSlot()];
         switch (key) {
             case "上" : {
