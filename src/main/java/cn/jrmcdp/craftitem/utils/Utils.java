@@ -2,12 +2,10 @@ package cn.jrmcdp.craftitem.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import cn.jrmcdp.craftitem.config.CraftMaterial;
 import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,12 +21,10 @@ public class Utils {
         }
     }
 
-    @CanIgnoreReturnValue
     public static boolean createDirectory(File file) {
         return !file.exists() && file.mkdirs();
     }
 
-    @CanIgnoreReturnValue
     public static boolean createNewFile(File file) {
         if (file.exists()) return false;
         try {

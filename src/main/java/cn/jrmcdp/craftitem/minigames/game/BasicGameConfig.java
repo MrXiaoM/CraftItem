@@ -1,6 +1,6 @@
 package cn.jrmcdp.craftitem.minigames.game;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.jetbrains.annotations.CheckReturnValue;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -15,7 +15,6 @@ public class BasicGameConfig {
         return new Builder();
     }
 
-    @CanIgnoreReturnValue
     public static class Builder {
 
         private final BasicGameConfig basicGameConfig;
