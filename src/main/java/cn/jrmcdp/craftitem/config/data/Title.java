@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.config.data;
 
 import cn.jrmcdp.craftitem.ColorHelper;
+import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
 import org.bukkit.entity.Player;
 
 public class Title {
@@ -19,6 +20,6 @@ public class Title {
     }
 
     public void send(Player player) {
-        player.sendTitle(title, subTitle, fadeIn, stay, fadeOut);
+        AdventureManagerImpl.getInstance().sendTitle(player, title, subTitle, fadeIn, stay, fadeOut);
     }
 }
