@@ -16,7 +16,7 @@ public class AdventureManagerImpl {
     private final BukkitAudiences adventure;
     private final MiniMessage miniMessage;
     private static AdventureManagerImpl instance;
-    public static final boolean legacyColorSupport = false;
+    public static final boolean legacyColorSupport = true;
 
     private AdventureManagerImpl(JavaPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
