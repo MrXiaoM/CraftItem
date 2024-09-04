@@ -251,7 +251,7 @@ public class CraftData implements ConfigurationSerializable {
         Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
         for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
             int amount = 0;
-            for (ItemStack i : gui.getStorageContents()) {
+            for (ItemStack i : gui.getContents()) {
                 if (entry.getKey().isSimilar(i)) amount += i.getAmount();
             }
             list.add(Triple.of(entry.getKey(), amount, entry.getValue()));
