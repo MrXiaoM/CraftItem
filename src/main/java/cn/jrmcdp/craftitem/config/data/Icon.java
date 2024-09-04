@@ -55,8 +55,9 @@ public class Icon {
                 }
                 meta.setLore(lore);
             }
-            if (customModelData != null) {
+            if (customModelData != null) try {
                 meta.setCustomModelData(customModelData);
+            } catch (Throwable ignored) {
             }
         }
         item.setItemMeta(meta);
