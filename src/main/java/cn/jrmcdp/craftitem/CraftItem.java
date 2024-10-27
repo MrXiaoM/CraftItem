@@ -8,16 +8,19 @@ import cn.jrmcdp.craftitem.listener.PlayerListener;
 import java.io.File;
 
 import cn.jrmcdp.craftitem.minigames.GameManager;
+import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import cn.jrmcdp.craftitem.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftItem extends JavaPlugin {
     private static CraftItem plugin;
@@ -27,6 +30,7 @@ public class CraftItem extends JavaPlugin {
     private static GameManager miniGames = null;
     private GuiListener guiListener;
     private PlayerListener playerListener;
+    YamlConfiguration config;
 
     public static CraftItem getPlugin() {
         return plugin;
@@ -77,30 +81,30 @@ public class CraftItem extends JavaPlugin {
     }
 
     public void saveDefaultConfig() {
-        super.saveDefaultConfig();
+        ConfigUtils.saveResource("config.yml");
+
         File folder = new File(getDataFolder(), "PlayerData");
         Utils.createDirectory(folder);
 
-        String[] files = {
+        for (String filename : new String[] {
                 "Material.yml",
                 "Craft.yml",
                 "Gui.yml",
                 "Category.yml",
-        };
-        for (String filename : files) {
-            File file = new File(getDataFolder(), filename);
-            if (!file.exists()) {
-                saveResource(filename, false);
-            }
+        }) {
+            ConfigUtils.saveResource(filename);
         }
     }
 
+    public @NotNull FileConfiguration getConfig() {
+        if (config == null) {
+            this.reloadConfig();
+        }
+        return config;
+    }
     @Override
     public void reloadConfig() {
-        super.reloadConfig();
-        FileConfiguration config = getConfig();
-        config.addDefault("TimeForgeConditions", null);
-        config.addDefault("offset-characters", null);
+        config = ConfigUtils.loadOrSaveResource("config.yml");
         if (miniGames != null) miniGames.reloadConfig();
     }
 

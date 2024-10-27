@@ -100,7 +100,7 @@ public class MiniGames {
         File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "minigame");
         if (!typeFolder.exists()) {
             if (!typeFolder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "minigame" + File.separator + "default.yml", false);
+            cn.jrmcdp.craftitem.utils.ConfigUtils.saveResource("contents" + File.separator + "minigame" + File.separator + "default.yml");
         }
         fileDeque.push(typeFolder);
         while (!fileDeque.isEmpty()) {
@@ -124,7 +124,7 @@ public class MiniGames {
      * @param file The YAML file to load.
      */
     private void loadSingleFile(File file) {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration config = cn.jrmcdp.craftitem.utils.ConfigUtils.load(file);
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection) {
                 ConfigurationSection section = (ConfigurationSection) entry.getValue();

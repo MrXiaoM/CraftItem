@@ -1,35 +1,35 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import java.io.File;
-import java.io.IOException;
-
-import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
+import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+
 public enum FileConfig {
-    Message(new File(CraftItem.getPlugin().getDataFolder(), "Message.yml")),
-    Craft(new File(CraftItem.getPlugin().getDataFolder(), "Craft.yml"), ' '),
-    Gui(new File(CraftItem.getPlugin().getDataFolder(), "Gui.yml")),
-    Category(new File(CraftItem.getPlugin().getDataFolder(), "Category.yml")),
-    Material(new File(CraftItem.getPlugin().getDataFolder(), "Material.yml")),
+    Message("Message.yml"),
+    Craft("Craft.yml", ' '),
+    Gui("Gui.yml"),
+    Category("Category.yml"),
+    Material("Material.yml"),
     Custom(null);
 
-    private File file;
+    private final String fileName;
+    private final File file;
     private final char separator;
-    FileConfig(File file) {
-        this.file = file;
-        this.separator = '.';
+    FileConfig(String fileName) {
+        this(fileName, '.');
     }
 
-    FileConfig(File file, char separator) {
-        this.file = file;
+    FileConfig(String fileName, char separator) {
+        this.fileName = fileName;
+        this.file = fileName == null ? null : new File(CraftItem.getPlugin().getDataFolder(), fileName);
         this.separator = separator;
     }
 
     public YamlConfiguration loadConfig() {
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(this.file);
+        YamlConfiguration config = ConfigUtils.loadOrSaveResource(fileName);
         if (separator != '.') {
             config.options().pathSeparator(separator);
         }
@@ -40,7 +40,7 @@ public enum FileConfig {
         File parent = CraftItem.getPlugin().getDataFolder();
         File file = new File(parent, path + File.separator + name + ".yml");
         Utils.createNewFile(file);
-        return YamlConfiguration.loadConfiguration(file);
+        return ConfigUtils.load(file);
     }
 
     public boolean exists() {
@@ -52,11 +52,7 @@ public enum FileConfig {
     }
 
     public void saveConfig(YamlConfiguration config, File file) {
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            LogUtils.warn("保存 " + file.getName() + " 时出现一个错误", e);
-        }
+        ConfigUtils.save(config, file);
     }
 
     public void saveConfig(String path, String name, YamlConfiguration config) {
