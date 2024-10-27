@@ -53,8 +53,8 @@ public class CraftItem extends JavaPlugin {
         }
         PlaceholderSupport.init();
         miniGames = new GameManager(this);
-        saveDefaultConfig();
         plugin = this;
+        saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
         Message.reload();
         CraftMaterial.reload();
