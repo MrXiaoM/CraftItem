@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+@SuppressWarnings("UnusedReturnValue")
 public class Utils {
     public static boolean isPresent(String className) {
         try {
@@ -35,6 +36,7 @@ public class Utils {
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     public static void updateInventory(Player player) {
         player.updateInventory();
     }
@@ -118,10 +120,13 @@ public class Utils {
             if (lower.equals("crafting_table")) return valueOf(m, "workbench");
             if (lower.contains("_door") && !lower.contains("iron_")) return valueOf(m, "wooden_door");
             if (lower.startsWith("wooden_")) return valueOf(m, lower.replace("wooden_", "wood"));
+            if (lower.equals("iron_bars")) return valueOf(m, "iron_fence");
+
         }
         return material;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isAir(ItemStack item) {
         return item == null || item.getType().equals(Material.AIR);
     }
