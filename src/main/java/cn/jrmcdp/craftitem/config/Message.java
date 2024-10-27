@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.ChatColor;
@@ -231,11 +232,11 @@ public enum Message {
         return String.format(config.getOrDefault(this, defValue), args);
     }
     public boolean msg0(CommandSender sender, Object... args) {
-        sender.sendMessage(get(args));
+        AdventureManagerImpl.getInstance().sendMessage(sender, get(args));
         return true;
     }
     public boolean msg(CommandSender sender, Object... args) {
-        sender.sendMessage(prefix.get() + get(args));
+        AdventureManagerImpl.getInstance().sendMessage(sender, prefix.get() + get(args));
         return true;
     }
     

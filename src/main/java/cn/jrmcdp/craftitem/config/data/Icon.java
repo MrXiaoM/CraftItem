@@ -1,6 +1,6 @@
 package cn.jrmcdp.craftitem.config.data;
 
-import cn.jrmcdp.craftitem.ColorHelper;
+import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
 import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
@@ -89,7 +89,7 @@ public class Icon {
             } else if (s.startsWith("[console]")) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.substring(9).trim());
             } else if (s.startsWith("[message]")) {
-                player.sendMessage(ColorHelper.parseColor(s.substring(9).trim()));
+                AdventureManagerImpl.getInstance().sendMessage(player, s.substring(9).trim());
             } else if (s.startsWith("[close]")) {
                 player.closeInventory();
             }

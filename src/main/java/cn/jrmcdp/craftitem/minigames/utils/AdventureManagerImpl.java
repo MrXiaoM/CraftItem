@@ -7,6 +7,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,7 +17,6 @@ public class AdventureManagerImpl {
     private final BukkitAudiences adventure;
     private final MiniMessage miniMessage;
     private static AdventureManagerImpl instance;
-    public static final boolean legacyColorSupport = true;
 
     private AdventureManagerImpl(JavaPlugin plugin) {
         this.adventure = BukkitAudiences.create(plugin);
@@ -38,11 +38,11 @@ public class AdventureManagerImpl {
         if (text == null) {
             return Component.empty();
         }
-        if (legacyColorSupport) {
-            return miniMessage.deserialize(legacyToMiniMessage(text));
-        } else {
-            return miniMessage.deserialize(text);
-        }
+        return miniMessage.deserialize(legacyToMiniMessage(text));
+    }
+
+    public void sendMessage(CommandSender sender, String message) {
+        adventure.sender(sender).sendMessage(miniMessage(message));
     }
 
     public void sendTitle(Player player, String title, String subtitle, int in, int duration, int out) {
@@ -99,12 +99,12 @@ public class AdventureManagerImpl {
                 case 'd': stringBuilder.append("<light_purple>"); break;
                 case 'e': stringBuilder.append("<yellow>"); break;
                 case 'f': stringBuilder.append("<white>"); break;
-                case 'r': stringBuilder.append("<r><!i>"); break;
+                case 'r': stringBuilder.append("<reset><!i>"); break;
                 case 'l': stringBuilder.append("<b>"); break;
                 case 'm': stringBuilder.append("<st>"); break;
                 case 'o': stringBuilder.append("<i>"); break;
                 case 'n': stringBuilder.append("<u>"); break;
-                case 'k': stringBuilder.append("<o>"); break;
+                case 'k': stringBuilder.append("<obf>"); break;
                 case 'x': {
                     if (i + 13 >= chars.length
                             || !isColorCode(chars[i+2])
