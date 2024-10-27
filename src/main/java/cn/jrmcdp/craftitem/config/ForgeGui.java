@@ -9,6 +9,7 @@ import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 import cn.jrmcdp.craftitem.utils.Pair;
 import com.google.common.collect.Lists;
@@ -78,17 +79,22 @@ public class ForgeGui {
             items.put(key, new Icon(material, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
 
-        checkError(chest);
-        checkError(chestTime);
+        checkError(chest, "Chest");
+        checkError(chestTime, "ChestTime");
     }
 
-    private static void checkError(char[] inv) {
+    private static void checkError(char[] inv, String name) {
+        Logger logger = CraftItem.getPlugin().getLogger();
+        if (inv.length % 9 != 0) {
+            logger.warning("Gui.yml 配置有误: " + name + " 的长度 (" + inv.length + ") 不为 9 的倍数。如果你没有修改过这个选项，这可能由编码错误引起。");
+            return;
+        }
         for (int i = 0; i < inv.length; i++) {
             char c = inv[i];
             String key = String.valueOf(c);
             if (!items.containsKey(key)) {
                 inv[i] = '　';
-                CraftItem.getPlugin().getLogger().warning("Gui.yml 配置有误: 无法找到图标 '" + key + "'");
+                logger.warning("Gui.yml 配置有误: 无法找到图标 '" + key + "'");
             }
         }
     }
