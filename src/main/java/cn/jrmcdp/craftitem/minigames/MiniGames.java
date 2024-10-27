@@ -97,10 +97,10 @@ public class MiniGames {
      */
     public void loadGamesFromPluginFolder() {
         Deque<File> fileDeque = new ArrayDeque<>();
-        File typeFolder = new File(plugin.getDataFolder() + File.separator + "contents" + File.separator + "minigame");
+        File typeFolder = new File(plugin.getDataFolder(), "contents/minigame");
         if (!typeFolder.exists()) {
             if (!typeFolder.mkdirs()) return;
-            cn.jrmcdp.craftitem.utils.ConfigUtils.saveResource("contents" + File.separator + "minigame" + File.separator + "default.yml");
+            cn.jrmcdp.craftitem.utils.ConfigUtils.saveResource("contents/minigame/default.yml");
         }
         fileDeque.push(typeFolder);
         while (!fileDeque.isEmpty()) {

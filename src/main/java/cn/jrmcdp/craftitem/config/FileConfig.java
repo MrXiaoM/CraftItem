@@ -8,28 +8,28 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public enum FileConfig {
-    Message("Message.yml"),
-    Craft("Craft.yml", ' '),
-    Gui("Gui.yml"),
-    Category("Category.yml"),
-    Material("Material.yml"),
-    Custom(null);
+    Message("Message.yml", false),
+    Craft("Craft.yml", true, ' '),
+    Gui("Gui.yml", true),
+    Category("Category.yml", true),
+    Material("Material.yml", true),
+    Custom(null, false);
 
-    private final String fileName;
+    private final boolean saveIfNotExists;
     private final File file;
     private final char separator;
-    FileConfig(String fileName) {
-        this(fileName, '.');
+    FileConfig(String fileName, boolean saveIfNotExists) {
+        this(fileName, saveIfNotExists, '.');
     }
 
-    FileConfig(String fileName, char separator) {
-        this.fileName = fileName;
+    FileConfig(String fileName, boolean saveIfNotExists, char separator) {
         this.file = fileName == null ? null : new File(CraftItem.getPlugin().getDataFolder(), fileName);
+        this.saveIfNotExists = saveIfNotExists;
         this.separator = separator;
     }
 
     public YamlConfiguration loadConfig() {
-        YamlConfiguration config = ConfigUtils.loadOrSaveResource(fileName);
+        YamlConfiguration config = saveIfNotExists ? ConfigUtils.loadOrSaveResource(file.getName()) : ConfigUtils.load(file);
         if (separator != '.') {
             config.options().pathSeparator(separator);
         }
