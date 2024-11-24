@@ -37,6 +37,7 @@ dependencies {
     impl("net.kyori:adventure-api:4.17.0")
     impl("net.kyori:adventure-platform-bukkit:4.3.4")
     impl("net.kyori:adventure-text-minimessage:4.17.0")
+    impl("de.tr7zw:item-nbt-api:2.14.0")
     impl(project(":paper"))
 }
 
@@ -59,6 +60,7 @@ tasks {
         archiveClassifier.set("")
         mapOf(
             "net.kyori" to "kyori",
+            "de.tr7zw.changeme.nbtapi" to "nbtapi",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }

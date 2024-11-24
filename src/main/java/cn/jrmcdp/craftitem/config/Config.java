@@ -3,12 +3,19 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Condition;
 import cn.jrmcdp.craftitem.config.data.Title;
+import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTType;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -27,6 +34,10 @@ public class Config {
     private static final List<Condition> timeForgeConditions = new ArrayList<>();
     private static final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
     private static String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
+    private static final List<Material> notDisappearMaterials = new ArrayList<>();
+    private static final List<String> notDisappearNames = new ArrayList<>();
+    private static final List<String> notDisappearLores = new ArrayList<>();
+    private static final Map<String, List<String>> notDisappearNBTStrings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     public static void reload() {
         CraftItem.getPlugin().reloadConfig();
         FileConfiguration config = CraftItem.getPlugin().getConfig();
@@ -92,6 +103,74 @@ public class Config {
                 countLimitGroups.put(key, map);
             }
         }
+
+        notDisappearMaterials.clear();
+        notDisappearNames.clear();
+        notDisappearLores.clear();
+        notDisappearNBTStrings.clear();
+        for (String s : config.getStringList("DoNotDisappear.Material")) {
+            Material material = Utils.parseMaterial(s).orElse(null);
+            if (material == null) continue;
+            notDisappearMaterials.add(material);
+        }
+        for (String s : config.getStringList("DoNotDisappear.Name")) {
+            notDisappearNames.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
+        for (String s : config.getStringList("DoNotDisappear.Lore")) {
+            notDisappearLores.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
+        section = config.getConfigurationSection("DoNotDisappear.NBTString");
+        if (section != null) for (String key : section.getKeys(false)) {
+            List<String> list = section.getStringList(key);
+            notDisappearNBTStrings.put(key, list);
+        }
+    }
+
+    public static List<ItemStack> filterMaterials(List<ItemStack> materials) {
+        List<ItemStack> list = new ArrayList<>();
+        if (materials.isEmpty()) return list;
+        for (ItemStack material : materials) {
+            if (isNotDisappearItem(material)) continue;
+            list.add(material);
+        }
+        return list;
+    }
+
+    public static boolean isNotDisappearItem(ItemStack item) {
+        if (item == null || item.getType().equals(Material.AIR)) return true;
+        if (notDisappearMaterials.contains(item.getType())) return true;
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            String displayName = meta.hasDisplayName() ? meta.getDisplayName() : null;
+            if (displayName != null && !displayName.isEmpty()) {
+                for (String s : notDisappearNames) {
+                    if (displayName.contains(s)) return true;
+                }
+            }
+            List<String> lore = meta.hasLore() ? meta.getLore() : null;
+            if (lore != null && !lore.isEmpty()) {
+                String loreStr = String.join("\n", lore);
+                for (String s : notDisappearLores) {
+                    if (loreStr.contains(s)) return true;
+                }
+            }
+        }
+        if (!notDisappearNBTStrings.isEmpty()) {
+            return NBT.get(item, nbt -> {
+                for (Map.Entry<String, List<String>> entry : notDisappearNBTStrings.entrySet()) {
+                    if (nbt.hasTag(entry.getKey(), NBTType.NBTTagString)) {
+                        List<String> list = entry.getValue();
+                        if (list.isEmpty()) return true;
+                        String value = nbt.getString(entry.getKey());
+                        for (String s : list) {
+                            if (value.contains(s)) return true;
+                        }
+                    }
+                }
+                return false;
+            });
+        }
+        return false;
     }
 
     public static void playSoundClickInventory(Player player) {

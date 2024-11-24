@@ -261,19 +261,20 @@ public class CraftData implements ConfigurationSerializable {
         return list;
     }
 
-    public ItemStack takeRandomMaterial(Player player, Inventory gui) {
-        if (this.material.isEmpty()) return null;
-        ItemStack item = this.material.get(RandomUtils.nextInt(this.material.size()));
+    public ItemStack takeRandomMaterial(Player player, Inventory inv) {
+        List<ItemStack> list = Config.filterMaterials(material);
+        if (list.isEmpty()) return null;
+        ItemStack item = list.get(RandomUtils.nextInt(list.size()));
         ItemStack clone = item.clone();
         clone.setAmount(1);
 
         MaterialDisappearEvent event = new MaterialDisappearEvent(player, this, item, clone);
         Bukkit.getPluginManager().callEvent(event);
-        clone = event.getItemToDisappear();
-        if (event.isCancelled() || clone == null) return null;
+        ItemStack toDisappear = event.getItemToDisappear();
+        if (event.isCancelled() || toDisappear == null || toDisappear.getAmount() == 0) return null;
 
-        gui.removeItem(clone);
-        return clone;
+        inv.removeItem(toDisappear);
+        return toDisappear;
     }
 
     public void takeAllMaterial(Inventory gui) {

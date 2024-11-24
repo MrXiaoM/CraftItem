@@ -11,6 +11,7 @@ import cn.jrmcdp.craftitem.minigames.GameManager;
 import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import cn.jrmcdp.craftitem.utils.Utils;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,6 +43,14 @@ public class CraftItem extends JavaPlugin {
 
     public static GameManager getMiniGames() {
         return miniGames;
+    }
+
+    @Override
+    public void onLoad() {
+        MinecraftVersion.replaceLogger(getLogger());
+        MinecraftVersion.disableUpdateCheck();
+        MinecraftVersion.disableBStats();
+        MinecraftVersion.getVersion();
     }
 
     public void onEnable() {

@@ -78,6 +78,27 @@ CountLimitGroups:
     # 拥有 craftitem.time.vip 权限的玩家限制 20 次，以此类推
     vip: 20
 
+# 大失败不消失的物品设置
+# 配置会自动替换 & 为 §
+DoNotDisappear:
+  # 以下物品材质不消失
+  Material:
+    - COMMAND_BLOCK
+  # 名字包含以下内容其中之一不消失
+  Name:
+    - '不会消失的物品'
+  # Lore 的某一行包含以下内容其中之一不消失
+  Lore:
+    - '非常稀有 的材料'
+  # 相应的 NBT 标签的值为以下任一内容不消失
+  # NBT标签名(键)不区分大小写
+  NBTString:
+    # 示例，指定的 MMOItems 物品不会消失
+    MMOITEMS_ITEM_ID:
+      - 'TEST_ITEM'
+    # 设为空列表就代表，只要有 DO_NOT_DISAPPEAR 这个标签，物品就不消失
+    DO_NOT_DISAPPEAR: []
+
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
 # 贴图位移字符配置
