@@ -37,7 +37,6 @@ dependencies {
     impl("net.kyori:adventure-api:4.17.0")
     impl("net.kyori:adventure-platform-bukkit:4.3.4")
     impl("net.kyori:adventure-text-minimessage:4.17.0")
-    impl("net.objecthunter:exp4j:0.4.8")
     impl(project(":paper"))
 }
 
@@ -60,9 +59,8 @@ tasks {
         archiveClassifier.set("")
         mapOf(
             "net.kyori" to "kyori",
-            "net.objecthunter.exp4j" to "exp4j"
         ).forEach { (original, target) ->
-            relocate(original, "cn.jrmcdp.craftitem.utils.$target")
+            relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }
     }
     processResources {
