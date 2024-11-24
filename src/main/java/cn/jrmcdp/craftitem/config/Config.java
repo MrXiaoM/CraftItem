@@ -141,17 +141,21 @@ public class Config {
         if (notDisappearMaterials.contains(item.getType())) return true;
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            String displayName = meta.hasDisplayName() ? meta.getDisplayName() : null;
-            if (displayName != null && !displayName.isEmpty()) {
-                for (String s : notDisappearNames) {
-                    if (displayName.contains(s)) return true;
+            if (!notDisappearNames.isEmpty()) {
+                String displayName = meta.hasDisplayName() ? meta.getDisplayName() : null;
+                if (displayName != null && !displayName.isEmpty()) {
+                    for (String s : notDisappearNames) {
+                        if (displayName.contains(s)) return true;
+                    }
                 }
             }
-            List<String> lore = meta.hasLore() ? meta.getLore() : null;
-            if (lore != null && !lore.isEmpty()) {
-                String loreStr = String.join("\n", lore);
-                for (String s : notDisappearLores) {
-                    if (loreStr.contains(s)) return true;
+            if (!notDisappearLores.isEmpty()) {
+                List<String> lore = meta.hasLore() ? meta.getLore() : null;
+                if (lore != null && !lore.isEmpty()) {
+                    String loreStr = String.join("\n", lore);
+                    for (String s : notDisappearLores) {
+                        if (loreStr.contains(s)) return true;
+                    }
                 }
             }
         }
