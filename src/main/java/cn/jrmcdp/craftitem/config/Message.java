@@ -190,6 +190,11 @@ public enum Message {
     gui__edit_display_not_found("&c未找到第一格的物品"),
     gui__edit_item_title("奖励物品"),
     gui__edit_command_title("奖励命令 (点击空格子添加)"),
+    gui__edit_command_tips(
+            "&a请在聊天栏发送命令 &7(无需/)&a，支持PAPI变量",
+            "  &a格式: &e命令||显示内容",
+            "  &a示例: &esay 这个插件太棒了||服务器说这个插件太棒了"),
+    gui__edit_command_lore("", "&4点击删除"),
     gui__edit_time_limit_count_title_normal("选择 普通/困难锻造限制组"),
     gui__edit_time_limit_count_title_time("选择 时长锻造限制组"),
     gui__edit_time_cost("&a请输入锻造时长金额 正整数"),

@@ -65,9 +65,13 @@ public class EditHolder implements IHolder {
         open(player, buildGui());
     }
     public void open(Player player, Inventory inv) {
+        open(player, inv, null);
+    }
+    public void open(Player player, Inventory inv, Runnable run) {
         Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> {
             player.closeInventory();
             player.openInventory(inv);
+            if (run != null) run.run();
         });
     }
 
@@ -297,25 +301,29 @@ public class EditHolder implements IHolder {
                 Message title = Message.gui__edit_command_title;
                 Prompter.gui(player, 54, title, inv -> { // init
                     for (String line : craftData.getCommands()) {
-                        inv.addItem(Utils.getItemStack(Material.PAPER, line));
+                        inv.addItem(Utils.getItemStack(Material.PAPER, line, Message.gui__edit_command_lore.list()));
                     }
                 }, e -> { // onClick
                     e.setCancelled(true);
                     Inventory inv = e.getClickedInventory();
                     if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
-                    if (!isAir(e.getCurrentItem())) return;
-                    else e.setCurrentItem(null);
                     if (!isAir(e.getCursor())) return;
+                    if (!isAir(e.getCurrentItem())) {
+                        inv.setItem(e.getSlot(), null);
+                        return;
+                    }
                     isChat.set(true);
                     player.closeInventory();
+                    Message.gui__edit_command_tips.msg(player);
+
                     Prompter.onChat(player, message -> {
                         ItemStack itemStack = Utils.getItemStack(
                                 Material.PAPER,
-                                message.replace("&", "§")
+                                message.replace("&", "§"),
+                                Message.gui__edit_command_lore.list()
                         );
                         inv.addItem(itemStack);
-                        open(player, inv);
-                        isChat.set(false);
+                        open(player, inv, () -> isChat.set(false));
                     });
                 }, inv -> { // onClose
                     if (isChat.get()) return false;
