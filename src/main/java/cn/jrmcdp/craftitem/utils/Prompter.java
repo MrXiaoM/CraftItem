@@ -2,6 +2,7 @@ package cn.jrmcdp.craftitem.utils;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.holder.IHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +13,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class Prompter implements InventoryHolder {
+public class Prompter implements IHolder {
     Inventory inventory;
     private Prompter() {}
 
@@ -96,4 +96,8 @@ public class Prompter implements InventoryHolder {
         }, CraftItem.getPlugin());
     }
 
+    @Override
+    public void onClick(InventoryClickEvent event) {
+        // do nothing
+    }
 }
