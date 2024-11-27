@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.utils;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.Message;
-import cn.jrmcdp.craftitem.holder.IHolder;
+import cn.jrmcdp.craftitem.holder.IAutoCloseHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class Prompter implements IHolder {
+public class Prompter implements IAutoCloseHolder {
     Inventory inventory;
     private Prompter() {}
 
@@ -94,10 +94,5 @@ public class Prompter implements IHolder {
                 }
             }
         }, CraftItem.getPlugin());
-    }
-
-    @Override
-    public void onClick(InventoryClickEvent event) {
-        // do nothing
     }
 }

@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.listener;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.holder.IAutoCloseHolder;
 import cn.jrmcdp.craftitem.holder.IHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class GuiListener implements Listener {
     public void onDisable() {
         // 防止热重载时玩家可以拿取界面物品
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getOpenInventory().getTopInventory().getHolder() instanceof IHolder) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof IAutoCloseHolder) {
                 player.closeInventory();
             }
         }
