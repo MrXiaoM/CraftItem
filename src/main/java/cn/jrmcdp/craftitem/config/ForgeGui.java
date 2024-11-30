@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Icon;
+import cn.jrmcdp.craftitem.utils.AdventureItemStack;
 import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
@@ -129,21 +130,16 @@ public class ForgeGui {
                 }
                 case "物": {
                     ItemStack item = craftData.getDisplayItem().clone();
-                    ItemMeta meta = item.getItemMeta();
-                    if (meta != null) {
-                        List<String> lore = meta.getLore();
-                        if (lore == null) lore = new ArrayList<>();
-                        lore.add("");
-                        lore.add("§a包含:");
-                        for (ItemStack itemStack : craftData.getItems())
-                            lore.add(" §8➥ §e" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
-                        for (String command : craftData.getCommands()) {
-                            String[] split = command.split("\\|\\|");
-                            if (split.length > 1) lore.add(" §8➥ §e" + command.split("\\|\\|")[1]);
-                        }
-                        meta.setLore(lore);
+                    List<String> lore = AdventureItemStack.getItemLoreAsMiniMessage(item);
+                    if (lore == null) lore = new ArrayList<>();
+                    lore.addAll(Message.gui__craft_info__lore__header.list());
+                    for (ItemStack itemStack : craftData.getItems())
+                        lore.add(Message.gui__craft_info__lore__item.get(Utils.getItemName(itemStack), itemStack.getAmount()));
+                    for (String command : craftData.getCommands()) {
+                        String[] split = command.split("\\|\\|");
+                        if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.get(split[1]));
                     }
-                    item.setItemMeta(meta);
+                    AdventureItemStack.setItemLore(item, lore);
                     is[i] = item;
                     break;
                 }

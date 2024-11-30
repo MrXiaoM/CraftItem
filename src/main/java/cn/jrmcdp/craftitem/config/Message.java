@@ -199,6 +199,14 @@ public enum Message {
     gui__edit_time_limit_count_title_time("选择 时长锻造限制组"),
     gui__edit_time_cost("&a请输入锻造时长金额 正整数"),
 
+    gui__category__not_found("&c未找到 &e%s"),
+    gui__craft_info__lore__header(
+            "",
+            "&a包含:"
+    ),
+    gui__craft_info__lore__item(" &8➥ &e%s&fx%d"),
+    gui__craft_info__lore__command(" &8➥ &e%s"),
+
     gui__edit__status__on("&a开启"),
     gui__edit__status__off("&c关闭"),
     gui__edit__unset("&f未设置"),
