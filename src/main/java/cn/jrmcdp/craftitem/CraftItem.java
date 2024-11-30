@@ -59,7 +59,7 @@ public class CraftItem extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         if (!setupEconomy()) {
-            Bukkit.getConsoleSender().sendMessage(Message.prefix + "§c未安装 Vault，自动关闭插件");
+            Bukkit.getConsoleSender().sendMessage(Message.prefix + "§c未安装 Vault 或无法找到已与 Vault 挂钩的经济插件，自动关闭本插件");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
