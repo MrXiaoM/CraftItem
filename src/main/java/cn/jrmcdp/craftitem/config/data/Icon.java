@@ -1,13 +1,13 @@
 package cn.jrmcdp.craftitem.config.data;
 
 import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
+import cn.jrmcdp.craftitem.utils.AdventureItemStack;
 import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,27 +40,20 @@ public class Icon {
     @SafeVarargs
     public final ItemStack getItem(Player player, Pair<String, Object>... replacements) {
         ItemStack item = data > 0 ? new ItemStack(material, amount, (short) data) : new ItemStack(material, amount);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (!lore.isEmpty()) {
-                List<String> lore = new ArrayList<>();
-                for (String s : PlaceholderSupport.setPlaceholders(player, this.lore)) {
-                    for (Pair<String, Object> pair : replacements) {
-                        if (s.contains(pair.getKey())) {
-                            s = s.replace(pair.getKey(), pair.getValue().toString());
-                        }
+        if (name != null) AdventureItemStack.setItemDisplayName(item, name);
+        if (!lore.isEmpty()) {
+            List<String> lore = new ArrayList<>();
+            for (String s : PlaceholderSupport.setPlaceholders(player, this.lore)) {
+                for (Pair<String, Object> pair : replacements) {
+                    if (s.contains(pair.getKey())) {
+                        s = s.replace(pair.getKey(), pair.getValue().toString());
                     }
-                    lore.add(s);
                 }
-                meta.setLore(lore);
+                lore.add(s);
             }
-            if (customModelData != null) try {
-                meta.setCustomModelData(customModelData);
-            } catch (Throwable ignored) {
-            }
+            AdventureItemStack.setItemLore(item, lore);
         }
-        item.setItemMeta(meta);
+        if (customModelData != null) AdventureItemStack.setCustomModelData(item, customModelData);
         return item;
     }
 

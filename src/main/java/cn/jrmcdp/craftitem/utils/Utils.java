@@ -41,18 +41,8 @@ public class Utils {
         player.updateInventory();
     }
 
-    public static ItemStack getItemStack(Material material, String name) {
-        return getItemStack(material, name, new ArrayList<>());
-    }
     public static ItemStack getItemStack(Material material, String name, List<String> lore) {
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            meta.setLore(lore);
-        }
-        itemStack.setItemMeta(meta);
-        return itemStack;
+        return AdventureItemStack.buildItem(material, name, lore);
     }
 
     public static Material getMaterial(String... ids) {
