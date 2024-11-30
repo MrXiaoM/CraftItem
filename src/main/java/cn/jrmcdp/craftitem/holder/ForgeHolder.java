@@ -1,7 +1,10 @@
 package cn.jrmcdp.craftitem.holder;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.*;
+import cn.jrmcdp.craftitem.config.Config;
+import cn.jrmcdp.craftitem.config.Craft;
+import cn.jrmcdp.craftitem.config.ForgeGui;
+import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;

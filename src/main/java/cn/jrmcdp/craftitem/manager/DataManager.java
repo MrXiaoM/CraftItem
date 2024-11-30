@@ -1,11 +1,10 @@
 package cn.jrmcdp.craftitem.manager;
 
 import cn.jrmcdp.craftitem.data.PlayerData;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.bukkit.entity.Player;
 
 public class DataManager {
     public static final Map<String, PlayerData> playerDataHashMap = new HashMap<>();

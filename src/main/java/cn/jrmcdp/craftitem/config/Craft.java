@@ -2,12 +2,6 @@ package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.data.CraftData;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.logging.Logger;
-
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
@@ -23,6 +17,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.logging.Logger;
 
 public class Craft {
     private static YamlConfiguration config;

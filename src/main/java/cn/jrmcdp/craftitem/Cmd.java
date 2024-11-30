@@ -2,12 +2,8 @@ package cn.jrmcdp.craftitem;
 
 import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
-import cn.jrmcdp.craftitem.manager.DataManager;
 import cn.jrmcdp.craftitem.holder.EditHolder;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import cn.jrmcdp.craftitem.manager.DataManager;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -17,6 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cmd implements CommandExecutor, TabCompleter {
 

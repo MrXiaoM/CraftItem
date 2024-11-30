@@ -3,16 +3,12 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Icon;
-import cn.jrmcdp.craftitem.utils.AdventureItemStack;
-import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
-
-import java.util.*;
-import java.util.logging.Logger;
-
+import cn.jrmcdp.craftitem.utils.AdventureItemStack;
 import cn.jrmcdp.craftitem.utils.Pair;
+import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,7 +17,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ForgeGui {
     private static String title;

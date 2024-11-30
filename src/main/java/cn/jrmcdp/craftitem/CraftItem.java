@@ -4,9 +4,6 @@ import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.listener.GuiListener;
 import cn.jrmcdp.craftitem.listener.PlayerListener;
-
-import java.io.File;
-
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import cn.jrmcdp.craftitem.utils.*;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -20,6 +17,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 public class CraftItem extends JavaPlugin {
     private static CraftItem plugin;

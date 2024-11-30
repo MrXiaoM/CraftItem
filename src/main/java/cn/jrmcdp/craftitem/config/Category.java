@@ -1,24 +1,22 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.utils.AdventureItemStack;
-import cn.jrmcdp.craftitem.utils.Utils;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.CategoryHolder;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
+import cn.jrmcdp.craftitem.utils.AdventureItemStack;
+import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class Category {
     private static String title;

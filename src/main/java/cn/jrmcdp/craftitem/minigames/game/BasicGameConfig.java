@@ -1,7 +1,5 @@
 package cn.jrmcdp.craftitem.minigames.game;
 
-import org.jetbrains.annotations.CheckReturnValue;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BasicGameConfig {

@@ -1,9 +1,5 @@
 package cn.jrmcdp.craftitem.config;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
 import cn.jrmcdp.craftitem.utils.Utils;
@@ -13,6 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum Message {
     prefix("&4&lCraftItem &8>> &e"),

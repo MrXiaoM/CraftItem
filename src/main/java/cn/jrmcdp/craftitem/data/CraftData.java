@@ -2,13 +2,9 @@ package cn.jrmcdp.craftitem.data;
 
 import cn.jrmcdp.craftitem.config.Config;
 import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import cn.jrmcdp.craftitem.utils.Triple;
 import cn.jrmcdp.craftitem.utils.Utils;
-
-import java.util.*;
-import java.util.function.Supplier;
-
-import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,6 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+import java.util.function.Supplier;
 
 public class CraftData implements ConfigurationSerializable {
     private List<ItemStack> material;
