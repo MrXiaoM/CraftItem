@@ -1,17 +1,22 @@
 package cn.jrmcdp.craftitem.utils;
 
 import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.NBTType;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.jrmcdp.craftitem.utils.MiniMessageConvert.miniMessage;
 
 public class AdventureItemStack {
 
@@ -29,7 +34,7 @@ public class AdventureItemStack {
 
     public static void setItemDisplayName(ItemStack item, String name) {
         if (item == null) return;
-        Component displayName = MiniMessageConvert.miniMessage(name);
+        Component displayName = miniMessage(name);
         String json = GsonComponentSerializer.gson().serialize(displayName);
         setItemDisplayNameByJson(item, json);
     }
@@ -51,7 +56,7 @@ public class AdventureItemStack {
         if (item == null) return;
         List<String> json = new ArrayList<>();
         for (String s : lore) {
-            Component line = MiniMessageConvert.miniMessage(s);
+            Component line = miniMessage(s);
             json.add(GsonComponentSerializer.gson().serialize(line));
         }
         setItemLoreByJson(item, json);
@@ -70,6 +75,49 @@ public class AdventureItemStack {
                 ReadWriteNBTList<String> list = display.getStringList("Lore");
                 if (!list.isEmpty()) list.clear();
                 list.addAll(json);
+            });
+        }
+    }
+
+    @Nullable
+    public static List<String> getItemLoreAsMiniMessage(ItemStack item) {
+        List<Component> components = getItemLore(item);
+        if (components == null) return null;
+        List<String> lore = new ArrayList<>();
+        for (Component component : components) {
+            String s = miniMessage(component);
+            lore.add(s);
+        }
+        return lore;
+    }
+
+    @Nullable
+    public static List<Component> getItemLore(ItemStack item) {
+        List<String> loreAsJson = getItemLoreAsJson(item);
+        if (loreAsJson == null) return null;
+        List<Component> lore = new ArrayList<>();
+        for (String line : loreAsJson) {
+            Component component = GsonComponentSerializer.gson().deserialize(line);
+            lore.add(component);
+        }
+        return lore;
+    }
+
+    @Nullable
+    public static List<String> getItemLoreAsJson(ItemStack item) {
+        if (item == null) return null;
+        if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_20_R4)) {
+            ReadWriteNBT nbtItem = NBT.itemStackToNBT(item);
+            ReadWriteNBT nbt = nbtItem.getCompound("components");
+            return nbt != null && nbt.hasTag("minecraft:custom_name", NBTType.NBTTagList)
+                    ? nbt.getStringList("minecraft:lore").toListCopy()
+                    : null;
+        } else {
+            return NBT.get(item, nbt -> {
+                ReadableNBT display = nbt.getCompound("display");
+                return display != null && display.hasTag("Lore", NBTType.NBTTagList)
+                        ? display.getStringList("Lore").toListCopy()
+                        : null;
             });
         }
     }
