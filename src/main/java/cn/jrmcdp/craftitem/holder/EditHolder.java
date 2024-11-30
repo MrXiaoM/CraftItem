@@ -49,14 +49,14 @@ public class EditHolder implements IHolder {
     public static Inventory buildGui(String id, CraftData craftData) {
         EditHolder holder = new EditHolder(id, craftData);
         ItemStack[] items = holder.getItems();
-        Inventory inventory = Bukkit.createInventory(holder, items.length, Message.gui__edit_title.get(holder.id));
+        Inventory inventory = CraftItem.getInventoryFactory().create(holder, items.length, Message.gui__edit_title.get(holder.id));
         inventory.setContents(items);
         holder.inventory = inventory;
         return inventory;
     }
     public Inventory buildGui() {
         ItemStack[] items = getItems();
-        Inventory inv = Bukkit.createInventory(this, items.length, Message.gui__edit_title.get(this.id));
+        Inventory inv = CraftItem.getInventoryFactory().create(this, items.length, Message.gui__edit_title.get(this.id));
         inv.setContents(items);
         return this.inventory = inv;
     }

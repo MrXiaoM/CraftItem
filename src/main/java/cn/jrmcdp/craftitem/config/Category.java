@@ -75,7 +75,7 @@ public class Category {
 
     public static CategoryHolder buildGui(PlayerData playerData, String type, List<String> craftList, int page) {
         CategoryHolder holder = new CategoryHolder(chest, playerData, type, craftList, page);
-        Inventory gui = Bukkit.createInventory(holder, chest.length, title.replace("<Category>", type));
+        Inventory gui = CraftItem.getInventoryFactory().create(holder, chest.length, title.replace("<Category>", type));
         holder.setInventory(gui);
         ItemStack[] is = new ItemStack[chest.length];
         Iterator<String> iterator = craftList.subList(

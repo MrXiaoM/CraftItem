@@ -48,7 +48,7 @@ public class Prompter implements IAutoCloseHolder {
     }
     public static void gui(Player player, int size, Message title, Consumer<Inventory> items, Consumer<InventoryClickEvent> click, Function<Inventory, Boolean> close) {
         Prompter holder = new Prompter();
-        holder.inventory = Bukkit.createInventory(holder, size, title.get());
+        holder.inventory = CraftItem.getInventoryFactory().create(holder, size, title.get());
         if (items != null) items.accept(holder.inventory);
         player.openInventory(holder.inventory);
         Bukkit.getPluginManager().registerEvents(new Listener() {

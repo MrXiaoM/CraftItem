@@ -8,9 +8,7 @@ import cn.jrmcdp.craftitem.listener.PlayerListener;
 import java.io.File;
 
 import cn.jrmcdp.craftitem.minigames.GameManager;
-import cn.jrmcdp.craftitem.utils.ConfigUtils;
-import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
-import cn.jrmcdp.craftitem.utils.Utils;
+import cn.jrmcdp.craftitem.utils.*;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -29,6 +27,7 @@ public class CraftItem extends JavaPlugin {
     private static Economy econ;
 
     private static GameManager miniGames = null;
+    private static InventoryFactory inventoryFactory;
     private GuiListener guiListener;
     private PlayerListener playerListener;
     YamlConfiguration config;
@@ -43,6 +42,10 @@ public class CraftItem extends JavaPlugin {
 
     public static GameManager getMiniGames() {
         return miniGames;
+    }
+
+    public static InventoryFactory getInventoryFactory() {
+        return inventoryFactory;
     }
 
     @Override
@@ -61,6 +64,11 @@ public class CraftItem extends JavaPlugin {
             return;
         }
         PlaceholderSupport.init();
+        if (Utils.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")) {
+            inventoryFactory = new PaperInventoryFactory();
+        } else {
+            inventoryFactory = new BukkitInventoryFactory();
+        }
         miniGames = new GameManager(this);
         plugin = this;
         saveDefaultConfig();

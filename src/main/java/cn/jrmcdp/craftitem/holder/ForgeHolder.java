@@ -44,7 +44,7 @@ public class ForgeHolder implements IHolder {
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
         ForgeHolder holder = new ForgeHolder(playerData, id, craftData);
-        Inventory inventory = Bukkit.createInventory(holder, size, PlaceholderSupport.setPlaceholders(playerData.getPlayer(), title));
+        Inventory inventory = CraftItem.getInventoryFactory().create(holder, size, PlaceholderSupport.setPlaceholders(playerData.getPlayer(), title));
         holder.inventory = inventory;
         return inventory;
     }
