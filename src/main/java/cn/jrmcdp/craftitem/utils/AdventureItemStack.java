@@ -2,14 +2,13 @@ package cn.jrmcdp.craftitem.utils;
 
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import de.tr7zw.changeme.nbtapi.handler.NBTHandlers;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
-import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTCompoundList;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,8 +36,13 @@ public class AdventureItemStack {
     public static void setItemDisplayName(ItemStack item, String name) {
         if (item == null) return;
         Component displayName = miniMessage(name);
-        String json = GsonComponentSerializer.gson().serialize(displayName);
-        setItemDisplayNameByJson(item, json);
+        if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1)) {
+            String json = GsonComponentSerializer.gson().serialize(displayName);
+            setItemDisplayNameByJson(item, json);
+        } else {
+            String legacy = LegacyComponentSerializer.legacySection().serialize(displayName);
+            setItemDisplayNameByJson(item, legacy);
+        }
     }
 
     public static void setItemDisplayNameByJson(ItemStack item, String json) {
@@ -51,21 +55,22 @@ public class AdventureItemStack {
                 ReadWriteNBT display = nbt.getOrCreateCompound("display");
                 display.setString("Name", json);
             });
-        } else {
-            NBT.modify(item, nbt -> {
-                ReadWriteNBT display = nbt.getOrCreateCompound("display");
-                display.removeKey("Name");
-                display.set("Name", NBT.parseNBT(json), NBTHandlers.STORE_READWRITE_TAG);
-            });
         }
     }
 
     public static void setItemLore(ItemStack item, List<String> lore) {
         if (item == null) return;
         List<String> json = new ArrayList<>();
-        for (String s : lore) {
-            Component line = miniMessage(s);
-            json.add(GsonComponentSerializer.gson().serialize(line));
+        if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_14_R1)) {
+            for (String s : lore) {
+                Component line = miniMessage(s);
+                json.add(GsonComponentSerializer.gson().serialize(line));
+            }
+        } else {
+            for (String s : lore) {
+                Component line = miniMessage(s);
+                json.add(LegacyComponentSerializer.legacySection().serialize(line));
+            }
         }
         setItemLoreByJson(item, json);
     }
@@ -77,21 +82,12 @@ public class AdventureItemStack {
                 if (!list.isEmpty()) list.clear();
                 list.addAll(json);
             });
-        } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1)) {
+        } else {
             NBT.modify(item, nbt -> {
                 ReadWriteNBT display = nbt.getOrCreateCompound("display");
                 ReadWriteNBTList<String> list = display.getStringList("Lore");
                 if (!list.isEmpty()) list.clear();
                 list.addAll(json);
-            });
-        } else {
-            NBT.modify(item, nbt -> {
-                ReadWriteNBT display = nbt.getOrCreateCompound("display");
-                ReadWriteNBTCompoundList list = display.getCompoundList("Lore");
-                if (!list.isEmpty()) list.clear();
-                for (String s : json) {
-                    list.addCompound(NBT.parseNBT(s));
-                }
             });
         }
     }
