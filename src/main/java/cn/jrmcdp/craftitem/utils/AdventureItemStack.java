@@ -2,7 +2,9 @@ package cn.jrmcdp.craftitem.utils;
 
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTType;
+import de.tr7zw.changeme.nbtapi.handler.NBTHandlers;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTCompoundList;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBTList;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -44,10 +46,16 @@ public class AdventureItemStack {
             NBT.modifyComponents(item, nbt -> {
                 nbt.setString("minecraft:custom_name", json);
             });
-        } else {
+        } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1)) {
             NBT.modify(item, nbt -> {
                 ReadWriteNBT display = nbt.getOrCreateCompound("display");
                 display.setString("Name", json);
+            });
+        } else {
+            NBT.modify(item, nbt -> {
+                ReadWriteNBT display = nbt.getOrCreateCompound("display");
+                display.removeKey("Name");
+                display.set("Name", NBT.parseNBT(json), NBTHandlers.STORE_READWRITE_TAG);
             });
         }
     }
@@ -69,12 +77,21 @@ public class AdventureItemStack {
                 if (!list.isEmpty()) list.clear();
                 list.addAll(json);
             });
-        } else {
+        } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1)) {
             NBT.modify(item, nbt -> {
                 ReadWriteNBT display = nbt.getOrCreateCompound("display");
                 ReadWriteNBTList<String> list = display.getStringList("Lore");
                 if (!list.isEmpty()) list.clear();
                 list.addAll(json);
+            });
+        } else {
+            NBT.modify(item, nbt -> {
+                ReadWriteNBT display = nbt.getOrCreateCompound("display");
+                ReadWriteNBTCompoundList list = display.getCompoundList("Lore");
+                if (!list.isEmpty()) list.clear();
+                for (String s : json) {
+                    list.addCompound(NBT.parseNBT(s));
+                }
             });
         }
     }
@@ -112,12 +129,22 @@ public class AdventureItemStack {
             return nbt != null && nbt.hasTag("minecraft:custom_name", NBTType.NBTTagList)
                     ? nbt.getStringList("minecraft:lore").toListCopy()
                     : null;
-        } else {
+        } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1)) {
             return NBT.get(item, nbt -> {
                 ReadableNBT display = nbt.getCompound("display");
                 return display != null && display.hasTag("Lore", NBTType.NBTTagList)
                         ? display.getStringList("Lore").toListCopy()
                         : null;
+            });
+        } else {
+            return NBT.get(item, nbt -> {
+                ReadableNBT display = nbt.getCompound("display");
+                if (display == null || !display.hasTag("Lore", NBTType.NBTTagList)) return null;
+                List<String> lore = new ArrayList<>();
+                for (ReadWriteNBT compound : display.getCompoundList("Lore")) {
+                    lore.add(compound.toString());
+                }
+                return lore;
             });
         }
     }
