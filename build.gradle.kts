@@ -7,7 +7,7 @@ plugins {
 val targetJavaVersion = 8
 allprojects {
     group = "cn.jrmcdp"
-    version = "1.2.0"
+    version = "1.2.1"
 
     repositories {
         mavenCentral()
