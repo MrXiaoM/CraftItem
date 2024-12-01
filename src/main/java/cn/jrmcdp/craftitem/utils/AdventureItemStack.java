@@ -125,22 +125,12 @@ public class AdventureItemStack {
             return nbt != null && nbt.hasTag("minecraft:custom_name", NBTType.NBTTagList)
                     ? nbt.getStringList("minecraft:lore").toListCopy()
                     : null;
-        } else if (MinecraftVersion.isAtLeastVersion(MinecraftVersion.MC1_13_R1)) {
+        } else {
             return NBT.get(item, nbt -> {
                 ReadableNBT display = nbt.getCompound("display");
                 return display != null && display.hasTag("Lore", NBTType.NBTTagList)
                         ? display.getStringList("Lore").toListCopy()
                         : null;
-            });
-        } else {
-            return NBT.get(item, nbt -> {
-                ReadableNBT display = nbt.getCompound("display");
-                if (display == null || !display.hasTag("Lore", NBTType.NBTTagList)) return null;
-                List<String> lore = new ArrayList<>();
-                for (ReadWriteNBT compound : display.getCompoundList("Lore")) {
-                    lore.add(compound.toString());
-                }
-                return lore;
             });
         }
     }
