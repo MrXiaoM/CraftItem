@@ -312,7 +312,7 @@ public class ForgeHolder implements IHolder {
 
             player.closeInventory();
             CraftItem.getEcon().withdrawPlayer(player, cost);
-            craftData.takeAllMaterial(player.getInventory());
+            craftData.takeAllMaterial(player);
             long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
             playerData.setTime(key, endTime);
             playerData.save(); // 开始时长锻造

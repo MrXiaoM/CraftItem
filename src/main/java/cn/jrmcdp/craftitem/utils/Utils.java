@@ -1,15 +1,20 @@
 package cn.jrmcdp.craftitem.utils;
 
+import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.CraftMaterial;
 import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
+import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 @SuppressWarnings("UnusedReturnValue")
 public class Utils {
@@ -39,6 +44,69 @@ public class Utils {
     @SuppressWarnings("UnstableApiUsage")
     public static void updateInventory(Player player) {
         player.updateInventory();
+    }
+
+    /**
+     * CraftInventory#first(item, withAmount:false)
+     */
+    private static int first(Inventory inv, ItemStack item) {
+        if (item == null) {
+            return -1;
+        } else {
+            ItemStack[] inventory = inv.getContents(); // modified
+            int i = 0;
+            while (true) {
+                if (i >= inventory.length) return -1;
+                if (inventory[i] != null && item.isSimilar(inventory[i])) break;
+                ++i;
+            }
+            return i;
+        }
+    }
+
+    /**
+     * 重写 CraftInventory#removeItem，解决材料在副手不消耗问题
+     */
+    public static void takeItem(Player player, ItemStack... items) {
+        PlayerInventory inv = player.getInventory();
+        HashMap<Integer, ItemStack> leftover = new HashMap<>();
+
+        for (int i = 0; i < items.length; ++i) {
+            ItemStack item = items[i];
+            Preconditions.checkArgument(item != null, "ItemStack cannot be null");
+            int toDelete = item.getAmount();
+
+            while (true) {
+                int first = first(inv, item); // modified
+                if (first == -1) {
+                    item.setAmount(toDelete);
+                    leftover.put(i, item);
+                    break;
+                }
+
+                ItemStack itemStack = inv.getItem(first);
+                if (itemStack == null) continue;
+                int amount = itemStack.getAmount();
+                if (amount <= toDelete) {
+                    toDelete -= amount;
+                    inv.setItem(first, null);
+                } else {
+                    itemStack.setAmount(amount - toDelete);
+                    inv.setItem(first, itemStack);
+                    toDelete = 0;
+                }
+                if (toDelete <= 0) break;
+            }
+        }
+        if (!leftover.isEmpty()) {
+            Logger logger = CraftItem.getPlugin().getLogger();
+            logger.warning("预料中的问题，在扣除玩家 " + player.getName() + " 的所有材料时，有以下材料没有成功扣除");
+            logger.warning("(格式: 物品所在格子索引 -- 物品ID x 物品数量)");
+            for (Map.Entry<Integer, ItemStack> entry : leftover.entrySet()) {
+                ItemStack item = entry.getValue();
+                logger.warning(entry.getKey() + " -- " + (item == null ? "null" : (item.getType()  + " x " + item.getAmount())));
+            }
+        }
     }
 
     public static ItemStack getItemStack(Material material, String name, List<String> lore) {

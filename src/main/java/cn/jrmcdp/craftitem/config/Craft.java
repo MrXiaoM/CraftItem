@@ -94,7 +94,7 @@ public class Craft {
                 score = value - oldValue;
             }
             if (value == 100) {
-                craftData.takeAllMaterial(player.getInventory());
+                craftData.takeAllMaterial(player);
                 String failTimes = String.valueOf(playerData.getFailTimes(id));
                 playerData.clearScore(id);
                 playerData.clearFailTimes(id);
@@ -146,7 +146,7 @@ public class Craft {
                 }
                 case 2 : {
                     Message.craft__process_fail_big.msg(player, score);
-                    ItemStack itemStack = craftData.takeRandomMaterial(player, player.getInventory());
+                    ItemStack itemStack = craftData.takeRandomMaterial(player);
                     if (itemStack != null) {
                         Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), itemStack);
                     }

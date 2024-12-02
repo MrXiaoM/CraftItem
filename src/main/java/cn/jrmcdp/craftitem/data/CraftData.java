@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
+import static cn.jrmcdp.craftitem.utils.Utils.takeItem;
+
 public class CraftData implements ConfigurationSerializable {
     private List<ItemStack> material;
 
@@ -260,7 +262,7 @@ public class CraftData implements ConfigurationSerializable {
         return list;
     }
 
-    public ItemStack takeRandomMaterial(Player player, Inventory inv) {
+    public ItemStack takeRandomMaterial(Player player) {
         List<ItemStack> list = Config.filterMaterials(material);
         if (list.isEmpty()) return null;
         ItemStack item = list.get(RandomUtils.nextInt(list.size()));
@@ -272,13 +274,14 @@ public class CraftData implements ConfigurationSerializable {
         ItemStack toDisappear = event.getItemToDisappear();
         if (event.isCancelled() || toDisappear == null || toDisappear.getAmount() == 0) return null;
 
-        inv.removeItem(toDisappear);
+        takeItem(player, toDisappear);
         return toDisappear;
     }
 
-    public void takeAllMaterial(Inventory gui) {
-        gui.removeItem(this.material.toArray(new ItemStack[0]));
+    public void takeAllMaterial(Player player) {
+        takeItem(player, this.material.toArray(new ItemStack[0]));
     }
+
     @NotNull
     public Map<String, Object> serialize() {
         // 注: 配置路径分隔符是 ' '(空格) 不是 '.'(点)
