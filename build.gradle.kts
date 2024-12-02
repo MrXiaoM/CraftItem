@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id ("com.github.johnrengelman.shadow") version "7.0.0"
+    id("top.mrxiaom.shadow")
 }
 
 val targetJavaVersion = 8
@@ -64,6 +64,7 @@ tasks {
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }
+        ignoreRelocations("cn/jrmcdp/craftitem/utils/PaperInventoryFactory.class")
     }
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
