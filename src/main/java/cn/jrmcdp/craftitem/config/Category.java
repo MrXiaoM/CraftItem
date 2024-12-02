@@ -53,10 +53,12 @@ public class Category {
                     .parseMaterial(section.getString(key + ".Type", "STONE"))
                     .map(ItemStack::new)
                     .orElseGet(() -> new ItemStack(Material.STONE));
-            String name = section.getString(key + ".Name");
-            List<String> lore = section.getStringList(key + ".Lore");
-            if (name != null) AdventureItemStack.setItemDisplayName(itemStack, name);
-            if (!lore.isEmpty()) AdventureItemStack.setItemLore(itemStack, lore);
+            if (!itemStack.getType().equals(Material.AIR)) {
+                String name = section.getString(key + ".Name");
+                List<String> lore = section.getStringList(key + ".Lore");
+                if (name != null) AdventureItemStack.setItemDisplayName(itemStack, name);
+                if (!lore.isEmpty()) AdventureItemStack.setItemLore(itemStack, lore);
+            }
             items.put(key, itemStack);
         }
     }

@@ -27,6 +27,7 @@ public class AdventureItemStack {
     public static ItemStack buildItem(Material material, Integer customModelData, String name, List<String> lore) {
         if (material.equals(Material.AIR)) return new ItemStack(material);
         ItemStack item = new ItemStack(material, 1);
+        if (item.getType().equals(Material.AIR)) return item;
         if (name != null) setItemDisplayName(item, name);
         if (lore != null) setItemLore(item, lore);
         if (customModelData != null) setCustomModelData(item, customModelData);

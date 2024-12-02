@@ -40,6 +40,7 @@ public class Icon {
     @SafeVarargs
     public final ItemStack getItem(Player player, Pair<String, Object>... replacements) {
         ItemStack item = data > 0 ? new ItemStack(material, amount, (short) data) : new ItemStack(material, amount);
+        if (item.getType().equals(Material.AIR)) return item;
         if (name != null) AdventureItemStack.setItemDisplayName(item, name);
         if (!lore.isEmpty()) {
             List<String> lore = new ArrayList<>();
