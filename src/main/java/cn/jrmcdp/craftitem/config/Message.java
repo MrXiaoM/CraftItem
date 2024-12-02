@@ -57,7 +57,7 @@ public enum Message {
     page__already_first("&e当前已是首页."),
     page__already_last("&e当前已是尾页."),
 
-    gui__edit_title("编辑 %s"),
+    gui__edit_title("&0编辑 %s"),
     gui__edit__item__material__name("&a材料"),
     gui__edit__item__material__lore(
             "&7点击 查看/编辑",
@@ -182,7 +182,7 @@ public enum Message {
     ),
 
 
-    gui__edit_material_title("材料"),
+    gui__edit_material_title("&0材料"),
     gui__edit_input_chance("&a请输入概率 正整数"),
     gui__edit_input_multiple("&a请按照格式填写倍率 \"5 10 20\" (小 中 大)"),
     gui__edit_input_cost("&a请输入金额 正整数"),
@@ -195,8 +195,8 @@ public enum Message {
             "  &a格式: &e命令||显示内容",
             "  &a示例: &esay 这个插件太棒了||服务器说这个插件太棒了"),
     gui__edit_command_lore("", "&4点击删除"),
-    gui__edit_time_limit_count_title_normal("选择 普通/困难锻造限制组"),
-    gui__edit_time_limit_count_title_time("选择 时长锻造限制组"),
+    gui__edit_time_limit_count_title_normal("&0选择 普通/困难锻造限制组"),
+    gui__edit_time_limit_count_title_time("&0选择 时长锻造限制组"),
     gui__edit_time_cost("&a请输入锻造时长金额 正整数"),
 
     gui__category__not_found("&c未找到 &e%s"),

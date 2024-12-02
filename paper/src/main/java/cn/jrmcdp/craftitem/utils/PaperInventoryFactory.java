@@ -25,6 +25,6 @@ public class PaperInventoryFactory implements InventoryFactory {
     }
     @Override
     public Inventory create(InventoryHolder owner, int size, String title) {
-        return Bukkit.createInventory(owner, size, miniMessage(title));
+        return Bukkit.createInventory(owner, size, miniMessage(title.startsWith("&") ? title : ("&0" + title)));
     }
 }
