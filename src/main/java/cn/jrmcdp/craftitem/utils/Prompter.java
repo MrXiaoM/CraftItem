@@ -6,6 +6,7 @@ import cn.jrmcdp.craftitem.holder.IAutoCloseHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -79,7 +80,7 @@ public class Prompter implements IAutoCloseHolder {
 
     public static void onChat(Player player, Consumer<String> consumer) {
         Bukkit.getPluginManager().registerEvents(new Listener() {
-            @EventHandler
+            @EventHandler(priority = EventPriority.LOWEST)
             public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
                 if (e.getPlayer().getName().equals(player.getName())) {
                     e.setCancelled(true);
