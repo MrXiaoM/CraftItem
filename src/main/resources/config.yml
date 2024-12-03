@@ -99,6 +99,32 @@ DoNotDisappear:
     # 设为空列表就代表，只要有 DO_NOT_DISAPPEAR 这个标签，物品就不消失
     DO_NOT_DISAPPEAR: []
 
+# 触发事件执行命令
+# [console] 开头以管理员权限执行
+# [player] 开头以玩家权限执行
+# [message] 向玩家发送消息
+# 支持 PAPI 变量
+Events:
+  # 锻造失败时执行
+  # 额外变量：
+  # %craft% 配方名
+  # %modifier% 失败程度，-1 小失败，0 失败，1 大失败
+  # %progress% 失败后的进度
+  # %value% 失败后减少的进度
+  ForgeFail: []
+  # 锻造成功时执行
+  # 额外变量：
+  # %craft% 配方名
+  # %modifier% 成功程度，-1 小成功，0 成功，1 大成功
+  # %progress% 成功后的进度
+  # %value% 成功后增加的进度
+  ForgeSuccess: []
+  # 锻造完成 (进度达到 100% 时执行)
+  # 注意，ForgeSuccess 和 ForgeDone 会在锻造完成时同时执行，先执行 Success 再执行 Done
+  # 额外变量:
+  # %craft% 配方名
+  ForgeDone: []
+
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing
 # 贴图位移字符配置

@@ -1,11 +1,13 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
+import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,14 +21,20 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
+
+import static cn.jrmcdp.craftitem.utils.Pair.replace;
 
 public class Craft {
     private static YamlConfiguration config;
 
     private static final Map<String, CraftData> craftDataMap = new HashMap<>();
+    private static List<String> craftSuccessCommands;
+    private static List<String> craftFailCommands;
+    private static List<String> craftDoneCommands;
 
     public static void reload() {
         config = FileConfig.Craft.loadConfig();
@@ -40,6 +48,9 @@ public class Craft {
                 logger.warning("无法读取 Craft.yml 的项目 " + key + ": " + object);
             }
         }
+        craftSuccessCommands = config.getStringList("Events.ForgeSuccess");
+        craftFailCommands = config.getStringList("Events.ForgeFail");
+        craftDoneCommands = config.getStringList("Events.ForgeDone");
     }
 
     public static Map<String, CraftData> getCraftDataMap() {
@@ -93,6 +104,14 @@ public class Craft {
                 value = playerData.setScore(id, e.getNewValue());
                 score = value - oldValue;
             }
+            if (!craftSuccessCommands.isEmpty()) {
+                List<String> list = replace(craftSuccessCommands,
+                        Pair.of("%craft%", holder.getId()),
+                        Pair.of("%modifier%", e.getMultiple() - 1),
+                        Pair.of("%progress%", value),
+                        Pair.of("%value%", score));
+                Icon.runCommands(player, list);
+            }
             if (value == 100) {
                 craftData.takeAllMaterial(player);
                 String failTimes = String.valueOf(playerData.getFailTimes(id));
@@ -105,6 +124,11 @@ public class Craft {
                         player.getWorld().dropItem(player.getLocation(), add);
                         Message.full_inventory.msg(player, add, add.getAmount());
                     }
+                }
+                if (!craftDoneCommands.isEmpty()) {
+                    List<String> list = replace(craftDoneCommands,
+                            Pair.of("%craft%", holder.getId()));
+                    Icon.runCommands(player, list);
                 }
                 for (String str : craftData.getCommands()) {
                     String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
@@ -134,6 +158,14 @@ public class Craft {
             if (value != e.getNewValue()) {
                 value = playerData.setScore(id, e.getNewValue());
                 score = value - oldValue;
+            }
+            if (!craftFailCommands.isEmpty()) {
+                List<String> list = replace(craftFailCommands,
+                        Pair.of("%craft%", holder.getId()),
+                        Pair.of("%modifier%", e.getMultiple() - 1),
+                        Pair.of("%progress%", value),
+                        Pair.of("%value%", score));
+                Icon.runCommands(player, list);
             }
             switch (e.getMultiple()) {
                 case 0 : {
