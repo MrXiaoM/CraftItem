@@ -10,6 +10,7 @@ import cn.jrmcdp.craftitem.holder.ForgeHolder;
 import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 import static cn.jrmcdp.craftitem.utils.Pair.replace;
 
 public class Craft {
-    private static YamlConfiguration config;
+    private static YamlConfiguration craftConfig;
 
     private static final Map<String, CraftData> craftDataMap = new HashMap<>();
     private static List<String> craftSuccessCommands;
@@ -37,10 +38,10 @@ public class Craft {
     private static List<String> craftDoneCommands;
 
     public static void reload() {
-        config = FileConfig.Craft.loadConfig();
+        craftConfig = FileConfig.Craft.loadConfig();
         craftDataMap.clear();
-        for (String key : config.getKeys(false)) {
-            Object object = config.get(key, null);
+        for (String key : craftConfig.getKeys(false)) {
+            Object object = craftConfig.get(key, null);
             if (object instanceof CraftData) {
                 craftDataMap.put(key, (CraftData) object);
             } else {
@@ -48,9 +49,10 @@ public class Craft {
                 logger.warning("无法读取 Craft.yml 的项目 " + key + ": " + object);
             }
         }
-        craftSuccessCommands = config.getStringList("Events.ForgeSuccess");
-        craftFailCommands = config.getStringList("Events.ForgeFail");
-        craftDoneCommands = config.getStringList("Events.ForgeDone");
+        FileConfiguration pluginConfig = CraftItem.getPlugin().getConfig();
+        craftSuccessCommands = pluginConfig.getStringList("Events.ForgeSuccess");
+        craftFailCommands = pluginConfig.getStringList("Events.ForgeFail");
+        craftDoneCommands = pluginConfig.getStringList("Events.ForgeDone");
     }
 
     public static Map<String, CraftData> getCraftDataMap() {
@@ -63,13 +65,13 @@ public class Craft {
 
     public static void save(String id, CraftData craftData) {
         craftDataMap.put(id, craftData);
-        config.set(id, craftData);
-        FileConfig.Craft.saveConfig(config);
+        craftConfig.set(id, craftData);
+        FileConfig.Craft.saveConfig(craftConfig);
     }
     public static void delete(String id) {
         craftDataMap.remove(id);
-        config.set(id, null);
-        FileConfig.Craft.saveConfig(config);
+        craftConfig.set(id, null);
+        FileConfig.Craft.saveConfig(craftConfig);
     }
 
     public static boolean doForgeResult(ForgeHolder holder, Player player, boolean win, int multiple, Runnable cancel) {
