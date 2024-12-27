@@ -21,6 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 public class CraftItem extends JavaPlugin {
+    public static final String netKyori;
+    static {
+        netKyori = new String(new char[] { 'n', 'e', 't', '.', 'k', 'y', 'o', 'r', 'i' });
+    }
     private static CraftItem plugin;
 
     private static Economy econ;
@@ -65,8 +69,10 @@ public class CraftItem extends JavaPlugin {
         PlaceholderSupport.init();
         MiniMessageConvert.init();
         if (Utils.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")
-        && Utils.isPresent("net.kyori.adventure.text.Component")) {
+        && Utils.isPresent(netKyori + ".adventure.text.Component")) try {
             inventoryFactory = new PaperInventoryFactory();
+        } catch (Throwable ignored) {
+            inventoryFactory = new BukkitInventoryFactory();
         } else {
             inventoryFactory = new BukkitInventoryFactory();
         }
