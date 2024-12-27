@@ -64,7 +64,8 @@ public class CraftItem extends JavaPlugin {
         }
         PlaceholderSupport.init();
         MiniMessageConvert.init();
-        if (Utils.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")) {
+        if (Utils.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")
+        && Utils.isPresent("net.kyori.adventure.text.Component")) {
             inventoryFactory = new PaperInventoryFactory();
         } else {
             inventoryFactory = new BukkitInventoryFactory();
