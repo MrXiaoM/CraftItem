@@ -17,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -128,7 +129,8 @@ public class ForgeGui {
                 }
                 case "物": {
                     ItemStack item = craftData.getDisplayItem().clone();
-                    List<String> lore = AdventureItemStack.getItemLoreAsMiniMessage(item);
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = meta == null ? null : meta.getLore();
                     if (lore == null) lore = new ArrayList<>();
                     lore.addAll(Message.gui__craft_info__lore__header.list());
                     for (ItemStack itemStack : craftData.getItems())
