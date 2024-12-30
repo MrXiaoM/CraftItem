@@ -92,7 +92,7 @@ public class ForgeGui {
         for (int i = 0; i < inv.length; i++) {
             char c = inv[i];
             String key = String.valueOf(c);
-            if (!items.containsKey(key)) {
+            if (!items.containsKey(key) && !key.equals(" ") && !key.equals("　")) {
                 inv[i] = '　';
                 logger.warning("Gui.yml 配置有误: 无法找到图标 '" + key + "'");
             }
