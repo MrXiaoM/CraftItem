@@ -94,7 +94,7 @@ public class ForgeGui {
             String key = String.valueOf(c);
             if (!items.containsKey(key) && !key.equals(" ") && !key.equals("　")) {
                 inv[i] = '　';
-                logger.warning("Gui.yml 配置有误: 无法找到图标 '" + key + "'");
+                logger.warning("Gui.yml 配置有误: 无法找到 " + name + " 指定的图标 '" + key + "'");
             }
         }
     }
