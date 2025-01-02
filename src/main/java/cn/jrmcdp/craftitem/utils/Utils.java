@@ -4,7 +4,10 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.CraftMaterial;
 import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
 import com.google.common.base.Preconditions;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.Registry;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -189,9 +192,24 @@ public class Utils {
         return item == null || item.getType().equals(Material.AIR);
     }
 
-    public static <T extends Enum<?>> Optional<T> valueOf(Class<T> clazz, String s) {
-        if (s != null) for (T t : clazz.getEnumConstants()) {
-            if (t.name().equalsIgnoreCase(s)) return Optional.of(t);
+    @SuppressWarnings({"unchecked"})
+    public static <T> Optional<T> valueOf(Class<T> clazz, String s) {
+        if (s != null && !s.isEmpty()) {
+            if (clazz.isEnum()) {
+                for (T t : clazz.getEnumConstants()) {
+                    if (((Enum<?>) t).name().equalsIgnoreCase(s)) return Optional.of(t);
+                }
+            } else {
+                Registry<?> registry = clazz.equals(Sound.class) ? Registry.SOUNDS
+                        : clazz.equals(Material.class) ? Registry.MATERIAL
+                        : null;
+                if (registry != null) {
+                    Keyed matched = registry.match(s.toUpperCase());
+                    if (matched != null) {
+                        return Optional.of((T) matched);
+                    }
+                }
+            }
         }
         return Optional.empty();
     }
