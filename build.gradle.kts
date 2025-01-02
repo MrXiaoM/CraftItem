@@ -37,7 +37,7 @@ dependencies {
     impl("net.kyori:adventure-api:4.17.0")
     impl("net.kyori:adventure-platform-bukkit:4.3.4")
     impl("net.kyori:adventure-text-minimessage:4.17.0")
-    impl("de.tr7zw:item-nbt-api:2.14.0")
+    impl("de.tr7zw:item-nbt-api:2.14.1")
     impl(project(":paper"))
 }
 
