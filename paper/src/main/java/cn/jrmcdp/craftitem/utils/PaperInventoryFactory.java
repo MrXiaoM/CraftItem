@@ -8,6 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import static cn.jrmcdp.craftitem.utils.MiniMessageConvert.legacyToMiniMessage;
+import static cn.jrmcdp.craftitem.utils.MiniMessageConvert.miniMessageToLegacy;
 
 public class PaperInventoryFactory implements InventoryFactory {
     private final MiniMessage miniMessage;
@@ -25,6 +26,12 @@ public class PaperInventoryFactory implements InventoryFactory {
     }
     @Override
     public Inventory create(InventoryHolder owner, int size, String title) {
-        return Bukkit.createInventory(owner, size, miniMessage(title.startsWith("&") ? title : ("&0" + title)));
+        try {
+            Component parsed = miniMessage(title);
+            return Bukkit.createInventory(owner, size, parsed);
+        } catch (LinkageError e) { // 1.16 以下的旧版本 Paper 服务端不支持这个接口
+            String parsed = miniMessageToLegacy(title);
+            return Bukkit.createInventory(owner, size, parsed);
+        }
     }
 }
