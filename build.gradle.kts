@@ -58,6 +58,7 @@ tasks {
     shadowJar {
         from("LICENSE")
         archiveClassifier.set("")
+        destinationDirectory.set(rootProject.file("out"))
         mapOf(
             "net.kyori" to "kyori",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
