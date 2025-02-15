@@ -21,7 +21,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 8
-      - name: Build plugin and backend
+      - name: Build plugin
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
