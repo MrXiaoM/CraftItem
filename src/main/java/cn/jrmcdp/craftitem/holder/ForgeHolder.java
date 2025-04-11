@@ -181,11 +181,22 @@ public class ForgeHolder implements IHolder {
         }
     }
 
+    private boolean checkForgeData(Player player, CraftData craftData) {
+        if (craftData.getMultiple().size() != 3) {
+            Message.not_expected.msg(player, "multiple");
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 点击进行 普通锻造
      */
     private void clickForgeOnce(Player player) {
         CraftData craftData = getCraftData();
+        if (checkForgeData(player, craftData)) {
+            return;
+        }
         if (craftData.isDifficult() && CraftItem.getMiniGames() == null) {
             Message.no_protocollib.msg(player);
             return;
@@ -227,6 +238,9 @@ public class ForgeHolder implements IHolder {
      */
     private void clickForgeCombo(Player player) {
         CraftData craftData = getCraftData();
+        if (checkForgeData(player, craftData)) {
+            return;
+        }
         int combo = craftData.getCombo();
         if (craftData.isDifficult() || combo <= 0) return;
 
