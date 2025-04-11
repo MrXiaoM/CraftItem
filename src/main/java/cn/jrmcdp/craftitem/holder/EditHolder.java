@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static cn.jrmcdp.craftitem.utils.Utils.*;
@@ -233,7 +235,8 @@ public class EditHolder implements IHolder {
             case 2: { // 倍数
                 player.closeInventory();
                 Message.gui__edit_input_multiple.msg(player);
-                Prompter.onChat(player, message -> {
+                AtomicReference<Consumer<List<Integer>>> save = new AtomicReference<>(null);
+                Consumer<String> consumeChat = message -> {
                     String[] split = message.split(" ");
                     List<Integer> list = new ArrayList<>();
                     for (String str : split) {
@@ -245,10 +248,20 @@ public class EditHolder implements IHolder {
                         }
                         list.add(chance);
                     }
-                    craftData.setMultiple(list);
-                    Craft.save(getId(), craftData);
+                    Consumer<List<Integer>> consumer = save.get();
+                    if (consumer != null) consumer.accept(list);
+                };
+                save.set(list -> {
+                    if (list.size() != 3) {
+                        Message.gui__edit_input_multiple.msg(player);
+                        Prompter.onChat(player, consumeChat);
+                    } else {
+                        craftData.setMultiple(list);
+                        Craft.save(getId(), craftData);
+                    }
                     open(player);
                 });
+                Prompter.onChat(player, consumeChat);
                 break;
             }
             case 3: { // 价格
