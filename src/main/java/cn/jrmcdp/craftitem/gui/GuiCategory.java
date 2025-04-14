@@ -66,10 +66,8 @@ public class GuiCategory implements IHolder {
 
     public boolean upPage() {
         if (page < 1) return false;
-        GuiCategory holder = parent.buildGui(playerData, type, craftList, --page);
-        Inventory gui = holder.getInventory();
-        inventory.setContents(gui.getContents());
-        slot = holder.getSlot();
+        page--;
+        open();
         return true;
     }
 
@@ -79,10 +77,8 @@ public class GuiCategory implements IHolder {
         int startIndex = Math.min(size, nextIndex);
         int endIndex = Math.min(size, nextIndex + parent.getSlotAmount());
         if (craftList.subList(startIndex, endIndex).isEmpty()) return false;
-        GuiCategory holder = parent.buildGui(playerData, type, craftList, ++page);
-        Inventory gui = holder.getInventory();
-        inventory.setContents(gui.getContents());
-        slot = holder.getSlot();
+        page++;
+        open();
         return true;
     }
 
@@ -164,7 +160,7 @@ public class GuiCategory implements IHolder {
             case "方" : {
                 String name = getSlot()[event.getRawSlot()];
                 if (name == null) return;
-                ConfigForgeGui.inst().openGui(getPlayerData(), name, manager.getCraftData(name));
+                ConfigForgeGui.inst().openGui(getPlayerData(), name, manager.getCraftData(name), type);
             }
         }
     }

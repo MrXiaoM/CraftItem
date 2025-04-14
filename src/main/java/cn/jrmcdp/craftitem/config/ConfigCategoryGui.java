@@ -70,10 +70,6 @@ public class ConfigCategoryGui extends AbstractModule {
         });
     }
 
-    public GuiCategory buildGui(PlayerData playerData, String type, List<String> craftList, int page) {
-        return new GuiCategory(this, title, chest, items, slotAmount, playerData, type, craftList, page);
-    }
-
     public static ConfigCategoryGui inst() {
         return instanceOf(ConfigCategoryGui.class);
     }

@@ -145,7 +145,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             return Message.craft__not_found.tm(player, args[1]);
         }
         PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
-        ConfigForgeGui.inst().openGui(playerData, args[1], craftData);
+        ConfigForgeGui.inst().openGui(playerData, args[1], craftData, null);
         return false;
     }
 

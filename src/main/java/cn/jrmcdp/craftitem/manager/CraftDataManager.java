@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
@@ -33,6 +34,7 @@ import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 import static cn.jrmcdp.craftitem.utils.Utils.replace;
+import static top.mrxiaom.pluginbase.actions.ActionProviders.loadActions;
 
 @AutoRegister
 public class CraftDataManager extends AbstractModule {
@@ -121,7 +123,10 @@ public class CraftDataManager extends AbstractModule {
                         Pair.of("%modifier%", e.getMultiple() - 1),
                         Pair.of("%progress%", value),
                         Pair.of("%value%", score));
-                Icon.runCommands(player, list);
+                List<IAction> actions = loadActions(list);
+                for (IAction action : actions) {
+                    action.run(player);
+                }
             }
             if (value == 100) {
                 craftData.takeAllMaterial(player);
@@ -139,7 +144,10 @@ public class CraftDataManager extends AbstractModule {
                 if (!craftDoneCommands.isEmpty()) {
                     List<String> list = replace(craftDoneCommands,
                             Pair.of("%craft%", holder.getId()));
-                    Icon.runCommands(player, list);
+                    List<IAction> actions = loadActions(list);
+                    for (IAction action : actions) {
+                        action.run(player);
+                    }
                 }
                 for (String str : craftData.getCommands()) {
                     String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
@@ -176,7 +184,10 @@ public class CraftDataManager extends AbstractModule {
                         Pair.of("%modifier%", e.getMultiple() - 1),
                         Pair.of("%progress%", value),
                         Pair.of("%value%", score));
-                Icon.runCommands(player, list);
+                List<IAction> actions = loadActions(list);
+                for (IAction action : actions) {
+                    action.run(player);
+                }
             }
             switch (e.getMultiple()) {
                 case 0 : {
@@ -203,7 +214,7 @@ public class CraftDataManager extends AbstractModule {
                 if (cancel != null) cancel.run();
                 return;
             }
-            holder.parent.openGui(playerData, id, craftData);
+            holder.parent.openGui(playerData, id, craftData, holder.getCategory());
         }, 10);
         return true;
     }

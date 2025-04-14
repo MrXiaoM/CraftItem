@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
@@ -12,29 +13,33 @@ import top.mrxiaom.pluginbase.utils.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static top.mrxiaom.pluginbase.actions.ActionProviders.loadActions;
+
 public class Icon {
     public final Material material;
+    public final String redirect;
     public final int data;
     public final int amount;
     public final String name;
     public final List<String> lore;
     public final Integer customModelData;
-    public final List<String> leftClick;
-    public final List<String> rightClick;
-    public final List<String> shiftLeftClick;
-    public final List<String> shiftRightClick;
+    public final List<IAction> leftClick;
+    public final List<IAction> rightClick;
+    public final List<IAction> shiftLeftClick;
+    public final List<IAction> shiftRightClick;
 
-    public Icon(Material material, int data, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
+    public Icon(Material material, String redirect, int data, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
         this.material = material;
+        this.redirect = redirect;
         this.data = data;
         this.amount = amount;
         this.name = name;
         this.lore = lore;
         this.customModelData = customModelData;
-        this.leftClick = leftClick;
-        this.rightClick = rightClick;
-        this.shiftLeftClick = shiftLeftClick;
-        this.shiftRightClick = shiftRightClick;
+        this.leftClick = loadActions(leftClick);
+        this.rightClick = loadActions(rightClick);
+        this.shiftLeftClick = loadActions(shiftLeftClick);
+        this.shiftRightClick = loadActions(shiftRightClick);
     }
 
     @SafeVarargs
@@ -74,19 +79,10 @@ public class Icon {
         runCommands(player, shiftRightClick);
     }
 
-    public static void runCommands(Player player, List<String> commands) {
+    public static void runCommands(Player player, List<IAction> commands) {
         if (commands == null || commands.isEmpty()) return;
-        commands = PAPI.setPlaceholders(player, commands);
-        for (String s : commands) {
-            if (s.startsWith("[player]")) {
-                Bukkit.dispatchCommand(player, s.substring(8).trim());
-            } else if (s.startsWith("[console]")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.substring(9).trim());
-            } else if (s.startsWith("[message]")) {
-                AdventureManagerImpl.sendMessage(player, s.substring(9).trim());
-            } else if (s.startsWith("[close]")) {
-                player.closeInventory();
-            }
+        for (IAction action : commands) {
+            action.run(player);
         }
     }
 }

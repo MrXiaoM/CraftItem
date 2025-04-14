@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem;
 
+import cn.jrmcdp.craftitem.actions.ActionBack;
 import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.gui.IHolder;
@@ -15,6 +16,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
+import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
 import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -75,6 +77,7 @@ public class CraftItem extends BukkitPlugin {
         }
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
+        ActionProviders.registerActionProvider(ActionBack.PROVIDER);
         LanguageManager.inst()
                 .setLangFile("Message.yml")
                 .register(Message.class, Message::holder);

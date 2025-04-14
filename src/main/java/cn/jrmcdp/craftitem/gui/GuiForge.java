@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
@@ -33,6 +34,7 @@ public class GuiForge implements IHolder {
     private final PlayerData playerData;
     private final String id;
     private final CraftData craftData;
+    private final String category;
     private final String title;
     private final Map<String, Icon> items;
 
@@ -44,9 +46,10 @@ public class GuiForge implements IHolder {
     private final Set<Integer> timeSlots = new HashSet<>();
     public final CraftDataManager manager = CraftDataManager.inst();
     public final ConfigForgeGui parent;
-    public GuiForge(ConfigForgeGui parent, String title, Map<String, Icon> items, PlayerData playerData, String id, CraftData craftData) {
+    public GuiForge(ConfigForgeGui parent, String title, @Nullable String category, Map<String, Icon> items, PlayerData playerData, String id, CraftData craftData) {
         this.parent = parent;
         this.title = title;
+        this.category = category;
         this.items = items;
         this.playerData = playerData;
         this.id = id;
@@ -55,6 +58,10 @@ public class GuiForge implements IHolder {
         this.done = endTime != null && System.currentTimeMillis() >= endTime;
         this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
         this.chest = processing || done ? parent.getChestTime() : parent.getChest();
+    }
+
+    public @Nullable String getCategory() {
+        return category;
     }
 
     public ItemStack getTimeIcon() {
@@ -207,6 +214,20 @@ public class GuiForge implements IHolder {
                     is[i] = getTimeIcon();
                     break;
                 }
+                case "返": {
+                    Icon icon = items.get(key);
+                    if (icon != null) {
+                        if (category == null) {
+                            Icon redirect = items.get(icon.redirect);
+                            if (redirect != null) {
+                                is[i] = icon.getItem(player);
+                            }
+                            break;
+                        }
+                        is[i] = icon.getItem(player);
+                    }
+                    break;
+                }
                 default : {
                     Icon icon = items.get(key);
                     if (icon != null) {
@@ -221,6 +242,7 @@ public class GuiForge implements IHolder {
     }
 
     @Override
+    @SuppressWarnings("IfCanBeSwitch")
     public void onClick(
             InventoryAction action, ClickType click,
             InventoryType.SlotType slotType, int slot,
@@ -250,9 +272,27 @@ public class GuiForge implements IHolder {
             }
             return;
         }
+        if ("返".equals(key)) { // 特殊图标
+            Icon icon = parent.items.get(key);
+            if (icon == null) return;
+            if (category == null) {
+                Icon redirect = parent.items.get(icon.redirect);
+                if (redirect != null) {
+                    handleClick(redirect, player, event);
+                }
+                return;
+            }
+            handleClick(icon, player, event);
+            return;
+        }
         // 其它图标
         Icon icon = parent.items.get(key);
-        if (icon == null) return;
+        if (icon != null) {
+            handleClick(icon, player, event);
+        }
+    }
+
+    private void handleClick(Icon icon, Player player, InventoryClickEvent event) {
         if (!event.isShiftClick()) {
             if (event.isLeftClick()) {
                 icon.leftClick(player);

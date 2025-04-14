@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.ColorHelper;
 
@@ -65,7 +66,8 @@ public class ConfigForgeGui extends AbstractModule {
                 }
             }
 
-            String name = ColorHelper.parseColor(section.getString(key + ".Name"));
+            String redirect = section.getString(key + ".Redirect", "");
+            String name = ColorHelper.parseColor(section.getString(key + ".Name", ""));
             int data = section.getInt(key + ".Data", 0);
             int amount = section.getInt(key + ".Amount", 1);
             List<String> lore = ColorHelper.parseColor(section.getStringList(key + ".Lore"));
@@ -74,7 +76,7 @@ public class ConfigForgeGui extends AbstractModule {
             List<String> rightClick = ColorHelper.parseColor(section.getStringList(key + ".RightClick"));
             List<String> shiftLeftClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick"));
             List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
-            items.put(key, new Icon(material, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
+            items.put(key, new Icon(material, redirect, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
         }
 
         checkError(chest, "Chest");
@@ -96,14 +98,10 @@ public class ConfigForgeGui extends AbstractModule {
         }
     }
 
-    public void openGui(PlayerData playerData, String id, CraftData craftData) {
+    public void openGui(PlayerData playerData, String id, CraftData craftData, @Nullable String category) {
         plugin.getScheduler().runTask(() -> {
-            new GuiForge(this, title, items, playerData, id, craftData).open();
+            new GuiForge(this, title, category, items, playerData, id, craftData).open();
         });
-    }
-
-    public GuiForge buildGui(PlayerData playerData, String id, CraftData craftData) {
-        return new GuiForge(this, title, items, playerData, id, craftData);
     }
 
     public static ConfigForgeGui inst() {
