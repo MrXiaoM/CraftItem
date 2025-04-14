@@ -5,10 +5,12 @@ import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import top.mrxiaom.pluginbase.func.AutoRegister;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@AutoRegister
 public class ItemTranslation extends AbstractModule {
     private static final Map<String, String> material = new HashMap<>();
     public ItemTranslation(CraftItem plugin) {
