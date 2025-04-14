@@ -50,7 +50,9 @@ public class CraftDataManager extends AbstractModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration pluginConfig) {
-        craftConfig = ConfigUtils.loadPluginConfig(plugin, "Craft.yml", ' ');
+        craftConfig = new YamlConfiguration();
+        craftConfig.options().pathSeparator(' ');
+        ConfigUtils.load(craftConfig, plugin.resolve("Craft.yml"));
         craftDataMap.clear();
         for (String key : craftConfig.getKeys(false)) {
             Object object = craftConfig.get(key, null);

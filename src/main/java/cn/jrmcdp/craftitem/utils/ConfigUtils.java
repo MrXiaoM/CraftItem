@@ -28,10 +28,11 @@ public class ConfigUtils {
         if (!file.exists()) {
             plugin.saveResource(fileName);
         }
-        YamlConfiguration config = load(file);
+        YamlConfiguration config = new YamlConfiguration();
         if (separator != '.') {
             config.options().pathSeparator(separator);
         }
+        load(file);
         return config;
     }
     public static YamlConfiguration loadPluginConfig(BukkitPlugin plugin, String file) {
@@ -73,7 +74,12 @@ public class ConfigUtils {
 
     public static YamlConfiguration load(File file) {
         YamlConfiguration config = new YamlConfiguration();
-        if (!file.exists()) return config;
+        load(config, file);
+        return config;
+    }
+
+    public static void load(YamlConfiguration config, File file) {
+        if (!file.exists()) return;
         try {
             FileInputStream stream = new FileInputStream(file);
             config.load(new InputStreamReader(stream, StandardCharsets.UTF_8));
@@ -81,6 +87,5 @@ public class ConfigUtils {
         } catch (IOException | InvalidConfigurationException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, e);
         }
-        return config;
     }
 }
