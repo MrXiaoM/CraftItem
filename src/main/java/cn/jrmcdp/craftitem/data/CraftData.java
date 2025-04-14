@@ -1,6 +1,6 @@
 package cn.jrmcdp.craftitem.data;
 
-import cn.jrmcdp.craftitem.config.Config;
+import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import cn.jrmcdp.craftitem.utils.Triple;
@@ -20,18 +20,13 @@ import java.util.function.Supplier;
 import static cn.jrmcdp.craftitem.utils.Utils.takeItem;
 
 public class CraftData implements ConfigurationSerializable {
+    private final ConfigMain config;
     private List<ItemStack> material;
-
     private int chance;
-
     private List<Integer> multiple;
-
     private int cost;
-
     private ItemStack displayItem;
-
     private List<ItemStack> items;
-
     private List<String> commands;
     /**
      * 锻造时长 (秒)
@@ -48,6 +43,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
+        this.config = ConfigMain.inst();
         this.material = material;
         this.chance = chance;
         this.multiple = multiple;
@@ -76,19 +72,7 @@ public class CraftData implements ConfigurationSerializable {
         return getTimeDisplay("无");
     }
     public String getTimeDisplay(String noneTips) {
-        return getTimeDisplay(time, noneTips);
-    }
-    public static String getTimeDisplay(long second, String noneTips) {
-        int hour = 0, minute = 0;
-        while (second >= 3600) {
-            second -= 3600;
-            hour++;
-        }
-        while (second >= 60) {
-            second -= 60;
-            minute++;
-        }
-        return Config.formatTime(hour, minute, (int) second, noneTips);
+        return config.getTimeDisplay(time, noneTips);
     }
 
     public long getTime() {
@@ -216,11 +200,11 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public int getTimeForgeCountLimit(Player player) {
-        return Config.getCountLimit(player, getTimeCountLimit());
+        return config.getCountLimit(player, getTimeCountLimit());
     }
 
     public int getForgeCountLimit(Player player) {
-        return Config.getCountLimit(player, getCountLimit());
+        return config.getCountLimit(player, getCountLimit());
     }
 
     @SuppressWarnings({"unused"})
@@ -238,9 +222,9 @@ public class CraftData implements ConfigurationSerializable {
         List<Triple<ItemStack, Integer, Integer>> state = getMaterialState(player.getInventory());
         state.removeIf(it -> it.second >= it.third);
         if (!state.isEmpty()) {
-            Message.craft__not_enough_material.msg(player);
+            Message.craft__not_enough_material.tm(player);
             for (Triple<ItemStack, Integer, Integer> triple : state) {
-                Message.craft__not_enough_material_details.msg(player, triple.first, triple.second, triple.third);
+                Message.craft__not_enough_material_details.tm(player, triple.first, triple.second, triple.third);
             }
             return true;
         }
@@ -263,7 +247,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public ItemStack takeRandomMaterial(Player player) {
-        List<ItemStack> list = Config.filterMaterials(material);
+        List<ItemStack> list = config.filterMaterials(material);
         if (list.isEmpty()) return null;
         ItemStack item = list.get(RandomUtils.nextInt(list.size()));
         ItemStack clone = item.clone();

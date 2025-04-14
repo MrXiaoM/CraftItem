@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Condition;
 import cn.jrmcdp.craftitem.config.data.Title;
+import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBT;
@@ -12,36 +13,40 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.func.AutoRegister;
 
 import java.util.*;
 
 import static cn.jrmcdp.craftitem.utils.Utils.valueOf;
 
-public class Config {
-    private static ConfigurationSection setting;
-    private static HashMap<String, List<String>> category;
-    private static Title forgeTitle;
-    private static @Nullable Sound soundClickInventory;
-    private static @Nullable Sound soundForgeSuccess;
-    private static @Nullable Sound soundForgeFail;
-    private static @Nullable Sound soundForgeTitle;
-    private static List<String> randomGames;
-    private static final List<Condition> timeForgeConditions = new ArrayList<>();
-    private static final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
-    private static String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
-    private static final List<Material> notDisappearMaterials = new ArrayList<>();
-    private static final List<String> notDisappearNames = new ArrayList<>();
-    private static final List<String> notDisappearLores = new ArrayList<>();
-    private static final Map<String, List<String>> notDisappearNBTStrings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    public static void reload() {
-        CraftItem.getPlugin().reloadConfig();
-        FileConfiguration config = CraftItem.getPlugin().getConfig();
-        config.setDefaults(new MemoryConfiguration());
+@AutoRegister
+public class ConfigMain extends AbstractModule {
+    private ConfigurationSection setting;
+    private HashMap<String, List<String>> category;
+    private Title forgeTitle;
+    private @Nullable Sound soundClickInventory;
+    private @Nullable Sound soundForgeSuccess;
+    private @Nullable Sound soundForgeFail;
+    private @Nullable Sound soundForgeTitle;
+    private List<String> randomGames;
+    private final List<Condition> timeForgeConditions = new ArrayList<>();
+    private final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
+    private String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
+    private final List<Material> notDisappearMaterials = new ArrayList<>();
+    private final List<String> notDisappearNames = new ArrayList<>();
+    private final List<String> notDisappearLores = new ArrayList<>();
+    private final Map<String, List<String>> notDisappearNBTStrings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+    public ConfigMain(CraftItem plugin) {
+        super(plugin);
+    }
+
+    @Override
+    public void reloadConfig(MemoryConfiguration config) {
         setting = config.getConfigurationSection("Setting");
         if (setting != null) {
             category = new HashMap<>();
@@ -126,7 +131,7 @@ public class Config {
         }
     }
 
-    public static List<ItemStack> filterMaterials(List<ItemStack> materials) {
+    public List<ItemStack> filterMaterials(List<ItemStack> materials) {
         List<ItemStack> list = new ArrayList<>();
         if (materials.isEmpty()) return list;
         for (ItemStack material : materials) {
@@ -136,7 +141,7 @@ public class Config {
         return list;
     }
 
-    public static boolean isNotDisappearItem(ItemStack item) {
+    public boolean isNotDisappearItem(ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR)) return true;
         if (notDisappearMaterials.contains(item.getType())) return true;
         ItemMeta meta = item.getItemMeta();
@@ -177,39 +182,39 @@ public class Config {
         return false;
     }
 
-    public static void playSoundClickInventory(Player player) {
+    public void playSoundClickInventory(Player player) {
         if (soundClickInventory == null) return;
         player.playSound(player.getLocation(), soundClickInventory, 1.0f, 2.0f);
     }
-    public static void playSoundForgeSuccess(Player player) {
+    public void playSoundForgeSuccess(Player player) {
         if (soundForgeSuccess == null) return;
         player.playSound(player.getLocation(), soundForgeSuccess, 1.0f, 1.0f);
     }
-    public static void playSoundForgeFail(Player player) {
+    public void playSoundForgeFail(Player player) {
         if (soundForgeFail == null) return;
         player.playSound(player.getLocation(), soundForgeFail, 1.0f, 1.0f);
     }
-    public static void playSoundForgeTitle(Player player) {
+    public void playSoundForgeTitle(Player player) {
         if (soundForgeTitle == null) return;
         player.playSound(player.getLocation(), soundForgeTitle, 1.0f, 0.8f);
     }
-    public static Title getForgeTitle() {
-        return forgeTitle;
+    public void sendForgeTitle(Player player) {
+        forgeTitle.send(player);
     }
 
-    public static HashMap<String, List<String>> getCategory() {
+    public Map<String, List<String>> getCategory() {
         return category;
     }
 
-    public static List<String> getRandomGames() {
+    public List<String> getRandomGames() {
         return randomGames;
     }
 
-    public static String getRandomGame() {
+    public String getRandomGame() {
         return getRandomGames().get(new Random().nextInt(getRandomGames().size()));
     }
 
-    public static boolean isMeetTimeForgeCondition(Player player) {
+    public boolean isMeetTimeForgeCondition(Player player) {
         if (player == null) return false;
         for (Condition condition : timeForgeConditions) {
             if (!condition.check(player)) return false;
@@ -217,7 +222,7 @@ public class Config {
         return true;
     }
 
-    public static String formatTime(int hour, int minute, int second, String noneTips) {
+    public String formatTime(int hour, int minute, int second, String noneTips) {
         if (hour <= 0 && minute <= 0 && second <= 0) return noneTips;
         StringBuilder sb = new StringBuilder();
         String hourUnit = hour > 1 ? timeFormatHours : timeFormatHour;
@@ -229,7 +234,20 @@ public class Config {
         return sb.toString();
     }
 
-    public static Map<String, Map<String, Integer>> getCountLimitGroups() {
+    public String getTimeDisplay(long second, String noneTips) {
+        int hour = 0, minute = 0;
+        while (second >= 3600) {
+            second -= 3600;
+            hour++;
+        }
+        while (second >= 60) {
+            second -= 60;
+            minute++;
+        }
+        return formatTime(hour, minute, (int) second, noneTips);
+    }
+
+    public Map<String, Map<String, Integer>> getCountLimitGroups() {
         return countLimitGroups;
     }
 
@@ -239,7 +257,7 @@ public class Config {
      * @param group 组名
      * @return 0 为无限制，-1 为匹配失败
      */
-    public static int getCountLimit(Player player, String group) {
+    public int getCountLimit(Player player, String group) {
         if (group.isEmpty()) return 0;
         Map<String, Integer> map = countLimitGroups.get(group);
         if (map == null || map.isEmpty()) return 0;
@@ -258,7 +276,7 @@ public class Config {
         return limit;
     }
 
-    public static String getChanceName(int chance) {
+    public String getChanceName(int chance) {
         ConfigurationSection section = setting.getConfigurationSection("ChanceName");
         if (section != null) for (String key : section.getKeys(false)) {
             int i = Integer.parseInt(key);
@@ -266,5 +284,9 @@ public class Config {
                 return section.getString(key);
         }
         return "§c§n未知领域";
+    }
+
+    public static ConfigMain inst() {
+        return instanceOf(ConfigMain.class);
     }
 }

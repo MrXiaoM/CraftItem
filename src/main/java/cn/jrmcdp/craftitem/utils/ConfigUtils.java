@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import top.mrxiaom.pluginbase.BukkitPlugin;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -22,26 +23,33 @@ public class ConfigUtils {
         File parent = file.getParentFile();
         return parent != null && parent.mkdirs();
     }
-
-    public static void saveResource(String fileName) {
-        CraftItem plugin = CraftItem.getPlugin();
-        File file = new File(plugin.getDataFolder(), fileName);
-        if (file.exists()) return;
-        createParentDir(file);
-        try (InputStream resource = plugin.getResource(fileName);
-             InputStreamReader reader = resource == null ? null : new InputStreamReader(resource, StandardCharsets.UTF_8)) {
-            if (resource == null) throw new IOException("插件jar内不存在资源文件 " + fileName);
-            try (OutputStream out = Files.newOutputStream(file.toPath());
-                 Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
-                char[] buffer = new char[1024];
-                int len;
-                while ((len = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, len);
-                }
-            }
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "保存资源文件 " + fileName + " 时出现一个异常", e);
+    public static YamlConfiguration loadPluginConfig(BukkitPlugin plugin, String fileName, char separator) {
+        File file = plugin.resolve(fileName);
+        if (!file.exists()) {
+            plugin.saveResource(fileName);
         }
+        YamlConfiguration config = load(file);
+        if (separator != '.') {
+            config.options().pathSeparator(separator);
+        }
+        return config;
+    }
+    public static YamlConfiguration loadPluginConfig(BukkitPlugin plugin, String file) {
+        return loadPluginConfig(plugin, file, '.');
+    }
+    public static YamlConfiguration loadConfig(String path, String name) {
+        File file = CraftItem.getPlugin().resolve(path + File.separator + name + ".yml");
+        return ConfigUtils.load(file);
+    }
+
+    public static void savePluginConfig(BukkitPlugin plugin, String fileName, YamlConfiguration config) {
+        File file = plugin.resolve(fileName);
+        save(config, file);
+    }
+
+    public static void saveConfig(String path, String name, YamlConfiguration config) {
+        File file = CraftItem.getPlugin().resolve(path + File.separator + name + ".yml");
+        save(config, file);
     }
 
     public static void save(FileConfiguration config, File file) {
@@ -58,7 +66,7 @@ public class ConfigUtils {
     public static YamlConfiguration loadOrSaveResource(String fileName) {
         File file = new File(CraftItem.getPlugin().getDataFolder(), fileName);
         if (!file.exists()) {
-            saveResource(fileName);
+            CraftItem.getPlugin().saveResource(fileName);
         }
         return load(file);
     }

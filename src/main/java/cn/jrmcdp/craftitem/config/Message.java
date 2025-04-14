@@ -9,12 +9,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import top.mrxiaom.pluginbase.func.language.IHolderAccessor;
+import top.mrxiaom.pluginbase.func.language.Language;
+import top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder.wrap;
 
-public enum Message {
+@Language(prefix = "")
+public enum Message implements IHolderAccessor {
     prefix("&4&lCraftItem &8>> &e"),
     reload("&a配置文件重载成功."),
     no_permission("&c缺少权限 &e%s&c."),
@@ -215,71 +220,22 @@ public enum Message {
     not_integer("&a请输入整数"),
 
     ;
-    private static final Map<Message, String> config = new HashMap<>();
-    public final String defValue;
-    public final String key = name().replace("__", ".").replace("_", "-").toLowerCase();
-    Message(String defValue) {
-        this.defValue = ChatColor.translateAlternateColorCodes('&', defValue);
+    Message(String defaultValue) {
+        holder = wrap(this, defaultValue);
     }
-    Message(String... defValue) {
-        this.defValue = ChatColor.translateAlternateColorCodes('&', String.join("\n&r", defValue));
+    Message(String... defaultValue) {
+        holder = wrap(this, defaultValue);
     }
-
+    Message(List<String> defaultValue) {
+        holder = wrap(this, defaultValue);
+    }
+    // 4. 添加字段 holder 以及它的 getter
+    private final LanguageEnumAutoHolder<Message> holder;
+    public LanguageEnumAutoHolder<Message> holder() {
+        return holder;
+    }
     @Override
     public String toString() {
-        return get();
-    }
-    public List<String> list(Object... args) {
-        return Lists.newArrayList(get(args).split("\n"));
-    }
-    public String get(Object... args) {
-        for (int i = 0; i < args.length; i++) {
-            Object obj = args[i];
-            if (obj instanceof ItemStack) {
-                args[i] = Utils.getItemName((ItemStack) obj);
-            }
-            if (obj instanceof List<?>) {
-                List<?> list = (List<?>) obj;
-                args[i] = String.format(", ", list.toArray());
-            }
-        }
-        return String.format(config.getOrDefault(this, defValue), args);
-    }
-    public boolean msg0(CommandSender sender, Object... args) {
-        AdventureManagerImpl.sendMessage(sender, get(args));
-        return true;
-    }
-    public boolean msg(CommandSender sender, Object... args) {
-        AdventureManagerImpl.sendMessage(sender, prefix.get() + get(args));
-        return true;
-    }
-    
-    public static void reload() {
-        save(!FileConfig.Message.exists());
-        FileConfiguration config = FileConfig.Message.loadConfig();
-        Message.config.clear();
-        for (Message m : values()) {
-            List<String> list = config.getStringList(m.key);
-            String str = !list.isEmpty() ? String.join("\n&r", list) : config.getString(m.key);
-            if (str != null) {
-                Message.config.put(m, ChatColor.translateAlternateColorCodes('&', str));
-            }
-        }
-    }
-    public static void save(boolean overwrite) {
-        YamlConfiguration config = FileConfig.Message.loadConfig();
-        boolean save = false;
-        for (Message m : values()) {
-            if (overwrite || !config.contains(m.key)) {
-                config.set(m.key, Message.config.getOrDefault(m, m.defValue).replace("§", "&"));
-                save = true;
-            }
-        }
-        if (save) {
-            FileConfig.Message.saveConfig(config);
-            if (!overwrite) {
-                CraftItem.getPlugin().getLogger().info("Message.yml 已自动更新");
-            }
-        }
+        return str();
     }
 }

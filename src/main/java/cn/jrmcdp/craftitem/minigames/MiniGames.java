@@ -101,7 +101,7 @@ public class MiniGames {
         File typeFolder = new File(plugin.getDataFolder(), "contents/minigame");
         if (!typeFolder.exists()) {
             if (!typeFolder.mkdirs()) return;
-            cn.jrmcdp.craftitem.utils.ConfigUtils.saveResource("contents/minigame/default.yml");
+            plugin.saveResource("contents/minigame/default.yml");
         }
         fileDeque.push(typeFolder);
         while (!fileDeque.isEmpty()) {

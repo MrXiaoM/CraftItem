@@ -6,6 +6,7 @@ import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.gui.GuiForge;
+import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.Material;
@@ -37,7 +38,7 @@ public class ConfigForgeGui extends AbstractModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration cfg) {
-        YamlConfiguration config = FileConfig.Gui.loadConfig();
+        YamlConfiguration config = ConfigUtils.loadPluginConfig(plugin, "Gui.yml");
         title = ColorHelper.parseColor(config.getString("Title"));
 
         chest = String.join("", config.getStringList("Chest")).toCharArray();

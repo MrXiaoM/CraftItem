@@ -16,6 +16,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.api.IRunTask;
+import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
@@ -28,7 +29,7 @@ public class CraftItem extends BukkitPlugin {
     }
     private static CraftItem plugin;
     private static InventoryFactory inventoryFactory;
-    YamlConfiguration config;
+    private ConfigMain config;
     private IRunTask timer;
 
     public CraftItem() {
@@ -74,9 +75,9 @@ public class CraftItem extends BukkitPlugin {
         }
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
-        Message.reload();
-        CraftMaterial.reload();
-        Config.reload();
+        LanguageManager.inst()
+                .setLangFile("Message.yml")
+                .register(Message.class, Message::holder);
     }
 
     public void onSecond() {
@@ -103,30 +104,29 @@ public class CraftItem extends BukkitPlugin {
     }
 
     public void saveDefaultConfig() {
-        ConfigUtils.saveResource("config.yml");
-
-        File folder = new File(getDataFolder(), "PlayerData");
-        Util.mkdirs(folder);
-
+        if (!resolve("config.yml").exists()) {
+            plugin.saveResource("config.yml");
+        }
+        Util.mkdirs(resolve("PlayerData"));
         for (String filename : new String[] {
                 "Material.yml",
                 "Craft.yml",
                 "Gui.yml",
                 "Category.yml",
         }) {
-            ConfigUtils.saveResource(filename);
+            if (!resolve(filename).exists()) {
+                plugin.saveResource(filename);
+            }
         }
     }
 
-    public @NotNull FileConfiguration getConfig() {
-        if (config == null) {
-            this.reloadConfig();
-        }
+    public ConfigMain config() {
         return config;
     }
+
     @Override
     public void reloadConfig() {
+        config = ConfigMain.inst();
         super.reloadConfig();
-        config = ConfigUtils.loadOrSaveResource("config.yml");
     }
 }

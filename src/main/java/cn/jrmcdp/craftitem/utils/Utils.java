@@ -1,10 +1,8 @@
 package cn.jrmcdp.craftitem.utils;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.CraftMaterial;
-import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
+import cn.jrmcdp.craftitem.config.ItemTranslation;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Registry;
@@ -17,8 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.Pair;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -184,6 +180,6 @@ public class Utils {
             if (meta != null && meta.hasDisplayName()) return meta.getDisplayName();
         }
         String name = itemStack.getType().name();
-        return CraftMaterial.getMaterial().getOrDefault(name, name);
+        return ItemTranslation.get(name);
     }
 }

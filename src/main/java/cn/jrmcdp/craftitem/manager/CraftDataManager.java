@@ -1,8 +1,7 @@
 package cn.jrmcdp.craftitem.manager;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.Config;
-import cn.jrmcdp.craftitem.config.FileConfig;
+import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
@@ -11,6 +10,7 @@ import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.gui.GuiForge;
+import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,7 +48,7 @@ public class CraftDataManager extends AbstractModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration pluginConfig) {
-        craftConfig = FileConfig.Craft.loadConfig();
+        craftConfig = ConfigUtils.loadPluginConfig(plugin, "Craft.yml", ' ');
         craftDataMap.clear();
         for (String key : craftConfig.getKeys(false)) {
             Object object = craftConfig.get(key, null);
@@ -75,12 +75,12 @@ public class CraftDataManager extends AbstractModule {
     public void save(String id, CraftData craftData) {
         craftDataMap.put(id, craftData);
         craftConfig.set(id, craftData);
-        FileConfig.Craft.saveConfig(craftConfig);
+        ConfigUtils.savePluginConfig(plugin, "Craft.yml", craftConfig);
     }
     public void delete(String id) {
         craftDataMap.remove(id);
         craftConfig.set(id, null);
-        FileConfig.Craft.saveConfig(craftConfig);
+        ConfigUtils.savePluginConfig(plugin, "Craft.yml", craftConfig);
     }
 
     public boolean doForgeResult(GuiForge holder, Player player, boolean win, int multiple, Runnable cancel) {
@@ -107,7 +107,7 @@ public class CraftDataManager extends AbstractModule {
         int score = craftData.getMultiple().get(multiple);
         int oldValue = playerData.getScore(id);
         if (win) {
-            Config.playSoundForgeSuccess(player);
+            plugin.config().playSoundForgeSuccess(player);
             int value = playerData.addScore(id, score);
             CraftSuccessEvent e = new CraftSuccessEvent(player, holder, oldValue, value, multiple);
             Bukkit.getPluginManager().callEvent(e);
@@ -129,11 +129,11 @@ public class CraftDataManager extends AbstractModule {
                 playerData.clearScore(id);
                 playerData.clearFailTimes(id);
                 playerData.addForgeCount(id, 1);
-                Message.craft__success.msg(player, craftData.getDisplayItem());
+                Message.craft__success.tm(player, craftData.getDisplayItem());
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                         player.getWorld().dropItem(player.getLocation(), add);
-                        Message.full_inventory.msg(player, add, add.getAmount());
+                        Message.full_inventory.tm(player, add, add.getAmount());
                     }
                 }
                 if (!craftDoneCommands.isEmpty()) {
@@ -148,21 +148,21 @@ public class CraftDataManager extends AbstractModule {
             } else {
                 switch (e.getMultiple()) {
                     case 0 : {
-                        Message.craft__process_success_small.msg(player, score);
+                        Message.craft__process_success_small.tm(player, score);
                         break;
                     }
                     case 1 : {
-                        Message.craft__process_success_medium.msg(player, score);
+                        Message.craft__process_success_medium.tm(player, score);
                         break;
                     }
                     case 2 : {
-                        Message.craft__process_success_big.msg(player, score);
+                        Message.craft__process_success_big.tm(player, score);
                         break;
                     }
                 }
             }
         } else {
-            Config.playSoundForgeFail(player);
+            plugin.config().playSoundForgeFail(player);
             int value = playerData.addScore(id, -score);
             CraftFailEvent e = new CraftFailEvent(player, holder, oldValue, value, multiple);
             Bukkit.getPluginManager().callEvent(e);
@@ -180,18 +180,18 @@ public class CraftDataManager extends AbstractModule {
             }
             switch (e.getMultiple()) {
                 case 0 : {
-                    Message.craft__process_fail_small.msg(player, score);
+                    Message.craft__process_fail_small.tm(player, score);
                     break;
                 }
                 case 1 : {
-                    Message.craft__process_fail_medium.msg(player, score);
+                    Message.craft__process_fail_medium.tm(player, score);
                     break;
                 }
                 case 2 : {
-                    Message.craft__process_fail_big.msg(player, score);
+                    Message.craft__process_fail_big.tm(player, score);
                     ItemStack itemStack = craftData.takeRandomMaterial(player);
                     if (itemStack != null) {
-                        Message.craft__process_fail_lost_item.msg(player, itemStack.getAmount(), itemStack);
+                        Message.craft__process_fail_lost_item.tm(player, itemStack.getAmount(), itemStack);
                     }
                     break;
                 }
@@ -235,8 +235,8 @@ public class CraftDataManager extends AbstractModule {
                             consumer.accept(clear, this::cancel);
                             return;
                         }
-                        Config.getForgeTitle().send(player);
-                        Config.playSoundForgeTitle(player);
+                        plugin.config().sendForgeTitle(player);
+                        plugin.config().playSoundForgeTitle(player);
                         this.counter++;
                     }
                 }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);

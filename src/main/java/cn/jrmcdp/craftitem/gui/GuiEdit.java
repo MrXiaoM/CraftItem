@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.Config;
+import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.manager.CraftDataManager;
 import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
@@ -62,7 +62,7 @@ public class GuiEdit implements IHolder {
     @Override
     public Inventory newInventory() {
         ItemStack[] items = new ItemStack[invSize = 18];
-        inventory = CraftItem.getInventoryFactory().create(this, items.length, Message.gui__edit_title.get(this.id));
+        inventory = CraftItem.getInventoryFactory().create(this, items.length, Message.gui__edit_title.str(this.id));
         items[0] = item0();
         items[1] = item1();
         items[2] = item2();
@@ -80,56 +80,56 @@ public class GuiEdit implements IHolder {
     }
 
     private ItemStack item0() {
-        return getItemStack(getMaterial("WHEAT"), Message.gui__edit__item__material__name.get(),
+        return getItemStack(getMaterial("WHEAT"), Message.gui__edit__item__material__name.str(),
                 Message.gui__edit__item__material__lore.list(
                         String.join("\n§7", Utils.itemToListString(craftData.getMaterial()))
                 ));
     }
 
     private ItemStack item1() {
-        return getItemStack(getMaterial("COMPASS"), Message.gui__edit__item__successful_rate__name.get(),
+        return getItemStack(getMaterial("COMPASS"), Message.gui__edit__item__successful_rate__name.str(),
                 Message.gui__edit__item__successful_rate__lore.list(
                         craftData.getChance()
                 ));
     }
 
     private ItemStack item2() {
-        return getItemStack(getMaterial("HOPPER"), Message.gui__edit__item__multiple__name.get(),
+        return getItemStack(getMaterial("HOPPER"), Message.gui__edit__item__multiple__name.str(),
                 Message.gui__edit__item__multiple__lore.list(
                         craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                 ));
     }
 
     private ItemStack item3() {
-        return getItemStack(getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.get(),
+        return getItemStack(getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.str(),
                 Message.gui__edit__item__cost__lore.list(
                         craftData.getCost()
                 ));
     }
 
     private ItemStack item4() {
-        return getItemStack(getMaterial("PAINTING"), Message.gui__edit__item__display__name.get(),
+        return getItemStack(getMaterial("PAINTING"), Message.gui__edit__item__display__name.str(),
                 Message.gui__edit__item__display__lore.list(
                         craftData.getDisplayItem()
                 ));
     }
 
     private ItemStack item5() {
-        return getItemStack(getMaterial("CHEST"), Message.gui__edit__item__item__name.get(),
+        return getItemStack(getMaterial("CHEST"), Message.gui__edit__item__item__name.str(),
                 Message.gui__edit__item__item__lore.list(
                         String.join("\n§7", Utils.itemToListString(craftData.getItems()))
                 ));
     }
 
     private ItemStack item6() {
-        return getItemStack(getMaterial("PAPER"), Message.gui__edit__item__command__name.get(),
+        return getItemStack(getMaterial("PAPER"), Message.gui__edit__item__command__name.str(),
                 Message.gui__edit__item__command__lore.list(
                         String.join("\n§7", craftData.getCommands())
                 ));
     }
 
     private ItemStack item7() {
-        return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.get(),
+        return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.str(),
                 Message.gui__edit__item__time__lore.list(
                         craftData.getTimeDisplay(), craftData.getTimeCost()
                 ));
@@ -137,30 +137,30 @@ public class GuiEdit implements IHolder {
 
     private ItemStack item8() {
         String groupTime = craftData.getTimeCountLimit();
-        if (groupTime.trim().isEmpty()) groupTime = Message.gui__edit__unset.get();
+        if (groupTime.trim().isEmpty()) groupTime = Message.gui__edit__unset.str();
         String groupNormal = craftData.getCountLimit();
-        if (groupNormal.trim().isEmpty()) groupNormal = Message.gui__edit__unset.get();
-        return getItemStack(getMaterial("BUCKET"), Message.gui__edit__item__time_count_limit__name.get(),
+        if (groupNormal.trim().isEmpty()) groupNormal = Message.gui__edit__unset.str();
+        return getItemStack(getMaterial("BUCKET"), Message.gui__edit__item__time_count_limit__name.str(),
                 Message.gui__edit__item__time_count_limit__lore.list(groupNormal, groupTime));
     }
 
     private ItemStack item9() {
-        return getItemStack(getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.get(),
+        return getItemStack(getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.str(),
                 Message.gui__edit__item__difficult__lore.list(
-                        (craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).get()
+                        (craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).str()
                 ));
     }
     private ItemStack item10() {
-        return getItemStack(getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.get(),
+        return getItemStack(getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.str(),
                 Message.gui__edit__item__fail_times__lore.list(
-                        craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.get()
+                        craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.str()
                 ));
     }
 
     private ItemStack item11() {
-        return getItemStack(getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.get(),
+        return getItemStack(getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.str(),
                 Message.gui__edit__item__combo__lore.list(
-                        craftData.getCombo() > 0 ? String.valueOf(craftData.getCombo()) : Message.gui__edit__unset.get()
+                        craftData.getCombo() > 0 ? String.valueOf(craftData.getCombo()) : Message.gui__edit__unset.str()
                 ));
     }
 
@@ -180,7 +180,7 @@ public class GuiEdit implements IHolder {
         for (char c : forgeGui.getChest()) if (c == '材') count1++;
         for (char c : forgeGui.getChestTime()) if (c == '材') count2++;
         if (size > Math.min(count1, count2)) {
-            Message.gui__edit__item__material__too_much.msg(player);
+            Message.gui__edit__item__material__too_much.tm(player);
         }
     }
 
@@ -191,7 +191,7 @@ public class GuiEdit implements IHolder {
             ItemStack currentItem, ItemStack cursor,
             InventoryView view, InventoryClickEvent event
     ) {
-        Config.playSoundClickInventory(player);
+        manager.plugin.config().playSoundClickInventory(player);
         if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();
         switch (event.getRawSlot()) {
@@ -214,11 +214,11 @@ public class GuiEdit implements IHolder {
             }
             case 1: { // 成功率
                 player.closeInventory();
-                Message.gui__edit_input_chance.msg(player);
+                Message.gui__edit_input_chance.tm(player);
                 Prompter.onChat(player, message -> {
                     Integer chance = Util.parseInt(message).orElse(null);
                     if (chance == null || chance < 0) {
-                        Message.not_integer.msg(player);
+                        Message.not_integer.tm(player);
                     } else {
                         craftData.setChance(chance);
                         manager.save(getId(), craftData);
@@ -229,7 +229,7 @@ public class GuiEdit implements IHolder {
             }
             case 2: { // 倍数
                 player.closeInventory();
-                Message.gui__edit_input_multiple.msg(player);
+                Message.gui__edit_input_multiple.tm(player);
                 AtomicReference<Consumer<List<Integer>>> save = new AtomicReference<>(null);
                 Consumer<String> consumeChat = message -> {
                     String[] split = message.split(" ");
@@ -237,7 +237,7 @@ public class GuiEdit implements IHolder {
                     for (String str : split) {
                         Integer chance = Util.parseInt(str).orElse(null);
                         if (chance == null) {
-                            Message.not_integer.msg(player);
+                            Message.not_integer.tm(player);
                             open();
                             return;
                         }
@@ -248,7 +248,7 @@ public class GuiEdit implements IHolder {
                 };
                 save.set(list -> {
                     if (list.size() != 3) {
-                        Message.gui__edit_input_multiple.msg(player);
+                        Message.gui__edit_input_multiple.tm(player);
                         Prompter.onChat(player, consumeChat);
                     } else {
                         craftData.setMultiple(list);
@@ -261,11 +261,11 @@ public class GuiEdit implements IHolder {
             }
             case 3: { // 价格
                 player.closeInventory();
-                Message.gui__edit_input_cost.msg(player);
+                Message.gui__edit_input_cost.tm(player);
                 Prompter.onChat(player, message -> {
                     Integer cost = Util.parseInt(message).orElse(null);
                     if (cost == null || cost < 0) {
-                        Message.not_integer.msg(player);
+                        Message.not_integer.tm(player);
                     } else {
                         craftData.setCost(cost);
                         manager.save(getId(), craftData);
@@ -280,7 +280,7 @@ public class GuiEdit implements IHolder {
                 Prompter.gui(player, 9, title, items, inv -> { // onClose
                     ItemStack item = inv.getItem(0);
                     if (item == null || item.getType().equals(Material.AIR)) {
-                        Message.gui__edit_display_not_found.msg(player);
+                        Message.gui__edit_display_not_found.tm(player);
                     } else {
                         craftData.setDisplayItem(item);
                         manager.save(getId(), craftData);
@@ -322,7 +322,7 @@ public class GuiEdit implements IHolder {
                     }
                     isChat.set(true);
                     player.closeInventory();
-                    Message.gui__edit_command_tips.msg(player);
+                    Message.gui__edit_command_tips.tm(player);
 
                     Prompter.onChat(player, message -> {
                         ItemStack itemStack = Utils.getItemStack(
@@ -360,11 +360,11 @@ public class GuiEdit implements IHolder {
                     manager.save(getId(), craftData);
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     player.closeInventory();
-                    Message.gui__edit_time_cost.msg(player);
+                    Message.gui__edit_time_cost.tm(player);
                     Prompter.onChat(player, message -> {
                         Integer cost = Util.parseInt(message).orElse(null);
                         if (cost == null || cost < 0) {
-                            Message.not_integer.msg(player);
+                            Message.not_integer.tm(player);
                         } else {
                             craftData.setTimeCost(cost);
                             manager.save(getId(), craftData);
@@ -381,7 +381,7 @@ public class GuiEdit implements IHolder {
                 if (event.isLeftClick()) {
                     int size = 9;
                     List<ItemStack> items = new ArrayList<>();
-                    Map<String, Map<String, Integer>> groups = Config.getCountLimitGroups();
+                    Map<String, Map<String, Integer>> groups = manager.plugin.config().getCountLimitGroups();
                     for (Map.Entry<String, Map<String, Integer>> entry : groups.entrySet()) {
                         String group = entry.getKey();
                         Map<String, Integer> map = entry.getValue();

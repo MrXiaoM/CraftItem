@@ -116,7 +116,7 @@ public class GuiCategory implements IHolder {
                 String name = iterator.next();
                 CraftData craftData = CraftDataManager.inst().getCraftData(name);
                 if (craftData == null) {
-                    is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.get(name));
+                    is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.str(name));
                     continue;
                 }
                 ItemStack clone = craftData.getDisplayItem().clone();
@@ -125,10 +125,10 @@ public class GuiCategory implements IHolder {
                 if (lore == null) lore = new ArrayList<>();
                 lore.addAll(Message.gui__craft_info__lore__header.list());
                 for (ItemStack itemStack : craftData.getItems())
-                    lore.add(Message.gui__craft_info__lore__item.get(Utils.getItemName(itemStack), itemStack.getAmount()));
+                    lore.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack), itemStack.getAmount()));
                 for (String command : craftData.getCommands()) {
                     String[] split = command.split("\\|\\|");
-                    if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.get(split[1]));
+                    if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.str(split[1]));
                 }
                 AdventureItemStack.setItemLoreMiniMessage(clone, lore);
                 is[i] = clone;
@@ -150,15 +150,15 @@ public class GuiCategory implements IHolder {
     ) {
         final Player player = (Player)event.getWhoClicked();
         if (slot < 0 || slot >= chest.length) return;
-        Config.playSoundClickInventory(player);
+        parent.plugin.config().playSoundClickInventory(player);
         String key = chest[slot];
         switch (key) {
             case "上" : {
-                if (!upPage()) Message.page__already_first.msg(player);
+                if (!upPage()) Message.page__already_first.tm(player);
                 return;
             }
             case "下" : {
-                if (!downPage()) Message.page__already_last.msg(player);
+                if (!downPage()) Message.page__already_last.tm(player);
                 return;
             }
             case "方" : {

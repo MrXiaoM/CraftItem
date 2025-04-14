@@ -4,6 +4,7 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.gui.GuiCategory;
+import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -32,7 +33,7 @@ public class ConfigCategoryGui extends AbstractModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration cfg) {
-        YamlConfiguration config = FileConfig.Category.loadConfig();
+        YamlConfiguration config = ConfigUtils.loadPluginConfig(plugin, "Category.yml");
         title = config.getString("Title");
         chest = new String[config.getStringList("Chest").size() * 9];
         StringBuilder info = new StringBuilder();

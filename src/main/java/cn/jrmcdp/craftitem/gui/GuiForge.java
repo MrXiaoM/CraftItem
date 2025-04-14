@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.Config;
+import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.manager.CraftDataManager;
 import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
@@ -61,7 +61,7 @@ public class GuiForge implements IHolder {
         Icon icon;
         CraftData craftData = getCraftData();
         if (craftData.getTime() > 0) {
-            if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
+            if (parent.plugin.config().isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
                     icon = parent.items.get("时_完成");
                 } else if (processing) {
@@ -77,7 +77,7 @@ public class GuiForge implements IHolder {
         }
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
         double progress = endTime == null ? 0.0d : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
-        String remainTime = endTime == null ? "" : CraftData.getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒");
+        String remainTime = endTime == null ? "" : parent.plugin.config().getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒");
 
         int count = playerData.getTimeForgeCount(getId());
         int limit = craftData.getTimeForgeCountLimit(playerData.getPlayer());
@@ -89,8 +89,8 @@ public class GuiForge implements IHolder {
                 Pair.of("<Time>", craftData.getTimeDisplay()),
                 Pair.of("<Cost>", craftData.getTimeCost()),
                 Pair.of("<LimitCountCurrent>", count),
-                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.get()),
-                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
+                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),
+                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.str(count, limit) : Message.craft__unlimited.str())
         );
 
         if (item.getType().getMaxDurability() > 1) {
@@ -173,10 +173,10 @@ public class GuiForge implements IHolder {
                     if (lore == null) lore = new ArrayList<>();
                     lore.addAll(Message.gui__craft_info__lore__header.list());
                     for (ItemStack itemStack : craftData.getItems())
-                        lore.add(Message.gui__craft_info__lore__item.get(Utils.getItemName(itemStack), itemStack.getAmount()));
+                        lore.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack), itemStack.getAmount()));
                     for (String command : craftData.getCommands()) {
                         String[] split = command.split("\\|\\|");
-                        if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.get(split[1]));
+                        if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.str(split[1]));
                     }
                     AdventureItemStack.setItemLoreMiniMessage(item, lore);
                     is[i] = item;
@@ -191,13 +191,13 @@ public class GuiForge implements IHolder {
                         int limit = craftData.getForgeCountLimit(player);
                         is[i] = icon.getItem(
                                 player,
-                                Pair.of("<ChanceName>", Config.getChanceName(craftData.getChance())),
+                                Pair.of("<ChanceName>", parent.plugin.config().getChanceName(craftData.getChance())),
                                 Pair.of("<Score>", playerData.getScore(id)),
                                 Pair.of("<Cost>", craftData.getCost()),
                                 Pair.of("<Combo>", craftData.getCombo()),
                                 Pair.of("<LimitCountCurrent>", count),
-                                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.get()),
-                                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
+                                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),
+                                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.str(count, limit) : Message.craft__unlimited.str())
                         );
                     }
                     break;
@@ -228,7 +228,7 @@ public class GuiForge implements IHolder {
             InventoryView view, InventoryClickEvent event
     ) {
         Player player = playerData.getPlayer();
-        Config.playSoundClickInventory(player);
+        parent.plugin.config().playSoundClickInventory(player);
 
         if (!event.getClick().isRightClick() && !event.getClick().isLeftClick()) return;
         if (event.getRawSlot() < 0 || event.getRawSlot() >= chest.length) return;
@@ -272,7 +272,7 @@ public class GuiForge implements IHolder {
 
     private boolean checkForgeData(Player player, CraftData craftData) {
         if (craftData.getMultiple().size() != 3) {
-            Message.not_expected.msg(player, "multiple");
+            Message.not_expected.tm(player, "multiple");
             return true;
         }
         return false;
@@ -287,19 +287,19 @@ public class GuiForge implements IHolder {
             return;
         }
         if (craftData.isDifficult() && CraftItem.getMiniGames() == null) {
-            Message.no_protocollib.msg(player);
+            Message.no_protocollib.tm(player);
             return;
         }
         int cost = craftData.getCost();
         if (!parent.plugin.options.economy().has(player, cost)) {
-            Message.craft__not_enough_money.msg(player);
+            Message.craft__not_enough_money.tm(player);
             return;
         }
         if (craftData.isNotEnoughMaterial(player)) return;
         String key = getId();
         int limit = craftData.getForgeCountLimit(player);
         if (limit < 0 || (limit > 0 && playerData.getForgeCount(key) >= limit)) {
-            Message.craft__forge_limit.msg(player, Math.max(limit, 0));
+            Message.craft__forge_limit.tm(player, Math.max(limit, 0));
             return;
         }
         parent.plugin.options.economy().takeMoney(player, cost);
@@ -307,10 +307,15 @@ public class GuiForge implements IHolder {
         final int multiple = RandomUtils.nextInt(3);
         player.closeInventory();
         if (craftData.isDifficult()) {
+            String randomGame = parent.plugin.config().getRandomGame();
+            if (randomGame == null) {
+                // TODO: 提醒玩家，服主未配置好困难锻造
+                return;
+            }
             CraftItem.getMiniGames().startGame(
                     new GameData(this, player, win, multiple),
                     player,
-                    Config.getRandomGame()
+                    randomGame
             );
             return;
         }
@@ -334,14 +339,14 @@ public class GuiForge implements IHolder {
 
         int costOneTime = craftData.getCost();
         if (!parent.plugin.options.economy().has(player, costOneTime * combo)) {
-            Message.craft__not_enough_money.msg(player);
+            Message.craft__not_enough_money.tm(player);
             return;
         }
         if (craftData.isNotEnoughMaterial(player)) return;
         String key = getId();
         int limit = craftData.getForgeCountLimit(player);
         if (limit < 0 || (limit > 0 && playerData.getForgeCount(key) + combo - 1 >= limit)) {
-            Message.craft__forge_limit.msg(player, Math.max(limit, 0));
+            Message.craft__forge_limit.tm(player, Math.max(limit, 0));
             return;
         }
 
@@ -369,7 +374,7 @@ public class GuiForge implements IHolder {
      */
     private void clickForgeTime(Player player) {
         // 检查是否满足时长锻造条件
-        if (!Config.isMeetTimeForgeCondition(playerData.getPlayer())) return;
+        if (!parent.plugin.config().isMeetTimeForgeCondition(playerData.getPlayer())) return;
         CraftData craftData = getCraftData();
         // 检查是否已开启时长锻造
         if (craftData.getTime() <= 0) return;
@@ -386,11 +391,11 @@ public class GuiForge implements IHolder {
             playerData.removeTime(key);
             playerData.addTimeForgeCount(key, 1);
             playerData.save(); // 锻造结束，给予奖励
-            Message.craft__success.msg(player, craftData.getDisplayItem());
+            Message.craft__success.tm(player, craftData.getDisplayItem());
             for (ItemStack item : craftData.getItems()) {
                 for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
                     player.getWorld().dropItem(player.getLocation(), add);
-                    Message.full_inventory.msg(player, add, add.getAmount());
+                    Message.full_inventory.tm(player, add, add.getAmount());
                 }
             }
             for (String str : craftData.getCommands()) {
@@ -402,13 +407,13 @@ public class GuiForge implements IHolder {
         if (!processing) { // 如果时长锻造未开始
             int cost = craftData.getTimeCost();
             if (!parent.plugin.options.economy().has(player, cost)) {
-                Message.craft__not_enough_money.msg(player);
+                Message.craft__not_enough_money.tm(player);
                 return;
             }
             if (craftData.isNotEnoughMaterial(player)) return;
             int limit = craftData.getTimeForgeCountLimit(player);
             if (limit < 0 || (limit > 0 && playerData.getTimeForgeCount(key) >= limit)) {
-                Message.craft__time_forge_limit.msg(player, Math.max(limit, 0));
+                Message.craft__time_forge_limit.tm(player, Math.max(limit, 0));
                 return;
             }
 
@@ -418,7 +423,7 @@ public class GuiForge implements IHolder {
             long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
             playerData.setTime(key, endTime);
             playerData.save(); // 开始时长锻造
-            Message.craft__time_start.msg(player);
+            Message.craft__time_start.tm(player);
         }
     }
 }
