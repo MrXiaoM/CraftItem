@@ -8,6 +8,7 @@ import cn.jrmcdp.craftitem.minigames.GameManager;
 import cn.jrmcdp.craftitem.utils.*;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -19,6 +20,7 @@ import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
 import top.mrxiaom.pluginbase.func.LanguageManager;
+import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
@@ -95,7 +97,9 @@ public class CraftItem extends BukkitPlugin {
     @Override
     protected void afterEnable() {
         this.timer = getScheduler().runTaskTimer(this::onSecond, 20L, 20L);
-        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§a插件成功启用 By.ZhiBuMiao & MrXiaoM");
+        ConsoleCommandSender sender = Bukkit.getConsoleSender();
+        AdventureUtil.sendMessage(sender, Message.prefix + "<green>插件成功启用 <yellow>v" + getDescription().getVersion());
+        AdventureUtil.sendMessage(sender, Message.prefix + "<white>由 MrXiaoM 重置! 原作者为 ZhiBuMiao.");
     }
 
     @Override
@@ -103,7 +107,8 @@ public class CraftItem extends BukkitPlugin {
         if (timer != null) timer.cancel();
         ConfigurationSerialization.unregisterClass(CraftData.class);
         HandlerList.unregisterAll(this);
-        Bukkit.getConsoleSender().sendMessage(Message.prefix + "§2插件成功卸载 By.ZhiBuMiao & MrXiaoM");
+        ConsoleCommandSender sender = Bukkit.getConsoleSender();
+        AdventureUtil.sendMessage(sender, Message.prefix + "<green>插件成功卸载 <yellow>v" + getDescription().getVersion());
     }
 
     public void saveDefaultConfig() {
