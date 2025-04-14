@@ -4,11 +4,11 @@ plugins {
     id("top.mrxiaom.shadow")
 }
 
+group = "cn.jrmcdp"
+version = "2.0.0-pre1"
+
 val targetJavaVersion = 8
 allprojects {
-    group = "cn.jrmcdp"
-    version = "1.2.8"
-
     repositories {
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")

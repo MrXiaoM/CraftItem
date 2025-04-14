@@ -1,6 +1,8 @@
 # CraftItem
 
-[![Releases](https://img.shields.io/github/downloads/MrXiaoM/CraftItem/total)](https://github.com/MrXiaoM/CraftItem/releases)
+> 当前正在使用 PluginBase 对插件进行重构，正式发布之前可能存在一些问题，敬请期待
+
+[![Releases](https://img.shields.io/github/downloads/MrXiaoM/CraftItem/total)](https://plugins.mcio.dev/dl?repo=CraftItem)
 
 本插件 Fork 自 https://gitee.com/zhibumiao/CraftItem
 
@@ -15,7 +17,7 @@
 
 ## 安装教程
 
-1. 于 [Releases](https://github.com/MrXiaoM/CraftItem/releases) 下载插件
+1. 于 [MCIO Plugins](https://plugins.mcio.dev/dl?repo=CraftItem) 下载插件
 2. 放入服务器根目录 plugins 文件夹内
 3. 重启以加载插件 开始享用吧
 
@@ -24,10 +26,11 @@
 以下为本 Fork 对于原插件的修改
 
 * 使用 Gradle 管理依赖，便于贡献代码
+* **使用 PluginBase 重构**
 * 将硬编码的字符串提取到配置文件
 * 添加事件，便于编写附属
-* 修正一些bug
-比如 监听命令方式不正确 锻造成果物品莫名减少 锻造配方名不能用`.`号 等等
+* 修正一些严重bug
+比如 监听命令方式不正确 锻造成果物品莫名减少 锻造配方名不能用`.`号 副手的锻造材料不会扣除 等等
 * 添加更多可配置项
 * 添加小游戏作为锻造难度挑战 (来自 [Custom-Fishing](https://github.com/Xiao-MoMi/Custom-Fishing)，感谢开源!)
 * 添加**时长锻造**选项，玩家可以仅仅在提交材料后，等待一定时间即可领取锻造成品
