@@ -32,7 +32,7 @@
 * 修正一些严重bug
 比如 监听命令方式不正确 锻造成果物品莫名减少 锻造配方名不能用`.`号 副手的锻造材料不会扣除 等等
 * 添加更多可配置项
-* 添加小游戏作为锻造难度挑战 (来自 [Custom-Fishing](https://github.com/Xiao-MoMi/Custom-Fishing)，感谢开源!)
+* 添加小游戏作为锻造难度挑战 (来自 [Custom-Fishing](https://github.com/Xiao-MoMi/Custom-Fishing)，感谢开源! 配套材质包可以在[这里](https://github.com/MrXiaoM/CraftItem/wiki/resourcepack.zip)下载)
 * 添加**时长锻造**选项，玩家可以仅仅在提交材料后，等待一定时间即可领取锻造成品
 * 添加**连击锻造**选项，允许玩家一键连续进行多次普通锻造
 * 添加**锻造保底**选项，玩家失败达到保底次数后，失败将变为小成功
