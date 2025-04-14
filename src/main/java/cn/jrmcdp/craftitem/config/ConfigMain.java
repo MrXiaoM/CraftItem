@@ -210,8 +210,13 @@ public class ConfigMain extends AbstractModule {
         return randomGames;
     }
 
+    @Nullable
     public String getRandomGame() {
-        return getRandomGames().get(new Random().nextInt(getRandomGames().size()));
+        List<String> list = getRandomGames();
+        int size = list.size();
+        if (size == 0) return null;
+        if (size == 1) return list.get(0);
+        return list.get(new Random().nextInt(size));
     }
 
     public boolean isMeetTimeForgeCondition(Player player) {

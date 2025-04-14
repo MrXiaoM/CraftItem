@@ -25,6 +25,7 @@ public enum Message implements IHolderAccessor {
     no_permission("&c缺少权限 &e%s&c."),
     no_player("&e此命令只有玩家能执行."),
     no_protocollib("&e服务器未安装依赖 ProtocolLib."),
+    no_minigames("&e未配置困难锻造小游戏列表 &7(config.yml:RandomGames)&e，请联系服务器管理员"),
     not_expected("&e参数异常&7(%s)&e，请联系服务器管理员"),
     help(
             "&4&lCraftItem",

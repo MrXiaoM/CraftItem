@@ -349,7 +349,7 @@ public class GuiForge implements IHolder {
         if (craftData.isDifficult()) {
             String randomGame = parent.plugin.config().getRandomGame();
             if (randomGame == null) {
-                // TODO: 提醒玩家，服主未配置好困难锻造
+                Message.no_minigames.tm(player);
                 return;
             }
             CraftItem.getMiniGames().startGame(
