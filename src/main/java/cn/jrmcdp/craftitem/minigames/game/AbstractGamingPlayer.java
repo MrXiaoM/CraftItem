@@ -5,13 +5,14 @@ import cn.jrmcdp.craftitem.minigames.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import top.mrxiaom.pluginbase.api.IRunTask;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     protected final GameData game;
     protected final Player player;
     protected final GameSettings settings;
     protected final long deadline;
-    protected BukkitTask task;
+    protected IRunTask task;
     protected boolean success;
     protected boolean isTimeOut;
 
@@ -24,7 +25,7 @@ public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
     }
 
     public void arrangeTask() {
-        this.task = Bukkit.getScheduler().runTaskTimer(GameManager.getPlugin(), this, 1, 1);
+        this.task = GameManager.inst().plugin.getScheduler().runTaskTimer(this, 1, 1);
     }
 
     @Override

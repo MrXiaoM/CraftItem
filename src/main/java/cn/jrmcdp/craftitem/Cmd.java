@@ -2,34 +2,32 @@ package cn.jrmcdp.craftitem;
 
 import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
-import cn.jrmcdp.craftitem.holder.EditHolder;
-import cn.jrmcdp.craftitem.manager.DataManager;
+import cn.jrmcdp.craftitem.data.PlayerData;
+import cn.jrmcdp.craftitem.func.AbstractModule;
+import cn.jrmcdp.craftitem.gui.GuiEdit;
+import cn.jrmcdp.craftitem.manager.CraftDataManager;
+import cn.jrmcdp.craftitem.manager.PlayerDataManager;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.PAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cmd implements CommandExecutor, TabCompleter {
-
-    public static void register(JavaPlugin plugin, String name) {
-        PluginCommand command = plugin.getCommand(name);
-        if (command != null) {
-            Cmd cmd = new Cmd();
-            command.setExecutor(cmd);
-            command.setTabCompleter(cmd);
-        } else {
-            plugin.getLogger().warning("无法注册命令 /" + name);
-        }
+@AutoRegister
+public class Cmd extends AbstractModule implements CommandExecutor, TabCompleter {
+    public Cmd(CraftItem plugin) {
+        super(plugin);
+        registerCommand("CraftItem", this);
     }
 
+    @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length > 0) {
             String perm = command.getName() + ".command." + args[0];
@@ -87,11 +85,12 @@ public class Cmd implements CommandExecutor, TabCompleter {
             return Message.no_player.msg(sender);
         }
         Player player = (Player)sender;
-        CraftData craftData = Craft.getCraftData(args[1]);
+        CraftDataManager manager = CraftDataManager.inst();
+        CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.msg(player, args[1]);
         }
-        Craft.delete(args[1]);
+        manager.delete(args[1]);
         return Message.delete__done.msg(player, args[1]);
     }
 
@@ -100,13 +99,15 @@ public class Cmd implements CommandExecutor, TabCompleter {
             return Message.no_player.msg(sender);
         }
         Player player = (Player)sender;
-        CraftData craftData = Craft.getCraftData(args[1]);
+        CraftDataManager manager = CraftDataManager.inst();
+        CraftData craftData = manager.getCraftData(args[1]);
         if (craftData != null) {
             return Message.create__found.msg(player, args[1]);
         }
         craftData = new CraftData();
-        Craft.save(args[1], craftData);
-        player.openInventory(EditHolder.buildGui(args[1], craftData));
+        manager.save(args[1], craftData);
+
+        GuiEdit.openGui(player, args[1], craftData);
         return true;
     }
 
@@ -115,11 +116,11 @@ public class Cmd implements CommandExecutor, TabCompleter {
             return Message.no_player.msg(sender);
         }
         Player player = (Player)sender;
-        CraftData craftData = Craft.getCraftData(args[1]);
+        CraftData craftData = CraftDataManager.inst().getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.msg(player, args[1]);
         }
-        player.openInventory(EditHolder.buildGui(args[1], craftData));
+        GuiEdit.openGui(player, args[1], craftData);
         return true;
     }
 
@@ -136,11 +137,12 @@ public class Cmd implements CommandExecutor, TabCompleter {
             }
             player = (Player)sender;
         }
-        CraftData craftData = Craft.getCraftData(args[1]);
+        CraftData craftData = CraftDataManager.inst().getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.msg(player, args[1]);
         }
-        Bukkit.getScheduler().runTaskLater(CraftItem.getPlugin(), () -> player.openInventory(ForgeGui.buildGui(DataManager.getOrCreatePlayerData(player), args[1], craftData)), 1);
+        PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
+        ConfigForgeGui.inst().openGui(playerData, args[1], craftData);
         return false;
     }
 
@@ -161,7 +163,8 @@ public class Cmd implements CommandExecutor, TabCompleter {
         if (list == null) {
             return Message.category__not_found.msg(player, args[1]);
         }
-        Bukkit.getScheduler().runTaskLater(CraftItem.getPlugin(), () -> Category.openGui(DataManager.getOrCreatePlayerData(player), args[1], list, 0), 1);
+        PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
+        ConfigCategoryGui.inst().openGui(playerData, args[1], list, 0);
         return true;
     }
 
@@ -178,7 +181,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
             }
             player = (Player)sender;
         }
-        CraftData craftData = Craft.getCraftData(args[1]);
+        CraftData craftData = CraftDataManager.inst().getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.msg(player, args[1]);
         }
@@ -214,38 +217,48 @@ public class Cmd implements CommandExecutor, TabCompleter {
         Message.reload();
         CraftMaterial.reload();
         Config.reload();
-        Craft.reload();
-        ForgeGui.reload();
-        Category.reload();
         return Message.reload.msg(sender);
     }
 
+    private List<String> args0 = Lists.newArrayList(
+            "category",
+            "open",
+            "get",
+            "create",
+            "delete",
+            "edit",
+            "reload"
+    );
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         switch (args.length) {
             case 1 : {
                 String arg0 = args[0].toLowerCase();
-                List<String> list = Lists.newArrayList(
-                    "category",
-                    "open",
-                    "get",
-                    "create",
-                    "delete",
-                    "edit",
-                    "reload"
-                );
-                list.removeIf(next -> !next.startsWith(arg0));
+                List<String> list = new ArrayList<>();
+                for (String s : args0) {
+                    if (s.startsWith(arg0)) {
+                        list.add(s);
+                    }
+                }
                 return list;
             }
             case 2 : {
                 String arg1 = args[1].toLowerCase();
                 if (args[0].equalsIgnoreCase("category")) {
-                    List<String> list = new ArrayList<>(Config.getCategory().keySet());
-                    list.removeIf(next -> !next.toLowerCase().startsWith(arg1));
+                    List<String> list = new ArrayList<>();
+                    for (String s : Config.getCategory().keySet()) {
+                        if (s.startsWith(arg1)) {
+                            list.add(s);
+                        }
+                    }
                     return list;
                 }
-                List<String> list = new ArrayList<>(Craft.getCraftDataMap().keySet());
-                list.removeIf(next -> !next.toLowerCase().startsWith(arg1));
+                List<String> list = new ArrayList<>();
+                for (String s : CraftDataManager.inst().getCraftDataMap().keySet()) {
+                    if (s.startsWith(arg1)) {
+                        list.add(s);
+                    }
+                }
                 return list;
             }
         }

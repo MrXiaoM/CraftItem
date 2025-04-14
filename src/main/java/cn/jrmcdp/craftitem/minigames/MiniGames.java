@@ -12,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.io.File;
@@ -21,10 +22,10 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings("DuplicatedCode")
 public class MiniGames {
 
-    private final JavaPlugin plugin;
+    private final BukkitPlugin plugin;
     private final HashMap<String, GameFactory> gameCreatorMap;
     private final HashMap<String, Pair<BasicGameConfig, GameInstance>> gameInstanceMap;
-    public MiniGames(JavaPlugin plugin) {
+    public MiniGames(BukkitPlugin plugin) {
         this.plugin = plugin;
         this.gameCreatorMap = new HashMap<>();
         this.gameInstanceMap = new HashMap<>();
@@ -179,7 +180,7 @@ public class MiniGames {
                 
                 public void arrangeTask() {
                     double period = ((double) 10*(200-settings.getDifficulty()))/((double) (1+4*settings.getDifficulty()));
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, (long) period / 50L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, (long) period / 50L);
                 }
 
                 
@@ -255,7 +256,7 @@ public class MiniGames {
                 
                 public void arrangeTask() {
                     this.judgement_position = (double) (barEffectiveWidth - judgementAreaWidth) / 2;
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, 1L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, 1L);
                 }
 
                 
@@ -385,7 +386,7 @@ public class MiniGames {
 
                 
                 public void arrangeTask() {
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, 1L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, 1L);
                 }
 
                 
@@ -492,7 +493,7 @@ public class MiniGames {
                     for (int i = 0; i < requiredTimes; i++) {
                         order[i] = ThreadLocalRandom.current().nextInt(0, easy ? 2 : 4);
                     }
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, 1L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, 1L);
                 }
 
                 
@@ -745,7 +746,7 @@ public class MiniGames {
 
                 
                 public void arrangeTask() {
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, 1L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, 1L);
                 }
 
                 
@@ -824,7 +825,7 @@ public class MiniGames {
 
                 
                 public void arrangeTask() {
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, 1L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, 1L);
                 }
 
                 
@@ -916,7 +917,7 @@ public class MiniGames {
                 
                 public void arrangeTask() {
                     double period = ((double) 10*(200-settings.getDifficulty()))/((double) (1+4*settings.getDifficulty()));
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, (long) period / 10L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, (long) period / 10L);
                 }
 
                 
@@ -1006,7 +1007,7 @@ public class MiniGames {
                 
                 public void arrangeTask() {
                     this.judgement_position = (double) (barEffectiveWidth - judgementAreaWidth) / 2;
-                    this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 1L, 1L);
+                    this.task = plugin.getScheduler().runTaskTimerAsynchronously(this, 1L, 1L);
                 }
 
                 

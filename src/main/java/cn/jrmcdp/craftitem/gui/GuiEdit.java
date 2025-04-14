@@ -1,19 +1,21 @@
-package cn.jrmcdp.craftitem.holder;
+package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.Config;
-import cn.jrmcdp.craftitem.config.Craft;
-import cn.jrmcdp.craftitem.config.ForgeGui;
+import cn.jrmcdp.craftitem.manager.CraftDataManager;
+import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.utils.Prompter;
 import cn.jrmcdp.craftitem.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -29,16 +31,24 @@ import java.util.stream.Collectors;
 
 import static cn.jrmcdp.craftitem.utils.Utils.*;
 
-public class EditHolder implements IHolder {
+public class GuiEdit implements IHolder {
     private final String id;
 
     private final CraftData craftData;
     private Inventory inventory;
     private int invSize = 0;
 
-    EditHolder(String id, CraftData craftData) {
+    private final Player player;
+    private final CraftDataManager manager = CraftDataManager.inst();
+
+    public GuiEdit(Player player, String id, CraftData craftData) {
+        this.player = player;
         this.id = id;
         this.craftData = craftData;
+    }
+
+    public static void openGui(Player player, String id, CraftData craftData) {
+        new GuiEdit(player, id, craftData).open();
     }
 
     public String getId() {
@@ -49,37 +59,10 @@ public class EditHolder implements IHolder {
         return this.craftData;
     }
 
-    public static Inventory buildGui(String id, CraftData craftData) {
-        EditHolder holder = new EditHolder(id, craftData);
-        ItemStack[] items = holder.getItems();
-        Inventory inventory = CraftItem.getInventoryFactory().create(holder, items.length, Message.gui__edit_title.get(holder.id));
-        inventory.setContents(items);
-        holder.inventory = inventory;
-        return inventory;
-    }
-    public Inventory buildGui() {
-        ItemStack[] items = getItems();
-        Inventory inv = CraftItem.getInventoryFactory().create(this, items.length, Message.gui__edit_title.get(this.id));
-        inv.setContents(items);
-        return this.inventory = inv;
-    }
-
-    public void open(Player player) {
-        open(player, buildGui());
-    }
-    public void open(Player player, Inventory inv) {
-        open(player, inv, null);
-    }
-    public void open(Player player, Inventory inv, Runnable run) {
-        Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> {
-            player.closeInventory();
-            player.openInventory(inv);
-            if (run != null) run.run();
-        });
-    }
-
-    private ItemStack[] getItems() {
+    @Override
+    public Inventory newInventory() {
         ItemStack[] items = new ItemStack[invSize = 18];
+        inventory = CraftItem.getInventoryFactory().create(this, items.length, Message.gui__edit_title.get(this.id));
         items[0] = item0();
         items[1] = item1();
         items[2] = item2();
@@ -92,7 +75,8 @@ public class EditHolder implements IHolder {
         items[9] = item9();
         items[10] = item10();
         items[11] = item11();
-        return items;
+        inventory.setContents(items);
+        return inventory;
     }
 
     private ItemStack item0() {
@@ -185,18 +169,28 @@ public class EditHolder implements IHolder {
         return inventory;
     }
 
-    private void checkMaterialSlots(Player player, int size) {
+    @Override
+    public Player getPlayer() {
+        return player;
+    }
 
+    private void checkMaterialSlots(Player player, int size) {
+        ConfigForgeGui forgeGui = ConfigForgeGui.inst();
         int count1 = 0, count2 = 0;
-        for (char c : ForgeGui.getChest()) if (c == '材') count1++;
-        for (char c : ForgeGui.getChestTime()) if (c == '材') count2++;
-        if (size > count1 || size > count2) {
+        for (char c : forgeGui.getChest()) if (c == '材') count1++;
+        for (char c : forgeGui.getChestTime()) if (c == '材') count2++;
+        if (size > Math.min(count1, count2)) {
             Message.gui__edit__item__material__too_much.msg(player);
         }
     }
 
-    public void onClick(InventoryClickEvent event) {
-        final Player player = (Player)event.getWhoClicked();
+    @Override
+    public void onClick(
+            InventoryAction action, ClickType click,
+            InventoryType.SlotType slotType, int slot,
+            ItemStack currentItem, ItemStack cursor,
+            InventoryView view, InventoryClickEvent event
+    ) {
         Config.playSoundClickInventory(player);
         if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();
@@ -212,9 +206,9 @@ public class EditHolder implements IHolder {
                         }
                     }
                     craftData.setMaterial(list);
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                     checkMaterialSlots(player, list.size());
-                    open(player);
+                    open();
                 });
                 break;
             }
@@ -227,9 +221,9 @@ public class EditHolder implements IHolder {
                         Message.not_integer.msg(player);
                     } else {
                         craftData.setChance(chance);
-                        Craft.save(getId(), craftData);
+                        manager.save(getId(), craftData);
                     }
-                    open(player);
+                    open();
                 });
                 break;
             }
@@ -244,7 +238,7 @@ public class EditHolder implements IHolder {
                         Integer chance = Util.parseInt(str).orElse(null);
                         if (chance == null) {
                             Message.not_integer.msg(player);
-                            open(player);
+                            open();
                             return;
                         }
                         list.add(chance);
@@ -258,9 +252,9 @@ public class EditHolder implements IHolder {
                         Prompter.onChat(player, consumeChat);
                     } else {
                         craftData.setMultiple(list);
-                        Craft.save(getId(), craftData);
+                        manager.save(getId(), craftData);
                     }
-                    open(player);
+                    open();
                 });
                 Prompter.onChat(player, consumeChat);
                 break;
@@ -274,9 +268,9 @@ public class EditHolder implements IHolder {
                         Message.not_integer.msg(player);
                     } else {
                         craftData.setCost(cost);
-                        Craft.save(getId(), craftData);
+                        manager.save(getId(), craftData);
                     }
-                    open(player);
+                    open();
                 });
                 break;
             }
@@ -289,9 +283,9 @@ public class EditHolder implements IHolder {
                         Message.gui__edit_display_not_found.msg(player);
                     } else {
                         craftData.setDisplayItem(item);
-                        Craft.save(getId(), craftData);
+                        manager.save(getId(), craftData);
                     }
-                    open(player);
+                    open();
                 });
                 break;
             }
@@ -305,8 +299,8 @@ public class EditHolder implements IHolder {
                             list.add(content);
                     }
                     craftData.setItems(list);
-                    Craft.save(getId(), craftData);
-                    open(player);
+                    manager.save(getId(), craftData);
+                    open();
                 });
                 break;
             }
@@ -337,7 +331,8 @@ public class EditHolder implements IHolder {
                                 Message.gui__edit_command_lore.list()
                         );
                         inv.addItem(itemStack);
-                        open(player, inv, () -> isChat.set(false));
+                        open();
+                        isChat.set(false);
                     });
                 }, inv -> { // onClose
                     if (isChat.get()) return false;
@@ -349,8 +344,8 @@ public class EditHolder implements IHolder {
                         commands.add(meta.getDisplayName());
                     }
                     craftData.setCommands(commands);
-                    Craft.save(getId(), craftData);
-                    open(player);
+                    manager.save(getId(), craftData);
+                    open();
                     return true;
                 });
 
@@ -359,10 +354,10 @@ public class EditHolder implements IHolder {
             case 7: { // 锻造时长
                 if (event.isLeftClick()) {
                     craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 600 : 60));
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                 } else if (event.isRightClick()) {
                     craftData.setTime(Math.max(0, craftData.getTime() - (event.isShiftClick() ? 600 : 60)));
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     player.closeInventory();
                     Message.gui__edit_time_cost.msg(player);
@@ -372,9 +367,9 @@ public class EditHolder implements IHolder {
                             Message.not_integer.msg(player);
                         } else {
                             craftData.setTimeCost(cost);
-                            Craft.save(getId(), craftData);
+                            manager.save(getId(), craftData);
                         }
-                        open(player);
+                        open();
                     });
                     break;
                 }
@@ -424,10 +419,10 @@ public class EditHolder implements IHolder {
                         } else {
                             craftData.setCountLimit(group);
                         }
-                        Craft.save(getId(), craftData);
+                        manager.save(getId(), craftData);
                         player.closeInventory();
                     }, inv -> {
-                        open(player);
+                        open();
                     });
                     return;
                 }
@@ -437,7 +432,7 @@ public class EditHolder implements IHolder {
                     } else {
                         craftData.setCountLimit("");
                     }
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                     event.getView().getTopInventory().setItem(8, item8());
                     Util.submitInvUpdate(player);
                 }
@@ -447,16 +442,16 @@ public class EditHolder implements IHolder {
                 craftData.setDifficult(!craftData.isDifficult());
                 event.getView().getTopInventory().setItem(9, item9());
                 Util.submitInvUpdate(player);
-                Craft.save(getId(), craftData);
+                manager.save(getId(), craftData);
                 break;
             }
             case 10: { // 保底次数
                 if (event.isLeftClick()) {
                     craftData.setGuaranteeFailTimes(craftData.getGuaranteeFailTimes() + (event.isShiftClick() ? 10 : 1));
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                 } else if (event.isRightClick()) {
                     craftData.setGuaranteeFailTimes(Math.max(0, craftData.getGuaranteeFailTimes() - (event.isShiftClick() ? 10 : 1)));
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(10, item10());
                 Util.submitInvUpdate(player);
@@ -465,10 +460,10 @@ public class EditHolder implements IHolder {
             case 11: { // 连击次数
                 if (event.isLeftClick()) {
                     craftData.setCombo(craftData.getCombo() + (event.isShiftClick() ? 10 : 1));
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                 } else if (event.isRightClick()) {
                     craftData.setCombo(Math.max(0, craftData.getCombo() - (event.isShiftClick() ? 10 : 1)));
-                    Craft.save(getId(), craftData);
+                    manager.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(11, item11());
                 Util.submitInvUpdate(player);

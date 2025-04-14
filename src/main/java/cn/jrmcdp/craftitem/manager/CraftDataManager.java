@@ -1,15 +1,18 @@
-package cn.jrmcdp.craftitem.config;
+package cn.jrmcdp.craftitem.manager;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.config.Config;
+import cn.jrmcdp.craftitem.config.FileConfig;
+import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
-import cn.jrmcdp.craftitem.holder.ForgeHolder;
-import com.google.common.collect.Lists;
+import cn.jrmcdp.craftitem.func.AbstractModule;
+import cn.jrmcdp.craftitem.gui.GuiForge;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
@@ -30,15 +34,20 @@ import java.util.logging.Logger;
 
 import static cn.jrmcdp.craftitem.utils.Utils.replace;
 
-public class Craft {
-    private static YamlConfiguration craftConfig;
+@AutoRegister
+public class CraftDataManager extends AbstractModule {
+    private YamlConfiguration craftConfig;
+    private final Map<String, CraftData> craftDataMap = new HashMap<>();
+    private List<String> craftSuccessCommands;
+    private List<String> craftFailCommands;
+    private List<String> craftDoneCommands;
 
-    private static final Map<String, CraftData> craftDataMap = new HashMap<>();
-    private static List<String> craftSuccessCommands;
-    private static List<String> craftFailCommands;
-    private static List<String> craftDoneCommands;
+    public CraftDataManager(CraftItem plugin) {
+        super(plugin);
+    }
 
-    public static void reload() {
+    @Override
+    public void reloadConfig(MemoryConfiguration pluginConfig) {
         craftConfig = FileConfig.Craft.loadConfig();
         craftDataMap.clear();
         for (String key : craftConfig.getKeys(false)) {
@@ -50,32 +59,31 @@ public class Craft {
                 logger.warning("无法读取 Craft.yml 的项目 " + key + ": " + object);
             }
         }
-        FileConfiguration pluginConfig = CraftItem.getPlugin().getConfig();
         craftSuccessCommands = pluginConfig.getStringList("Events.ForgeSuccess");
         craftFailCommands = pluginConfig.getStringList("Events.ForgeFail");
         craftDoneCommands = pluginConfig.getStringList("Events.ForgeDone");
     }
 
-    public static Map<String, CraftData> getCraftDataMap() {
+    public Map<String, CraftData> getCraftDataMap() {
         return craftDataMap;
     }
 
-    public static CraftData getCraftData(String key) {
+    public CraftData getCraftData(String key) {
         return craftDataMap.get(key);
     }
 
-    public static void save(String id, CraftData craftData) {
+    public void save(String id, CraftData craftData) {
         craftDataMap.put(id, craftData);
         craftConfig.set(id, craftData);
         FileConfig.Craft.saveConfig(craftConfig);
     }
-    public static void delete(String id) {
+    public void delete(String id) {
         craftDataMap.remove(id);
         craftConfig.set(id, null);
         FileConfig.Craft.saveConfig(craftConfig);
     }
 
-    public static boolean doForgeResult(ForgeHolder holder, Player player, boolean win, int multiple, Runnable cancel) {
+    public boolean doForgeResult(GuiForge holder, Player player, boolean win, int multiple, Runnable cancel) {
         String id = holder.getId();
         CraftData craftData = holder.getCraftData();
         PlayerData playerData = holder.getPlayerData();
@@ -195,12 +203,12 @@ public class Craft {
                 if (cancel != null) cancel.run();
                 return;
             }
-            ForgeGui.openGui(playerData, id, craftData);
+            holder.parent.openGui(playerData, id, craftData);
         }, 10);
         return true;
     }
 
-    public static void playForgeAnimate(Player player, BiConsumer<Runnable, Runnable> consumer) {
+    public void playForgeAnimate(Player player, BiConsumer<Runnable, Runnable> consumer) {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onPlayerQuit(PlayerQuitEvent eventB) {
@@ -234,5 +242,9 @@ public class Craft {
                 }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
             }
         }, CraftItem.getPlugin());
+    }
+
+    public static CraftDataManager inst() {
+        return instanceOf(CraftDataManager.class);
     }
 }

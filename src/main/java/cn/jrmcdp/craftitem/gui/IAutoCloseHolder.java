@@ -1,4 +1,4 @@
-package cn.jrmcdp.craftitem.holder;
+package cn.jrmcdp.craftitem.gui;
 
 import org.bukkit.inventory.InventoryHolder;
 

@@ -1,6 +1,6 @@
 package cn.jrmcdp.craftitem.event;
 
-import cn.jrmcdp.craftitem.holder.ForgeHolder;
+import cn.jrmcdp.craftitem.gui.GuiForge;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -15,11 +15,11 @@ public class CraftFailEvent extends Event {
         return handlers;
     }
     private final Player player;
-    private final ForgeHolder holder;
+    private final GuiForge holder;
     private final int oldValue;
     private int newValue;
     private int multiple;
-    public CraftFailEvent(Player player, ForgeHolder holder, int oldValue, int newValue, int multiple) {
+    public CraftFailEvent(Player player, GuiForge holder, int oldValue, int newValue, int multiple) {
         this.player = player;
         this.holder = holder;
         this.oldValue = oldValue;
@@ -31,7 +31,7 @@ public class CraftFailEvent extends Event {
         return player;
     }
 
-    public ForgeHolder getHolder() {
+    public GuiForge getHolder() {
         return holder;
     }
 

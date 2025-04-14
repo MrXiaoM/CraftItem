@@ -1,5 +1,7 @@
 package cn.jrmcdp.craftitem.minigames;
 
+import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.minigames.game.BasicGameConfig;
 import cn.jrmcdp.craftitem.minigames.game.GameInstance;
 import cn.jrmcdp.craftitem.minigames.game.GameSettings;
@@ -9,6 +11,7 @@ import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
 import cn.jrmcdp.craftitem.minigames.utils.OffsetUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -18,30 +21,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
-public class GameManager implements Listener {
-    static GameManager inst;
-    static JavaPlugin plugin;
-    public static JavaPlugin getPlugin() {
-        return plugin;
-    }
+@AutoRegister
+public class GameManager extends AbstractModule implements Listener {
     public static GameManager inst() {
-        return inst;
+        return instanceOf(GameManager.class);
     }
     public final MiniGames miniGames;
     protected final ConcurrentHashMap<UUID, GamingPlayer> gamingPlayerMap = new ConcurrentHashMap<>();
-    public GameManager(JavaPlugin plugin) {
-        if (GameManager.inst != null) throw new IllegalStateException("GameManager is already loaded");
-        GameManager.plugin = plugin;
-        GameManager.inst = this;
-
+    public GameManager(CraftItem plugin) {
+        super(plugin);
         this.miniGames = new MiniGames(plugin);
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        registerEvents();
         if (Util.isPresent("com.destroystokyo.paper.event.player.PlayerJumpEvent")) {
             Bukkit.getPluginManager().registerEvents(new OnPaper(this::onJump), plugin);
         } else {
@@ -49,11 +47,15 @@ public class GameManager implements Listener {
         }
     }
 
-    public void reloadConfig() {
+    public Logger getLogger() {
+        return plugin.getLogger();
+    }
+
+    @Override
+    public void reloadConfig(MemoryConfiguration config) {
         this.miniGames.unload();
         this.miniGames.load();
         unload();
-        FileConfiguration config = plugin.getConfig();
         OffsetUtils.loadConfig(config.getConfigurationSection("offset-characters"));
     }
 
@@ -64,7 +66,8 @@ public class GameManager implements Listener {
         gamingPlayerMap.clear();
     }
 
-    public void disable() {
+    @Override
+    public void onDisable() {
         unload();
         miniGames.disable();
     }
@@ -80,7 +83,7 @@ public class GameManager implements Listener {
 
         gamingPlayer.cancel();
         gamingPlayerMap.remove(uuid);
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        plugin.getScheduler().runTask(() -> {
             if (gamingPlayer.isSuccessful()) {
                 gamingPlayer.getGame().success(gamingPlayer);
             } else {

@@ -39,6 +39,7 @@ dependencies {
     impl("net.kyori:adventure-platform-bukkit:4.3.4")
     impl("net.kyori:adventure-text-minimessage:4.17.0")
     impl("de.tr7zw:item-nbt-api:2.14.2-SNAPSHOT")
+    impl("com.github.technicallycoded:FoliaLib:0.4.4")
     impl("top.mrxiaom:PluginBase:1.3.8")
     impl(project(":paper"))
 }

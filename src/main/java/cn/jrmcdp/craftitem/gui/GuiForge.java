@@ -1,9 +1,9 @@
-package cn.jrmcdp.craftitem.holder;
+package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.Config;
-import cn.jrmcdp.craftitem.config.Craft;
-import cn.jrmcdp.craftitem.config.ForgeGui;
+import cn.jrmcdp.craftitem.manager.CraftDataManager;
+import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
@@ -13,43 +13,48 @@ import cn.jrmcdp.craftitem.utils.Utils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public class ForgeHolder implements IHolder {
+public class GuiForge implements IHolder {
     private final PlayerData playerData;
     private final String id;
     private final CraftData craftData;
+    private final String title;
+    private final Map<String, Icon> items;
+
     private Inventory inventory;
     public final Long endTime;
     public final char[] chest;
     public boolean done;
     public boolean processing;
     private final Set<Integer> timeSlots = new HashSet<>();
-    ForgeHolder(PlayerData playerData, String id, CraftData craftData) {
+    public final CraftDataManager manager = CraftDataManager.inst();
+    public final ConfigForgeGui parent;
+    public GuiForge(ConfigForgeGui parent, String title, Map<String, Icon> items, PlayerData playerData, String id, CraftData craftData) {
+        this.parent = parent;
+        this.title = title;
+        this.items = items;
         this.playerData = playerData;
         this.id = id;
         this.craftData = craftData;
         this.endTime = playerData.getEndTime(id);
         this.done = endTime != null && System.currentTimeMillis() >= endTime;
         this.processing = endTime != null && (System.currentTimeMillis() >= endTime - craftData.getTime() * 1000L);
-        this.chest = processing || done ? ForgeGui.getChestTime() : ForgeGui.getChest();
-    }
-
-    public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
-        ForgeHolder holder = new ForgeHolder(playerData, id, craftData);
-        Inventory inventory = CraftItem.getInventoryFactory().create(holder, size, PAPI.setPlaceholders(playerData.getPlayer(), title));
-        holder.inventory = inventory;
-        return inventory;
+        this.chest = processing || done ? parent.getChestTime() : parent.getChest();
     }
 
     public ItemStack getTimeIcon() {
@@ -58,17 +63,17 @@ public class ForgeHolder implements IHolder {
         if (craftData.getTime() > 0) {
             if (Config.isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
-                    icon = ForgeGui.items.get("时_完成");
+                    icon = parent.items.get("时_完成");
                 } else if (processing) {
-                    icon = ForgeGui.items.get("时_进行中");
+                    icon = parent.items.get("时_进行中");
                 } else {
-                    icon = ForgeGui.items.get("时");
+                    icon = parent.items.get("时");
                 }
             } else {
-                icon = ForgeGui.items.get("时_条件不足");
+                icon = parent.items.get("时_条件不足");
             }
         } else {
-            icon = ForgeGui.items.get("时_未开启");
+            icon = parent.items.get("时_未开启");
         }
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
         double progress = endTime == null ? 0.0d : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
@@ -136,9 +141,93 @@ public class ForgeHolder implements IHolder {
         return inventory;
     }
 
-    public void onClick(InventoryClickEvent event) {
-        final PlayerData playerData = getPlayerData();
-        final Player player = playerData.getPlayer();
+    @Override
+    public Player getPlayer() {
+        return playerData.getPlayer();
+    }
+
+    @Override
+    public Inventory newInventory() {
+        inventory = CraftItem.getInventoryFactory().create(this, chest.length, PAPI.setPlaceholders(playerData.getPlayer(), title));
+        Player player = getPlayer();
+        ItemStack[] is = new ItemStack[chest.length];
+        Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
+        for (int i = 0; i < chest.length; i++) {
+            String key = String.valueOf(chest[i]);
+            switch (key) {
+                case "材": {
+                    if (iterator.hasNext()) {
+                        is[i] = iterator.next();
+                        break;
+                    }
+                    Icon icon = items.get(key);
+                    if (icon != null) {
+                        is[i] = icon.getItem(player);
+                    }
+                    break;
+                }
+                case "物": {
+                    ItemStack item = craftData.getDisplayItem().clone();
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = meta == null ? null : meta.getLore();
+                    if (lore == null) lore = new ArrayList<>();
+                    lore.addAll(Message.gui__craft_info__lore__header.list());
+                    for (ItemStack itemStack : craftData.getItems())
+                        lore.add(Message.gui__craft_info__lore__item.get(Utils.getItemName(itemStack), itemStack.getAmount()));
+                    for (String command : craftData.getCommands()) {
+                        String[] split = command.split("\\|\\|");
+                        if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.get(split[1]));
+                    }
+                    AdventureItemStack.setItemLoreMiniMessage(item, lore);
+                    is[i] = item;
+                    break;
+                }
+                case "锻": {
+                    Icon icon = items.get(craftData.isDifficult()
+                            ? "锻_困难"
+                            : (craftData.getCombo() > 0 ? "锻_连击" : "锻"));
+                    if (icon != null) {
+                        int count = playerData.getForgeCount(id);
+                        int limit = craftData.getForgeCountLimit(player);
+                        is[i] = icon.getItem(
+                                player,
+                                Pair.of("<ChanceName>", Config.getChanceName(craftData.getChance())),
+                                Pair.of("<Score>", playerData.getScore(id)),
+                                Pair.of("<Cost>", craftData.getCost()),
+                                Pair.of("<Combo>", craftData.getCombo()),
+                                Pair.of("<LimitCountCurrent>", count),
+                                Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.get()),
+                                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.get(count, limit) : Message.craft__unlimited.get())
+                        );
+                    }
+                    break;
+                }
+                case "时": {
+                    putTimeSlot(i);
+                    is[i] = getTimeIcon();
+                    break;
+                }
+                default : {
+                    Icon icon = items.get(key);
+                    if (icon != null) {
+                        is[i] = icon.getItem(player);
+                    }
+                    break;
+                }
+            }
+        }
+        inventory.setContents(is);
+        return null;
+    }
+
+    @Override
+    public void onClick(
+            InventoryAction action, ClickType click,
+            InventoryType.SlotType slotType, int slot,
+            ItemStack currentItem, ItemStack cursor,
+            InventoryView view, InventoryClickEvent event
+    ) {
+        Player player = playerData.getPlayer();
         Config.playSoundClickInventory(player);
 
         if (!event.getClick().isRightClick() && !event.getClick().isLeftClick()) return;
@@ -162,7 +251,7 @@ public class ForgeHolder implements IHolder {
             return;
         }
         // 其它图标
-        Icon icon = ForgeGui.items.get(key);
+        Icon icon = parent.items.get(key);
         if (icon == null) return;
         if (!event.isShiftClick()) {
             if (event.isLeftClick()) {
@@ -202,7 +291,7 @@ public class ForgeHolder implements IHolder {
             return;
         }
         int cost = craftData.getCost();
-        if (!CraftItem.getEcon().has(player, cost)) {
+        if (!parent.plugin.options.economy().has(player, cost)) {
             Message.craft__not_enough_money.msg(player);
             return;
         }
@@ -213,8 +302,7 @@ public class ForgeHolder implements IHolder {
             Message.craft__forge_limit.msg(player, Math.max(limit, 0));
             return;
         }
-
-        CraftItem.getEcon().withdrawPlayer(player, cost);
+        parent.plugin.options.economy().takeMoney(player, cost);
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
         final int multiple = RandomUtils.nextInt(3);
         player.closeInventory();
@@ -226,8 +314,8 @@ public class ForgeHolder implements IHolder {
             );
             return;
         }
-        Craft.playForgeAnimate(player, (clear, cancel) -> {
-            if (Craft.doForgeResult(this, player, win, multiple, cancel)) {
+        manager.playForgeAnimate(player, (clear, cancel) -> {
+            if (manager.doForgeResult(this, player, win, multiple, cancel)) {
                 clear.run();
             }
         });
@@ -245,7 +333,7 @@ public class ForgeHolder implements IHolder {
         if (craftData.isDifficult() || combo <= 0) return;
 
         int costOneTime = craftData.getCost();
-        if (!CraftItem.getEcon().has(player, costOneTime * combo)) {
+        if (!parent.plugin.options.economy().has(player, costOneTime * combo)) {
             Message.craft__not_enough_money.msg(player);
             return;
         }
@@ -258,15 +346,15 @@ public class ForgeHolder implements IHolder {
         }
 
         player.closeInventory();
-        Craft.playForgeAnimate(player, (clear, cancel) -> {
-            Bukkit.getScheduler().runTask(CraftItem.getPlugin(), () -> {
+        manager.playForgeAnimate(player, (clear, cancel) -> {
+            parent.plugin.getScheduler().runTask(() -> {
                 if (craftData.isNotEnoughMaterial(player)) return;
 
                 for (int i = 0; i < combo; i++) {
-                    CraftItem.getEcon().withdrawPlayer(player, costOneTime);
+                    parent.plugin.options.economy().takeMoney(player, costOneTime);
                     final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
                     final int multiple = RandomUtils.nextInt(3);
-                    if (!Craft.doForgeResult(this, player, win, multiple, null)) {
+                    if (!manager.doForgeResult(this, player, win, multiple, null)) {
                         break;
                     }
                     if (craftData.isNotEnoughMaterial(player)) break;
@@ -313,7 +401,7 @@ public class ForgeHolder implements IHolder {
         }
         if (!processing) { // 如果时长锻造未开始
             int cost = craftData.getTimeCost();
-            if (!CraftItem.getEcon().has(player, cost)) {
+            if (!parent.plugin.options.economy().has(player, cost)) {
                 Message.craft__not_enough_money.msg(player);
                 return;
             }
@@ -325,7 +413,7 @@ public class ForgeHolder implements IHolder {
             }
 
             player.closeInventory();
-            CraftItem.getEcon().withdrawPlayer(player, cost);
+            parent.plugin.options.economy().takeMoney(player, cost);
             craftData.takeAllMaterial(player);
             long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
             playerData.setTime(key, endTime);

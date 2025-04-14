@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.utils;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.Message;
-import cn.jrmcdp.craftitem.holder.IAutoCloseHolder;
+import cn.jrmcdp.craftitem.gui.IAutoCloseHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

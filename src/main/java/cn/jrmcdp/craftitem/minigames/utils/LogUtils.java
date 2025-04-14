@@ -17,7 +17,7 @@ public final class LogUtils {
      * @param message The message to log.
      */
     public static void info(@NotNull String message) {
-        GameManager.getPlugin().getLogger().info(message);
+        GameManager.inst().getLogger().info(message);
     }
 
     /**
@@ -26,7 +26,7 @@ public final class LogUtils {
      * @param message The message to log.
      */
     public static void warn(@NotNull String message) {
-        GameManager.getPlugin().getLogger().warning(message);
+        GameManager.inst().getLogger().warning(message);
     }
 
     /**
@@ -35,7 +35,7 @@ public final class LogUtils {
      * @param message The message to log.
      */
     public static void severe(@NotNull String message) {
-        GameManager.getPlugin().getLogger().severe(message);
+        GameManager.inst().getLogger().severe(message);
     }
 
     /**
@@ -45,7 +45,7 @@ public final class LogUtils {
      * @param throwable  The throwable exception to log.
      */
     public static void warn(@NotNull String message, Throwable throwable) {
-        GameManager.getPlugin().getLogger().log(Level.WARNING, message, throwable);
+        GameManager.inst().getLogger().log(Level.WARNING, message, throwable);
     }
 
     /**
@@ -55,7 +55,7 @@ public final class LogUtils {
      * @param throwable  The throwable exception to log.
      */
     public static void severe(@NotNull String message, Throwable throwable) {
-        GameManager.getPlugin().getLogger().log(Level.SEVERE, message, throwable);
+        GameManager.inst().getLogger().log(Level.SEVERE, message, throwable);
     }
 
     private LogUtils() {
