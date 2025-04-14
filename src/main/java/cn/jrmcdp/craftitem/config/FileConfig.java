@@ -39,7 +39,6 @@ public enum FileConfig {
     public YamlConfiguration loadConfig(String path, String name) {
         File parent = CraftItem.getPlugin().getDataFolder();
         File file = new File(parent, path + File.separator + name + ".yml");
-        Utils.createNewFile(file);
         return ConfigUtils.load(file);
     }
 

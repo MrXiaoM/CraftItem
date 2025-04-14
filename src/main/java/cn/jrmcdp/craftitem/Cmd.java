@@ -4,7 +4,6 @@ import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.holder.EditHolder;
 import cn.jrmcdp.craftitem.manager.DataManager;
-import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -13,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.utils.PAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,7 +191,7 @@ public class Cmd implements CommandExecutor, TabCompleter {
         }
         for (String str : craftData.getCommands()) {
             String cmd = str.split("\\|\\|")[0];
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderSupport.setPlaceholders(player, cmd));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
         }
         return true;
     }

@@ -246,11 +246,11 @@ public enum Message {
         return String.format(config.getOrDefault(this, defValue), args);
     }
     public boolean msg0(CommandSender sender, Object... args) {
-        AdventureManagerImpl.getInstance().sendMessage(sender, get(args));
+        AdventureManagerImpl.sendMessage(sender, get(args));
         return true;
     }
     public boolean msg(CommandSender sender, Object... args) {
-        AdventureManagerImpl.getInstance().sendMessage(sender, prefix.get() + get(args));
+        AdventureManagerImpl.sendMessage(sender, prefix.get() + get(args));
         return true;
     }
     

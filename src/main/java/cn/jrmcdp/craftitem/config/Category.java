@@ -4,7 +4,6 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.CategoryHolder;
-import cn.jrmcdp.craftitem.utils.AdventureItemStack;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -13,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class Category {
                 String name = section.getString(key + ".Name");
                 List<String> lore = section.getStringList(key + ".Lore");
                 if (name != null) AdventureItemStack.setItemDisplayName(itemStack, name);
-                if (!lore.isEmpty()) AdventureItemStack.setItemLore(itemStack, lore);
+                if (!lore.isEmpty()) AdventureItemStack.setItemLoreMiniMessage(itemStack, lore);
             }
             items.put(key, itemStack);
         }
@@ -90,7 +90,7 @@ public class Category {
                 String name = iterator.next();
                 CraftData craftData = Craft.getCraftData(name);
                 if (craftData == null) {
-                    is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.get(name), null);
+                    is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.get(name));
                     continue;
                 }
                 ItemStack clone = craftData.getDisplayItem().clone();
@@ -104,7 +104,7 @@ public class Category {
                     String[] split = command.split("\\|\\|");
                     if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.get(split[1]));
                 }
-                AdventureItemStack.setItemLore(clone, lore);
+                AdventureItemStack.setItemLoreMiniMessage(clone, lore);
                 is[i] = clone;
                 holder.getSlot()[i] = name;
             } else {

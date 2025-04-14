@@ -7,7 +7,6 @@ import cn.jrmcdp.craftitem.minigames.game.GamingPlayer;
 import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
 import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
 import cn.jrmcdp.craftitem.minigames.utils.OffsetUtils;
-import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,6 +18,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,10 +40,9 @@ public class GameManager implements Listener {
         GameManager.plugin = plugin;
         GameManager.inst = this;
 
-        AdventureManagerImpl.load(plugin);
         this.miniGames = new MiniGames(plugin);
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        if (Utils.isPresent("com.destroystokyo.paper.event.player.PlayerJumpEvent")) {
+        if (Util.isPresent("com.destroystokyo.paper.event.player.PlayerJumpEvent")) {
             Bukkit.getPluginManager().registerEvents(new OnPaper(this::onJump), plugin);
         } else {
             plugin.getLogger().warning("当前服务端非 Paper 服务端，困难锻造中 dance 类型的小游戏（默认配置不使用）将无法正常使用");

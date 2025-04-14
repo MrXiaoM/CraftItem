@@ -9,8 +9,6 @@ import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.minigames.GameData;
-import cn.jrmcdp.craftitem.utils.Pair;
-import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -21,6 +19,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.utils.PAPI;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class ForgeHolder implements IHolder {
 
     public static Inventory buildGui(PlayerData playerData, String id, CraftData craftData, int size, String title) {
         ForgeHolder holder = new ForgeHolder(playerData, id, craftData);
-        Inventory inventory = CraftItem.getInventoryFactory().create(holder, size, PlaceholderSupport.setPlaceholders(playerData.getPlayer(), title));
+        Inventory inventory = CraftItem.getInventoryFactory().create(holder, size, PAPI.setPlaceholders(playerData.getPlayer(), title));
         holder.inventory = inventory;
         return inventory;
     }
@@ -307,7 +307,7 @@ public class ForgeHolder implements IHolder {
             }
             for (String str : craftData.getCommands()) {
                 String cmd = str.split("\\|\\|")[0];
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderSupport.setPlaceholders(player, cmd));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
             }
             return;
         }

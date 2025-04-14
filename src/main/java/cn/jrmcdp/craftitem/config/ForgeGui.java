@@ -1,13 +1,10 @@
 package cn.jrmcdp.craftitem.config;
 
-import cn.jrmcdp.craftitem.ColorHelper;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
-import cn.jrmcdp.craftitem.utils.AdventureItemStack;
-import cn.jrmcdp.craftitem.utils.Pair;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -18,6 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import top.mrxiaom.pluginbase.utils.AdventureItemStack;
+import top.mrxiaom.pluginbase.utils.ColorHelper;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -139,7 +139,7 @@ public class ForgeGui {
                         String[] split = command.split("\\|\\|");
                         if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.get(split[1]));
                     }
-                    AdventureItemStack.setItemLore(item, lore);
+                    AdventureItemStack.setItemLoreMiniMessage(item, lore);
                     is[i] = item;
                     break;
                 }

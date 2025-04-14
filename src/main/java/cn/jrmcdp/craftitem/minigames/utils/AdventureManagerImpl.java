@@ -9,40 +9,23 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.mrxiaom.pluginbase.utils.AdventureUtil;
 
 import java.time.Duration;
 
-import static cn.jrmcdp.craftitem.utils.MiniMessageConvert.miniMessage;
+import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class AdventureManagerImpl {
-    private final BukkitAudiences adventure;
-    private static AdventureManagerImpl instance;
-
-    private AdventureManagerImpl(JavaPlugin plugin) {
-        this.adventure = BukkitAudiences.create(plugin);
-        instance = this;
+    public static void sendMessage(CommandSender sender, String message) {
+        AdventureUtil.adventure().sender(sender).sendMessage(miniMessage(message));
     }
 
-    public static void load(JavaPlugin plugin) {
-        if (instance == null) {
-            new AdventureManagerImpl(plugin);
-        }
-    }
-
-    public static AdventureManagerImpl getInstance() {
-        return instance;
-    }
-
-    public void sendMessage(CommandSender sender, String message) {
-        adventure.sender(sender).sendMessage(miniMessage(message));
-    }
-
-    public void sendTitle(Player player, String title, String subtitle, int in, int duration, int out) {
+    public static void sendTitle(Player player, String title, String subtitle, int in, int duration, int out) {
         sendTitle(player, miniMessage(title), miniMessage(subtitle), in, duration, out);
     }
     
-    public void sendTitle(Player player, Component title, Component subtitle, int in, int duration, int out) {
-        Audience audience = adventure.player(player);
+    public static void sendTitle(Player player, Component title, Component subtitle, int in, int duration, int out) {
+        Audience audience = AdventureUtil.adventure().player(player);
         Title.Times times = Title.Times.times(
                 Duration.ofMillis(in * 50L),
                 Duration.ofMillis(duration * 50L),
@@ -51,15 +34,14 @@ public class AdventureManagerImpl {
         audience.showTitle(Title.title(title, subtitle, times));
     }
     
-    public void sendActionbar(Player player, String s) {
-        Audience audience = adventure.player(player);
+    public static void sendActionbar(Player player, String s) {
+        Audience audience = AdventureUtil.adventure().player(player);
         audience.sendActionBar(miniMessage(s));
     }
     
-    public void sendSound(Player player, Sound.Source source, Key key, float volume, float pitch) {
+    public static void sendSound(Player player, Sound.Source source, Key key, float volume, float pitch) {
         Sound sound = Sound.sound(key, source, volume, pitch);
-        Audience au = adventure.player(player);
+        Audience au = AdventureUtil.adventure().player(player);
         au.playSound(sound);
     }
-
 }

@@ -4,6 +4,7 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.CraftMaterial;
 import cn.jrmcdp.craftitem.minigames.utils.LogUtils;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Registry;
@@ -13,6 +14,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import top.mrxiaom.pluginbase.utils.AdventureItemStack;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,32 +24,8 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("UnusedReturnValue")
 public class Utils {
-    public static boolean isPresent(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    public static boolean createDirectory(File file) {
-        return !file.exists() && file.mkdirs();
-    }
-
-    public static boolean createNewFile(File file) {
-        if (file.exists()) return false;
-        try {
-            return file.createNewFile();
-        } catch (IOException e) {
-            LogUtils.warn("创建文件 " + file.getName() + " 时出现一个错误", e);
-            return false;
-        }
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    public static void updateInventory(Player player) {
-        player.updateInventory();
+    public static List<String> replace(List<String> list, Pair<String, Object>... replacements) {
+        return Pair.replace(list, replacements);
     }
 
     /**
@@ -148,22 +127,6 @@ public class Utils {
             map.put(item, itemStack.getAmount());
         }
         return map;
-    }
-
-    public static Integer tryParseInt(String text) {
-        try {
-            return Integer.parseInt(text);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    public static Double tryParseDouble(String text) {
-        try {
-            return Double.parseDouble(text);
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     public static Optional<Material> parseMaterial(String s) {

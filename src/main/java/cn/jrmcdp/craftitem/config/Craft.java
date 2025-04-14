@@ -7,8 +7,7 @@ import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.holder.ForgeHolder;
-import cn.jrmcdp.craftitem.utils.Pair;
-import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +19,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import top.mrxiaom.pluginbase.utils.PAPI;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
-import static cn.jrmcdp.craftitem.utils.Pair.replace;
+import static cn.jrmcdp.craftitem.utils.Utils.replace;
 
 public class Craft {
     private static YamlConfiguration craftConfig;
@@ -134,7 +135,7 @@ public class Craft {
                 }
                 for (String str : craftData.getCommands()) {
                     String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderSupport.setPlaceholders(player, cmd));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
                 }
             } else {
                 switch (e.getMultiple()) {

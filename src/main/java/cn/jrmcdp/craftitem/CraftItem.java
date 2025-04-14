@@ -17,10 +17,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.BukkitPlugin;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.io.File;
 
-public class CraftItem extends JavaPlugin {
+public class CraftItem extends BukkitPlugin {
     public static final String netKyori;
     static {
         netKyori = new String(new char[] { 'n', 'e', 't', '.', 'k', 'y', 'o', 'r', 'i' });
@@ -35,8 +37,18 @@ public class CraftItem extends JavaPlugin {
     private PlayerListener playerListener;
     YamlConfiguration config;
 
+    public CraftItem() {
+        super(new OptionsBuilder()
+                .bungee(false)
+                .adventure(true)
+                .database(false)
+                .reconnectDatabaseWhenReloadConfig(false)
+                .vaultEconomy(true)
+                .scanIgnore("cn.jrmcdp.craftitem.libs"));
+    }
+
     public static CraftItem getPlugin() {
-        return plugin;
+        return (CraftItem) getInstance();
     }
 
     public static Economy getEcon() {
@@ -52,24 +64,22 @@ public class CraftItem extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {
+    public void beforeLoad() {
         MinecraftVersion.replaceLogger(getLogger());
         MinecraftVersion.disableUpdateCheck();
         MinecraftVersion.disableBStats();
         MinecraftVersion.getVersion();
     }
 
-    public void onEnable() {
-        super.onEnable();
+    @Override
+    public void beforeEnable() {
         if (!setupEconomy()) {
             Bukkit.getConsoleSender().sendMessage(Message.prefix + "§c未安装 Vault 或无法找到已与 Vault 挂钩的经济插件，自动关闭本插件");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        PlaceholderSupport.init();
-        MiniMessageConvert.init();
-        if (Utils.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")
-        && Utils.isPresent(netKyori + ".adventure.text.Component")) try {
+        if (Util.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")
+        && Util.isPresent(netKyori + ".adventure.text.Component")) try {
             inventoryFactory = new PaperInventoryFactory();
         } catch (Throwable ignored) {
             inventoryFactory = new BukkitInventoryFactory();
@@ -77,7 +87,6 @@ public class CraftItem extends JavaPlugin {
             inventoryFactory = new BukkitInventoryFactory();
         }
         miniGames = new GameManager(this);
-        plugin = this;
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
         Message.reload();
@@ -91,11 +100,15 @@ public class CraftItem extends JavaPlugin {
                 playerListener = new PlayerListener()
         );
         Cmd.register(this, "CraftItem");
+    }
+
+    @Override
+    protected void afterEnable() {
         Bukkit.getConsoleSender().sendMessage(Message.prefix + "§a插件成功启用 By.ZhiBuMiao & MrXiaoM");
     }
 
-    public void onDisable() {
-        super.onDisable();
+    @Override
+    public void beforeDisable() {
         if (miniGames != null) miniGames.disable();
         if (guiListener != null) guiListener.onDisable();
         ConfigurationSerialization.unregisterClass(CraftData.class);
@@ -108,7 +121,7 @@ public class CraftItem extends JavaPlugin {
         ConfigUtils.saveResource("config.yml");
 
         File folder = new File(getDataFolder(), "PlayerData");
-        Utils.createDirectory(folder);
+        Util.mkdirs(folder);
 
         for (String filename : new String[] {
                 "Material.yml",
@@ -128,6 +141,7 @@ public class CraftItem extends JavaPlugin {
     }
     @Override
     public void reloadConfig() {
+        super.reloadConfig();
         config = ConfigUtils.loadOrSaveResource("config.yml");
         if (miniGames != null) miniGames.reloadConfig();
     }

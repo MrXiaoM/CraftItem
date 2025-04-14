@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.minigames.utils;
 
-import cn.jrmcdp.craftitem.utils.Pair;
 import com.google.common.collect.Lists;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;

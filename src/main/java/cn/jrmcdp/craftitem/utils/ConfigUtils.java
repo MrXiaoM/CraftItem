@@ -65,6 +65,7 @@ public class ConfigUtils {
 
     public static YamlConfiguration load(File file) {
         YamlConfiguration config = new YamlConfiguration();
+        if (!file.exists()) return config;
         try {
             FileInputStream stream = new FileInputStream(file);
             config.load(new InputStreamReader(stream, StandardCharsets.UTF_8));

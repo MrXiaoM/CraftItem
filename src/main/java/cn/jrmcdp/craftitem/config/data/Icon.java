@@ -1,13 +1,13 @@
 package cn.jrmcdp.craftitem.config.data;
 
 import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
-import cn.jrmcdp.craftitem.utils.AdventureItemStack;
-import cn.jrmcdp.craftitem.utils.Pair;
-import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import top.mrxiaom.pluginbase.utils.AdventureItemStack;
+import top.mrxiaom.pluginbase.utils.PAPI;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class Icon {
         if (name != null) AdventureItemStack.setItemDisplayName(item, name);
         if (!lore.isEmpty()) {
             List<String> lore = new ArrayList<>();
-            for (String s : PlaceholderSupport.setPlaceholders(player, this.lore)) {
+            for (String s : PAPI.setPlaceholders(player, this.lore)) {
                 for (Pair<String, Object> pair : replacements) {
                     if (s.contains(pair.getKey())) {
                         s = s.replace(pair.getKey(), pair.getValue().toString());
@@ -52,7 +52,7 @@ public class Icon {
                 }
                 lore.add(s);
             }
-            AdventureItemStack.setItemLore(item, lore);
+            AdventureItemStack.setItemLoreMiniMessage(item, lore);
         }
         if (customModelData != null) AdventureItemStack.setCustomModelData(item, customModelData);
         return item;
@@ -76,14 +76,14 @@ public class Icon {
 
     public static void runCommands(Player player, List<String> commands) {
         if (commands == null || commands.isEmpty()) return;
-        commands = PlaceholderSupport.setPlaceholders(player, commands);
+        commands = PAPI.setPlaceholders(player, commands);
         for (String s : commands) {
             if (s.startsWith("[player]")) {
                 Bukkit.dispatchCommand(player, s.substring(8).trim());
             } else if (s.startsWith("[console]")) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.substring(9).trim());
             } else if (s.startsWith("[message]")) {
-                AdventureManagerImpl.getInstance().sendMessage(player, s.substring(9).trim());
+                AdventureManagerImpl.sendMessage(player, s.substring(9).trim());
             } else if (s.startsWith("[close]")) {
                 player.closeInventory();
             }

@@ -1,8 +1,9 @@
 package cn.jrmcdp.craftitem.config.data;
 
-import cn.jrmcdp.craftitem.utils.PlaceholderSupport;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.entity.Player;
+import top.mrxiaom.pluginbase.utils.PAPI;
+import top.mrxiaom.pluginbase.utils.Util;
 
 public class Condition {
     public final String input;
@@ -16,8 +17,8 @@ public class Condition {
     }
 
     public boolean check(Player player) {
-        String i = PlaceholderSupport.setPlaceholders(player, input);
-        String o = PlaceholderSupport.setPlaceholders(player, output);
+        String i = PAPI.setPlaceholders(player, input);
+        String o = PAPI.setPlaceholders(player, output);
         boolean reversed = type.startsWith("!");
         String s = reversed ? type.substring(1) : type;
         switch (s) {
@@ -33,8 +34,8 @@ public class Condition {
             case "<=":
             case "<":
             case "number equals":
-                Double nInput = Utils.tryParseDouble(i);
-                Double nOutput = Utils.tryParseDouble(o);
+                Double nInput = Util.parseDouble(i).orElse(null);
+                Double nOutput = Util.parseDouble(o).orElse(null);
                 switch (s) {
                     case "number equals":
                         if (nInput == null || nOutput == null) {

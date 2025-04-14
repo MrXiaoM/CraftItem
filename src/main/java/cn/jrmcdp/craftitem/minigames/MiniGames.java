@@ -5,7 +5,6 @@ import cn.jrmcdp.craftitem.minigames.game.BasicGameConfig;
 import cn.jrmcdp.craftitem.minigames.game.GameFactory;
 import cn.jrmcdp.craftitem.minigames.game.GameInstance;
 import cn.jrmcdp.craftitem.minigames.utils.*;
-import cn.jrmcdp.craftitem.utils.Pair;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
@@ -13,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.io.File;
 import java.util.*;
@@ -201,7 +201,7 @@ public class MiniGames {
                             + OffsetUtils.getOffsetChars(pointerOffset + progress)
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars(totalWidth - progress - pointerWidth);
-                    AdventureManagerImpl.getInstance().sendTitle(player, sendTitle, bar,0,10,0);
+                    AdventureManagerImpl.sendTitle(player, sendTitle, bar,0,10,0);
                 }
 
                 @Override
@@ -342,7 +342,7 @@ public class MiniGames {
                             + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureManagerImpl.sendTitle(
                             player,
                             tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,
@@ -434,7 +434,7 @@ public class MiniGames {
                             + FontUtils.surroundWithFont((struggling_time > 0 ? strugglingFishImage[struggling_time % strugglingFishImage.length] : fishImage), font)
                             + OffsetUtils.getOffsetChars(barEffectiveWidth - fish_position - fishIconWidth);
                     strain = Math.max(0, Math.min(strain, ultimateTension));
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureManagerImpl.sendTitle(
                             player,
                             tip != null && !played ? tip : title.replace("{tension}", tension[(int) ((strain / ultimateTension) * tension.length)]),
                             bar,
@@ -499,7 +499,7 @@ public class MiniGames {
                 public void onTick() {
                     showUI();
                     if (tip != null) {
-                        AdventureManagerImpl.getInstance().sendActionbar(player, tip);
+                        AdventureManagerImpl.sendActionbar(player, tip);
                     }
                 }
 
@@ -510,7 +510,7 @@ public class MiniGames {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureManagerImpl.sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 wrongSound,
@@ -521,7 +521,7 @@ public class MiniGames {
                         return true;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureManagerImpl.sendSound(
                             player,
                             Sound.Source.PLAYER,
                             correctSound,
@@ -543,7 +543,7 @@ public class MiniGames {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureManagerImpl.sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 wrongSound,
@@ -554,7 +554,7 @@ public class MiniGames {
                         return false;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureManagerImpl.sendSound(
                             player,
                             Sound.Source.PLAYER,
                             correctSound,
@@ -576,7 +576,7 @@ public class MiniGames {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureManagerImpl.sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 wrongSound,
@@ -587,7 +587,7 @@ public class MiniGames {
                         return false;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureManagerImpl.sendSound(
                             player,
                             Sound.Source.PLAYER,
                             correctSound,
@@ -614,7 +614,7 @@ public class MiniGames {
                         setGameResult(false);
                         fail = true;
                         showUI();
-                        AdventureManagerImpl.getInstance().sendSound(
+                        AdventureManagerImpl.sendSound(
                                 player,
                                 Sound.Source.PLAYER,
                                 wrongSound,
@@ -625,7 +625,7 @@ public class MiniGames {
                         return true;
                     }
 
-                    AdventureManagerImpl.getInstance().sendSound(
+                    AdventureManagerImpl.sendSound(
                             player,
                             Sound.Source.PLAYER,
                             correctSound,
@@ -669,7 +669,7 @@ public class MiniGames {
                                     }
                                 }
                             }
-                            AdventureManagerImpl.getInstance().sendTitle(
+                            AdventureManagerImpl.sendTitle(
                                     player,
                                     sb.toString(),
                                     subtitle.replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
@@ -713,7 +713,7 @@ public class MiniGames {
                                     }
                                 }
                             }
-                            AdventureManagerImpl.getInstance().sendTitle(
+                            AdventureManagerImpl.sendTitle(
                                     player,
                                     sb.toString(),
                                     subtitle.replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
@@ -788,7 +788,7 @@ public class MiniGames {
                 }
 
                 public void showUI() {
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureManagerImpl.sendTitle(
                             player,
                             title.replace("{click}", String.valueOf(clickedTimes)),
                             subtitle.replace("{clicks}", String.valueOf(requiredTimes)).replace("{time}", String.format("%.1f", ((double) deadline - System.currentTimeMillis())/1000)),
@@ -864,7 +864,7 @@ public class MiniGames {
                         stringBuilder.append(barBody);
                     }
 
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureManagerImpl.sendTitle(
                             player,
                             stringBuilder.toString(),
                             subtitle,
@@ -943,7 +943,7 @@ public class MiniGames {
                             + OffsetUtils.getOffsetChars(progress + pointerOffset)
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars(barEffectiveWidth - progress - pointerIconWidth + 1);
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureManagerImpl.sendTitle(
                             player,
                             title,
                             bar,
@@ -1111,7 +1111,7 @@ public class MiniGames {
                             + OffsetUtils.getOffsetChars((int) (-barEffectiveWidth - 1 + fish_position))
                             + FontUtils.surroundWithFont(pointerImage, font)
                             + OffsetUtils.getOffsetChars((int) (barEffectiveWidth - fish_position - pointerIconWidth + 1));
-                    AdventureManagerImpl.getInstance().sendTitle(
+                    AdventureManagerImpl.sendTitle(
                             player,
                             tip != null && !played ? tip : title.replace("{progress}", progress[(int) ((hold_time / time_requirement) * progress.length)]),
                             bar,

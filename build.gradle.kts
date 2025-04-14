@@ -16,6 +16,7 @@ allprojects {
         maven("https://repo.codemc.io/repository/maven-public/")
         maven("https://jitpack.io")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
+        maven("https://s01.oss.sonatype.org/content/groups/public/")
     }
 
     tasks.withType<JavaCompile>().configureEach {
@@ -37,7 +38,8 @@ dependencies {
     impl("net.kyori:adventure-api:4.17.0")
     impl("net.kyori:adventure-platform-bukkit:4.3.4")
     impl("net.kyori:adventure-text-minimessage:4.17.0")
-    impl("de.tr7zw:item-nbt-api:2.14.1")
+    impl("de.tr7zw:item-nbt-api:2.14.2-SNAPSHOT")
+    impl("top.mrxiaom:PluginBase:1.3.8")
     impl(project(":paper"))
 }
 
@@ -62,6 +64,7 @@ tasks {
         mapOf(
             "net.kyori" to "kyori",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
+            "top.mrxiaom.pluginbase" to "base",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }

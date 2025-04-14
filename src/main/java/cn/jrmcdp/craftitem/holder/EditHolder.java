@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,7 +222,7 @@ public class EditHolder implements IHolder {
                 player.closeInventory();
                 Message.gui__edit_input_chance.msg(player);
                 Prompter.onChat(player, message -> {
-                    Integer chance = Utils.tryParseInt(message);
+                    Integer chance = Util.parseInt(message).orElse(null);
                     if (chance == null || chance < 0) {
                         Message.not_integer.msg(player);
                     } else {
@@ -240,7 +241,7 @@ public class EditHolder implements IHolder {
                     String[] split = message.split(" ");
                     List<Integer> list = new ArrayList<>();
                     for (String str : split) {
-                        Integer chance = Utils.tryParseInt(str);
+                        Integer chance = Util.parseInt(str).orElse(null);
                         if (chance == null) {
                             Message.not_integer.msg(player);
                             open(player);
@@ -268,7 +269,7 @@ public class EditHolder implements IHolder {
                 player.closeInventory();
                 Message.gui__edit_input_cost.msg(player);
                 Prompter.onChat(player, message -> {
-                    Integer cost = Utils.tryParseInt(message);
+                    Integer cost = Util.parseInt(message).orElse(null);
                     if (cost == null || cost < 0) {
                         Message.not_integer.msg(player);
                     } else {
@@ -366,7 +367,7 @@ public class EditHolder implements IHolder {
                     player.closeInventory();
                     Message.gui__edit_time_cost.msg(player);
                     Prompter.onChat(player, message -> {
-                        Integer cost = Utils.tryParseInt(message);
+                        Integer cost = Util.parseInt(message).orElse(null);
                         if (cost == null || cost < 0) {
                             Message.not_integer.msg(player);
                         } else {
@@ -378,7 +379,7 @@ public class EditHolder implements IHolder {
                     break;
                 }
                 event.getView().getTopInventory().setItem(7, item7());
-                Utils.updateInventory(player);
+                Util.submitInvUpdate(player);
                 break;
             }
             case 8: { // 锻造次数限制
@@ -438,14 +439,14 @@ public class EditHolder implements IHolder {
                     }
                     Craft.save(getId(), craftData);
                     event.getView().getTopInventory().setItem(8, item8());
-                    Utils.updateInventory(player);
+                    Util.submitInvUpdate(player);
                 }
                 break;
             }
             case 9: { // 困难锻造
                 craftData.setDifficult(!craftData.isDifficult());
                 event.getView().getTopInventory().setItem(9, item9());
-                Utils.updateInventory(player);
+                Util.submitInvUpdate(player);
                 Craft.save(getId(), craftData);
                 break;
             }
@@ -458,7 +459,7 @@ public class EditHolder implements IHolder {
                     Craft.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(10, item10());
-                Utils.updateInventory(player);
+                Util.submitInvUpdate(player);
                 break;
             }
             case 11: { // 连击次数
@@ -470,7 +471,7 @@ public class EditHolder implements IHolder {
                     Craft.save(getId(), craftData);
                 }
                 event.getView().getTopInventory().setItem(11, item11());
-                Utils.updateInventory(player);
+                Util.submitInvUpdate(player);
                 break;
             }
         }
