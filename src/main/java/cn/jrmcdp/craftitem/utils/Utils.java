@@ -92,15 +92,11 @@ public class Utils {
     }
 
     public static Material getMaterial(String... ids) {
-        return getMaterial(Material.STONE, ids);
-    }
-
-    public static Material getMaterial(Material def, String... ids) {
         for (String id : ids) {
             Material material = Material.getMaterial(id.toUpperCase());
             if (material != null) return material;
         }
-        return def;
+        return Material.STONE;
     }
 
     public static List<String> itemToListString(Collection<ItemStack> collection) {
@@ -116,11 +112,7 @@ public class Utils {
         for (ItemStack itemStack : list) {
             ItemStack item = itemStack.clone();
             item.setAmount(1);
-            if (map.containsKey(item)) {
-                map.put(item, map.get(item) + itemStack.getAmount());
-                continue;
-            }
-            map.put(item, itemStack.getAmount());
+            map.put(item, map.getOrDefault(item, 0) + itemStack.getAmount());
         }
         return map;
     }
@@ -141,6 +133,7 @@ public class Utils {
             if (lower.contains("_door") && !lower.contains("iron_")) return valueOf(m, "wooden_door");
             if (lower.startsWith("wooden_")) return valueOf(m, lower.replace("wooden_", "wood"));
             if (lower.equals("iron_bars")) return valueOf(m, "iron_fence");
+            if (lower.equals("red_dye")) return valueOf(m, "ink_sack");
 
         }
         return material;
@@ -152,18 +145,18 @@ public class Utils {
     }
 
     @SuppressWarnings({"unchecked"})
-    public static <T> Optional<T> valueOf(Class<T> clazz, String s) {
+    public static <T> Optional<T> valueOf(Class<T> type, String s) {
         if (s != null && !s.isEmpty()) {
-            if (clazz.isEnum()) {
-                for (T t : clazz.getEnumConstants()) {
+            if (type.isEnum()) {
+                for (T t : type.getEnumConstants()) {
                     if (((Enum<?>) t).name().equalsIgnoreCase(s)) return Optional.of(t);
                 }
             } else {
-                Registry<?> registry = clazz.equals(Sound.class) ? Registry.SOUNDS
-                        : clazz.equals(Material.class) ? Registry.MATERIAL
+                Registry<?> registry = type.equals(Sound.class) ? Registry.SOUNDS
+                        : type.equals(Material.class) ? Registry.MATERIAL
                         : null;
                 if (registry != null) {
-                    Keyed matched = registry.match(s.toUpperCase());
+                    Keyed matched = registry.match(s);
                     if (matched != null) {
                         return Optional.of((T) matched);
                     }

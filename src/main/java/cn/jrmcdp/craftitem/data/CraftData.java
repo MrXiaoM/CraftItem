@@ -3,7 +3,6 @@ package cn.jrmcdp.craftitem.data;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
-import cn.jrmcdp.craftitem.utils.Triple;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -20,6 +19,17 @@ import java.util.function.Supplier;
 import static cn.jrmcdp.craftitem.utils.Utils.takeItem;
 
 public class CraftData implements ConfigurationSerializable {
+    public static class MaterialState {
+        public final ItemStack item;
+        public final int amount;
+        public final int target;
+
+        public MaterialState(ItemStack item, int amount, int target) {
+            this.item = item;
+            this.amount = amount;
+            this.target = target;
+        }
+    }
     private final ConfigMain config;
     private List<ItemStack> material;
     private int chance;
@@ -219,29 +229,29 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public boolean isNotEnoughMaterial(Player player) {
-        List<Triple<ItemStack, Integer, Integer>> state = getMaterialState(player.getInventory());
-        state.removeIf(it -> it.second >= it.third);
+        List<MaterialState> state = getMaterialState(player.getInventory());
+        state.removeIf(it -> it.amount >= it.target);
         if (!state.isEmpty()) {
             Message.craft__not_enough_material.tm(player);
-            for (Triple<ItemStack, Integer, Integer> triple : state) {
-                Message.craft__not_enough_material_details.tm(player, triple.first, triple.second, triple.third);
+            for (MaterialState entry : state) {
+                Message.craft__not_enough_material_details.tm(player, Utils.getItemName(entry.item), entry.amount, entry.target);
             }
             return true;
         }
         return false;
     }
 
-    public List<Triple<ItemStack, Integer, Integer>> getMaterialState(Inventory gui) {
-        List<Triple<ItemStack, Integer, Integer>> list = new ArrayList<>();
+    public List<MaterialState> getMaterialState(Inventory gui) {
+        List<MaterialState> list = new ArrayList<>();
         Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
         for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
             int amount = 0;
             for (ItemStack i : gui.getContents()) {
                 if (entry.getKey().isSimilar(i)) amount += i.getAmount();
             }
-            list.add(Triple.of(entry.getKey(), amount, entry.getValue()));
+            list.add(new MaterialState(entry.getKey(), amount, entry.getValue()));
         }
-        list.sort(Comparator.comparingInt(it -> it.second));
+        list.sort(Comparator.comparingInt(it -> it.amount));
         Collections.reverse(list);
         return list;
     }

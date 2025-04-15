@@ -8,6 +8,8 @@ import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,7 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.*;
 
@@ -27,8 +31,11 @@ import static cn.jrmcdp.craftitem.utils.Utils.valueOf;
 
 @AutoRegister
 public class ConfigMain extends AbstractModule {
-    private ConfigurationSection setting;
-    private HashMap<String, List<String>> category;
+    private LegacyComponentSerializer legacy = LegacyComponentSerializer.legacySection();
+    private List<Integer> chanceNamesKeys;
+    private Map<Integer, String> chanceNames;
+    private String chanceNameUnknown;
+    private Map<String, List<String>> category;
     private Title forgeTitle;
     private @Nullable Sound soundClickInventory;
     private @Nullable Sound soundForgeSuccess;
@@ -62,7 +69,7 @@ public class ConfigMain extends AbstractModule {
         if (plugin.isEnableConfigUpdater() && config instanceof YamlConfiguration) {
             updater.apply((YamlConfiguration) config, plugin.resolve("config.yml"));
         }
-        setting = config.getConfigurationSection("Setting");
+        ConfigurationSection setting = config.getConfigurationSection("Setting");
         if (setting != null) {
             category = new HashMap<>();
             {
@@ -73,8 +80,22 @@ public class ConfigMain extends AbstractModule {
                     }
                 }
             }
-            String title = setting.getString("ForgeTitle.Title", "&a敲敲打打");
-            String subtitle = setting.getString("ForgeTitle.SubTitle", "&e锻造中...");
+            chanceNamesKeys = new ArrayList<>();
+            chanceNames = new HashMap<>();
+            {
+                chanceNameUnknown = setting.getString("ChanceNameUnknown", "<red><u>未知领域</u>");
+                ConfigurationSection section = setting.getConfigurationSection("ChanceName");
+                if (section != null) for (String key : section.getKeys(false)) {
+                    Integer i = Util.parseInt(key).orElse(null);
+                    if (i == null) continue;
+                    String name = section.getString(key);
+                    chanceNamesKeys.add(i);
+                    chanceNames.put(i, name);
+                }
+                chanceNamesKeys.sort(Comparator.comparingInt(it -> it));
+            }
+            String title = setting.getString("ForgeTitle.Title", "<green>敲敲打打");
+            String subtitle = setting.getString("ForgeTitle.SubTitle", "<yellow>锻造中...");
             int fadeIn = setting.getInt("ForgeTitle.FadeIn", 10);
             int time = setting.getInt("ForgeTitle.Time", 20);
             int fadeOut = setting.getInt("ForgeTitle.FadeOut", 10);
@@ -134,10 +155,12 @@ public class ConfigMain extends AbstractModule {
             notDisappearMaterials.add(material);
         }
         for (String s : config.getStringList("DoNotDisappear.Name")) {
-            notDisappearNames.add(ChatColor.translateAlternateColorCodes('&', s));
+            Component component = AdventureUtil.miniMessage(s);
+            notDisappearNames.add(legacy.serialize(component));
         }
         for (String s : config.getStringList("DoNotDisappear.Lore")) {
-            notDisappearLores.add(ChatColor.translateAlternateColorCodes('&', s));
+            Component component = AdventureUtil.miniMessage(s);
+            notDisappearLores.add(legacy.serialize(component));
         }
         section = config.getConfigurationSection("DoNotDisappear.NBTString");
         if (section != null) for (String key : section.getKeys(false)) {
@@ -297,13 +320,11 @@ public class ConfigMain extends AbstractModule {
     }
 
     public String getChanceName(int chance) {
-        ConfigurationSection section = setting.getConfigurationSection("ChanceName");
-        if (section != null) for (String key : section.getKeys(false)) {
-            int i = Integer.parseInt(key);
+        for (Integer i : chanceNamesKeys) {
             if (chance <= i)
-                return section.getString(key);
+                return chanceNames.get(i);
         }
-        return "§c§n未知领域";
+        return "<red><u>未知领域</u>";
     }
 
     public static ConfigMain inst() {
