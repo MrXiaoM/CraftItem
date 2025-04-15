@@ -13,11 +13,13 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 
 import java.util.*;
 
@@ -40,13 +42,26 @@ public class ConfigMain extends AbstractModule {
     private final List<String> notDisappearNames = new ArrayList<>();
     private final List<String> notDisappearLores = new ArrayList<>();
     private final Map<String, List<String>> notDisappearNBTStrings = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private final ConfigUpdater updater;
 
     public ConfigMain(CraftItem plugin) {
         super(plugin);
+        updater = ConfigUpdater.create(plugin, "config.yml");
+        updater.prefixMatch("Setting.")
+                .fullMatch("RandomGames")
+                .prefixMatch("TimeFormat.")
+                .fullMatch("DoNotDisappear.Material")
+                .fullMatch("DoNotDisappear.Name")
+                .fullMatch("DoNotDisappear.Lore")
+                .prefixMatch("Events.")
+                .prefixMatch("offset-characters.");
     }
 
     @Override
     public void reloadConfig(MemoryConfiguration config) {
+        if (plugin.isEnableConfigUpdater() && config instanceof YamlConfiguration) {
+            updater.apply((YamlConfiguration) config, plugin.resolve("config.yml"));
+        }
         setting = config.getConfigurationSection("Setting");
         if (setting != null) {
             category = new HashMap<>();

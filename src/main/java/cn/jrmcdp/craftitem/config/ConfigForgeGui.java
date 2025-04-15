@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.ColorHelper;
+import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 
 import java.util.*;
 
@@ -25,8 +26,23 @@ public class ConfigForgeGui extends AbstractModule {
     private char[] chest;
     private char[] chestTime;
     public final Map<String, Icon> items = new HashMap<>();
+    private final ConfigUpdater updater;
     public ConfigForgeGui(CraftItem plugin) {
         super(plugin);
+        updater = ConfigUpdater.create(plugin, "Gui.yml");
+        updater.fullMatch("Title")
+                .fullMatch("Chest")
+                .fullMatch("ChestTime")
+                .fullMatch("Item.材")
+                .fullMatch("Item.物")
+                .fullMatch("Item.锻")
+                .fullMatch("Item.锻_连击")
+                .fullMatch("Item.锻_困难")
+                .fullMatch("Item.时")
+                .fullMatch("Item.时_未开启")
+                .fullMatch("Item.时_条件不足")
+                .fullMatch("Item.时_进行中")
+                .fullMatch("Item.时_完成");
     }
 
     public char[] getChest() {
@@ -40,6 +56,9 @@ public class ConfigForgeGui extends AbstractModule {
     @Override
     public void reloadConfig(MemoryConfiguration cfg) {
         YamlConfiguration config = ConfigUtils.loadPluginConfig(plugin, "Gui.yml");
+        if (plugin.isEnableConfigUpdater()) {
+            updater.apply(config, plugin.resolve("Gui.yml"));
+        }
         title = ColorHelper.parseColor(config.getString("Title"));
 
         chest = String.join("", config.getStringList("Chest")).toCharArray();

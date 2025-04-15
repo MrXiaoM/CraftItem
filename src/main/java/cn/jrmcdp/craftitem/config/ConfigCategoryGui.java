@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
+import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 
 import java.util.*;
 
@@ -22,9 +23,14 @@ public class ConfigCategoryGui extends AbstractModule {
     private String[] chest;
     private Map<String, ItemStack> items;
     private int slotAmount;
+    private final ConfigUpdater updater;
     public ConfigCategoryGui(CraftItem plugin) {
         super(plugin);
-        register();
+        updater = ConfigUpdater.create(plugin, "Category.yml");
+        updater.fullMatch("Title")
+                .fullMatch("Chest")
+                .fullMatch("Item.上")
+                .fullMatch("Item.下");
     }
 
     public int getSlotAmount() {
@@ -34,6 +40,9 @@ public class ConfigCategoryGui extends AbstractModule {
     @Override
     public void reloadConfig(MemoryConfiguration cfg) {
         YamlConfiguration config = ConfigUtils.loadPluginConfig(plugin, "Category.yml");
+        if (plugin.isEnableConfigUpdater()) {
+            updater.apply(config, plugin.resolve("Category.yml"));
+        }
         title = config.getString("Title");
         chest = new String[config.getStringList("Chest").size() * 9];
         StringBuilder info = new StringBuilder();
