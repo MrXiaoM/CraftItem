@@ -124,10 +124,6 @@ public class CraftItem extends BukkitPlugin {
                     }
                     String last = sb.toString().trim().replace("\r", "").replace("\n", "");
                     if (!last.equals(version)) {
-                        try (FileOutputStream fos = new FileOutputStream(file);
-                             OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
-                            writer.write(version);
-                        }
                         updated = true;
                     } else {
                         updated = false;
@@ -136,6 +132,11 @@ public class CraftItem extends BukkitPlugin {
                 }
             }
             if (updated) {
+                try (FileOutputStream fos = new FileOutputStream(file);
+                     OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
+                    writer.write(version);
+                } catch (Throwable ignored) {
+                }
                 AdventureUtil.sendMessage(sender, Message.prefix + "<yellow>你的服务端版本不支持设置配置文件注释，配置更新器已禁用。更新插件后，请手动更新不存在的配置项。");
                 AdventureUtil.sendMessage(sender, Message.prefix + "<yellow><u>https://github.com/MrXiaoM/CraftItem/tree/main/src/main/resources");
             }
