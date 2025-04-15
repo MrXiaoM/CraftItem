@@ -67,7 +67,7 @@ public class ConfigMain extends AbstractModule {
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         if (plugin.isEnableConfigUpdater() && config instanceof YamlConfiguration) {
-            updater.apply((YamlConfiguration) config, plugin.resolve("config.yml"));
+            updater.apply((YamlConfiguration) config, plugin.resolve("./config.yml"));
         }
         ConfigurationSection setting = config.getConfigurationSection("Setting");
         if (setting != null) {

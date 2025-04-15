@@ -209,8 +209,8 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 Object defValue = message.holder().defaultValue;
                 cfg.set(message.holder().key, defValue);
             }
-            File file = plugin.resolve("Message.yml");
-            ConfigUtils.savePluginConfig(plugin, "Message.yml", cfg);
+            File file = plugin.resolve("./Message.yml");
+            ConfigUtils.savePluginConfig(plugin, "./Message.yml", cfg);
         }
         plugin.reloadConfig();
         return Message.reload.tm(sender);

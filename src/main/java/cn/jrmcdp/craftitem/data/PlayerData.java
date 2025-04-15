@@ -37,7 +37,7 @@ public class PlayerData {
 
     public PlayerData(Player player) {
         this.player = player;
-        this.config = ConfigUtils.loadConfig("PlayerData", player.getName());
+        this.config = ConfigUtils.loadConfig("./PlayerData", player.getName());
         load("ForgeData", (section, key) -> this.normalScoreMap.put(key, section.getInt(key)));
         load("ForgeCountData", (section, key) -> this.normalCountMap.put(key, section.getInt(key)));
         load("FailForgeData", (section, key) -> this.normalFailMap.put(key, section.getInt(key)));
@@ -141,6 +141,6 @@ public class PlayerData {
         save("FailForgeData", this.normalFailMap);
         save("TimeForgeData", this.timeEndMap);
         save("TimeForgeCountData", this.timeCountMap);
-        ConfigUtils.saveConfig("PlayerData", this.player.getName(), this.config);
+        ConfigUtils.saveConfig("./PlayerData", this.player.getName(), this.config);
     }
 }

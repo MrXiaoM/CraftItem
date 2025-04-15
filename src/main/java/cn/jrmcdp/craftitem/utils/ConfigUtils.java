@@ -24,7 +24,7 @@ public class ConfigUtils {
         return parent != null && parent.mkdirs();
     }
     public static YamlConfiguration loadPluginConfig(BukkitPlugin plugin, String fileName, char separator) {
-        File file = plugin.resolve(fileName);
+        File file = plugin.resolve("./" + fileName);
         if (!file.exists()) {
             plugin.saveResource(fileName);
         }

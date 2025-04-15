@@ -57,7 +57,7 @@ public class ConfigForgeGui extends AbstractModule {
     public void reloadConfig(MemoryConfiguration cfg) {
         YamlConfiguration config = ConfigUtils.loadPluginConfig(plugin, "Gui.yml");
         if (plugin.isEnableConfigUpdater()) {
-            updater.apply(config, plugin.resolve("Gui.yml"));
+            updater.apply(config, plugin.resolve("./Gui.yml"));
         }
         title = ColorHelper.parseColor(config.getString("Title"));
 

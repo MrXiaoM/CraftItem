@@ -52,7 +52,7 @@ public class CraftDataManager extends AbstractModule {
     public void reloadConfig(MemoryConfiguration pluginConfig) {
         craftConfig = new YamlConfiguration();
         craftConfig.options().pathSeparator(' ');
-        ConfigUtils.load(craftConfig, plugin.resolve("Craft.yml"));
+        ConfigUtils.load(craftConfig, plugin.resolve("./Craft.yml"));
         craftDataMap.clear();
         for (String key : craftConfig.getKeys(false)) {
             Object object = craftConfig.get(key, null);
@@ -79,12 +79,12 @@ public class CraftDataManager extends AbstractModule {
     public void save(String id, CraftData craftData) {
         craftDataMap.put(id, craftData);
         craftConfig.set(id, craftData);
-        ConfigUtils.savePluginConfig(plugin, "Craft.yml", craftConfig);
+        ConfigUtils.savePluginConfig(plugin, "./Craft.yml", craftConfig);
     }
     public void delete(String id) {
         craftDataMap.remove(id);
         craftConfig.set(id, null);
-        ConfigUtils.savePluginConfig(plugin, "Craft.yml", craftConfig);
+        ConfigUtils.savePluginConfig(plugin, "./Craft.yml", craftConfig);
     }
 
     public boolean doForgeResult(GuiForge holder, Player player, boolean win, int multiple, Runnable cancel) {

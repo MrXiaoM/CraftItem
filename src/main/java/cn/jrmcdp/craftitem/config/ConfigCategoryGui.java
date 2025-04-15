@@ -41,7 +41,7 @@ public class ConfigCategoryGui extends AbstractModule {
     public void reloadConfig(MemoryConfiguration cfg) {
         YamlConfiguration config = ConfigUtils.loadPluginConfig(plugin, "Category.yml");
         if (plugin.isEnableConfigUpdater()) {
-            updater.apply(config, plugin.resolve("Category.yml"));
+            updater.apply(config, plugin.resolve("./Category.yml"));
         }
         title = config.getString("Title");
         chest = new String[config.getStringList("Chest").size() * 9];

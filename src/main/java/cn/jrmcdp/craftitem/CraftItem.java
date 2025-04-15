@@ -112,7 +112,7 @@ public class CraftItem extends BukkitPlugin {
         AdventureUtil.sendMessage(sender, Message.prefix + "<white>由 MrXiaoM 重置! 原作者为 ZhiBuMiao.");
         enableConfigUpdater = ConfigUpdater.supportComments;
         if (!enableConfigUpdater) {
-            File file = resolve("last-version");
+            File file = resolve("./last-version");
             boolean updated = true;
             if (file.exists()) {
                 try (FileInputStream fis = new FileInputStream(file);
@@ -153,17 +153,17 @@ public class CraftItem extends BukkitPlugin {
     }
 
     public void saveDefaultConfig() {
-        if (!resolve("config.yml").exists()) {
+        if (!resolve("./config.yml").exists()) {
             plugin.saveResource("config.yml");
         }
-        Util.mkdirs(resolve("PlayerData"));
+        Util.mkdirs(resolve("./PlayerData"));
         for (String filename : new String[] {
                 "Material.yml",
                 "Craft.yml",
                 "Gui.yml",
                 "Category.yml",
         }) {
-            if (!resolve(filename).exists()) {
+            if (!resolve("./" + filename).exists()) {
                 plugin.saveResource(filename);
             }
         }
