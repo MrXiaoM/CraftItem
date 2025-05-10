@@ -96,7 +96,7 @@ public class CraftItem extends BukkitPlugin {
         ConfigurationSerialization.registerClass(CraftData.class);
         ActionProviders.registerActionProvider(ActionBack.PROVIDER);
         LanguageManager.inst()
-                .setLangFile("Message.yml")
+                .setLangFile("messages.yml")
                 .register(Message.class, Message::holder);
     }
 
