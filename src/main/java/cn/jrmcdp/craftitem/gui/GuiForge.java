@@ -30,6 +30,7 @@ import top.mrxiaom.pluginbase.utils.Pair;
 import java.util.*;
 
 public class GuiForge implements IHolder {
+    private final Player player;
     private final PlayerData playerData;
     private final String id;
     private final CraftData craftData;
@@ -51,6 +52,7 @@ public class GuiForge implements IHolder {
         this.category = category;
         this.items = items;
         this.playerData = playerData;
+        this.player = playerData.getPlayer();
         this.id = id;
         this.craftData = craftData;
         this.endTime = playerData.getEndTime(id);
@@ -67,7 +69,7 @@ public class GuiForge implements IHolder {
         Icon icon;
         CraftData craftData = getCraftData();
         if (craftData.getTime() > 0) {
-            if (parent.plugin.config().isMeetTimeForgeCondition(playerData.getPlayer())) {
+            if (parent.plugin.config().isMeetTimeForgeCondition(player)) {
                 if (done) {
                     icon = parent.getIcon("时_完成");
                 } else if (processing) {
@@ -86,10 +88,9 @@ public class GuiForge implements IHolder {
         String remainTime = endTime == null ? "" : parent.plugin.config().getTimeDisplay(Math.max(0, (endTime - System.currentTimeMillis()) / 1000L), "0秒");
 
         int count = playerData.getTimeForgeCount(getId());
-        int limit = craftData.getTimeForgeCountLimit(playerData.getPlayer());
+        int limit = craftData.getTimeForgeCountLimit(player);
 
-        ItemStack item = icon.getItem(
-                playerData.getPlayer(),
+        ItemStack item = icon.getItem(player,
                 Pair.of("<Progress>", String.format("%.2f%%", progress * 100)),
                 Pair.of("<RemainTime>", remainTime),
                 Pair.of("<Time>", craftData.getTimeDisplay()),
@@ -149,12 +150,12 @@ public class GuiForge implements IHolder {
 
     @Override
     public Player getPlayer() {
-        return playerData.getPlayer();
+        return player;
     }
 
     @Override
     public Inventory newInventory() {
-        inventory = CraftItem.getInventoryFactory().create(this, chest.length, PAPI.setPlaceholders(playerData.getPlayer(), title));
+        inventory = CraftItem.getInventoryFactory().create(this, chest.length, PAPI.setPlaceholders(player, title));
         Player player = getPlayer();
         ItemStack[] is = new ItemStack[chest.length];
         Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
@@ -249,7 +250,6 @@ public class GuiForge implements IHolder {
             InventoryView view, InventoryClickEvent event
     ) {
         event.setCancelled(true);
-        Player player = playerData.getPlayer();
         parent.plugin.config().playSoundClickInventory(player);
 
         if (!event.getClick().isRightClick() && !event.getClick().isLeftClick()) return;
@@ -268,7 +268,7 @@ public class GuiForge implements IHolder {
         }
         if ("时".equals(key)) { // 时长锻造
             if (!event.isShiftClick() && event.isLeftClick()) {
-                clickForgeTime(player);
+                clickForgeTime();
             }
             return;
         }
@@ -412,9 +412,9 @@ public class GuiForge implements IHolder {
     /**
      * 点击进行 时长锻造
      */
-    private void clickForgeTime(Player player) {
+    private void clickForgeTime() {
         // 检查是否满足时长锻造条件
-        if (!parent.plugin.config().isMeetTimeForgeCondition(playerData.getPlayer())) return;
+        if (!parent.plugin.config().isMeetTimeForgeCondition(player)) return;
         CraftData craftData = getCraftData();
         // 检查是否已开启时长锻造
         if (craftData.getTime() <= 0) return;
