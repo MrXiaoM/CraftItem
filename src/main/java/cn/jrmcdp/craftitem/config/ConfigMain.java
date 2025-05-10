@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Condition;
 import cn.jrmcdp.craftitem.config.data.Title;
+import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
@@ -178,11 +179,11 @@ public class ConfigMain extends AbstractModule {
         }
     }
 
-    public List<ItemStack> filterMaterials(List<ItemStack> materials) {
-        List<ItemStack> list = new ArrayList<>();
+    public List<MaterialInstance> filterMaterials(List<MaterialInstance> materials) {
+        List<MaterialInstance> list = new ArrayList<>();
         if (materials.isEmpty()) return list;
-        for (ItemStack material : materials) {
-            if (isNotDisappearItem(material)) continue;
+        for (MaterialInstance material : materials) {
+            if (isNotDisappearItem(material.getSample())) continue;
             list.add(material);
         }
         return list;

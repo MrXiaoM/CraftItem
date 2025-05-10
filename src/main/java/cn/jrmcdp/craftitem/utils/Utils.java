@@ -2,6 +2,8 @@ package cn.jrmcdp.craftitem.utils;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.ItemTranslation;
+import cn.jrmcdp.craftitem.data.MaterialInstance;
+import cn.jrmcdp.craftitem.func.entry.adapter.IMaterialAdapter;
 import com.google.common.base.Preconditions;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -27,7 +29,7 @@ public class Utils {
     /**
      * CraftInventory#first(item, withAmount:false)
      */
-    private static int first(Inventory inv, ItemStack item) {
+    private static int first(Inventory inv, IMaterialAdapter item) {
         if (item == null) {
             return -1;
         } else {
@@ -35,7 +37,7 @@ public class Utils {
             int i = 0;
             while (true) {
                 if (i >= inventory.length) return -1;
-                if (inventory[i] != null && item.isSimilar(inventory[i])) break;
+                if (inventory[i] != null && item.match(inventory[i])) break;
                 ++i;
             }
             return i;
@@ -45,20 +47,21 @@ public class Utils {
     /**
      * 重写 CraftInventory#removeItem，解决材料在副手不消耗问题
      */
-    public static void takeItem(Player player, ItemStack... items) {
+    public static void takeItem(Player player, List<MaterialInstance> list) {
         PlayerInventory inv = player.getInventory();
         HashMap<Integer, ItemStack> leftover = new HashMap<>();
+        List<MaterialInstance.Mutable> items = MaterialInstance.toMutable(list);
 
-        for (int i = 0; i < items.length; ++i) {
-            ItemStack item = items[i];
+        for (int i = 0; i < items.size(); ++i) {
+            MaterialInstance.Mutable item = items.get(i);
             Preconditions.checkArgument(item != null, "ItemStack cannot be null");
             int toDelete = item.getAmount();
 
             while (true) {
-                int first = first(inv, item); // modified
+                int first = first(inv, item.getAdapter()); // modified
                 if (first == -1) {
                     item.setAmount(toDelete);
-                    leftover.put(i, item);
+                    leftover.put(i, item.getSample());
                     break;
                 }
 

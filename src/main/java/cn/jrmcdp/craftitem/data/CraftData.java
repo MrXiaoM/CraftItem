@@ -3,7 +3,9 @@ package cn.jrmcdp.craftitem.data;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
+import cn.jrmcdp.craftitem.func.MaterialAdapterManager;
 import cn.jrmcdp.craftitem.utils.Utils;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,6 +34,7 @@ public class CraftData implements ConfigurationSerializable {
     }
     private final ConfigMain config;
     private List<ItemStack> material;
+    private List<MaterialInstance> loadedMaterial;
     private int chance;
     private List<Integer> multiple;
     private int cost;
@@ -54,7 +57,7 @@ public class CraftData implements ConfigurationSerializable {
 
     public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.config = ConfigMain.inst();
-        this.material = material;
+        this.setMaterial(material);
         this.chance = chance;
         this.multiple = multiple;
         if (multiple.isEmpty()) throw new IllegalArgumentException("multiple can not be empty!");
@@ -155,6 +158,7 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setMaterial(List<ItemStack> material) {
         this.material = material;
+        this.loadedMaterial = MaterialAdapterManager.inst().fromMaterials(material);
     }
 
     public int getChance() {
@@ -256,24 +260,24 @@ public class CraftData implements ConfigurationSerializable {
         return list;
     }
 
-    public ItemStack takeRandomMaterial(Player player) {
-        List<ItemStack> list = config.filterMaterials(material);
+    public MaterialInstance takeRandomMaterial(Player player) {
+        List<MaterialInstance> list = config.filterMaterials(loadedMaterial);
         if (list.isEmpty()) return null;
-        ItemStack item = list.get(RandomUtils.nextInt(list.size()));
-        ItemStack clone = item.clone();
-        clone.setAmount(1);
+        MaterialInstance item = list.get(RandomUtils.nextInt(list.size()));
+        MaterialInstance.Mutable clone = item.toMutable();
+        clone.setAmount(1); // 只拿走一个
 
         MaterialDisappearEvent event = new MaterialDisappearEvent(player, this, item, clone);
         Bukkit.getPluginManager().callEvent(event);
-        ItemStack toDisappear = event.getItemToDisappear();
+        MaterialInstance toDisappear = event.getMaterialToDisappear();
         if (event.isCancelled() || toDisappear == null || toDisappear.getAmount() == 0) return null;
 
-        takeItem(player, toDisappear);
+        takeItem(player, Lists.newArrayList(toDisappear));
         return toDisappear;
     }
 
     public void takeAllMaterial(Player player) {
-        takeItem(player, this.material.toArray(new ItemStack[0]));
+        takeItem(player, loadedMaterial);
     }
 
     @NotNull

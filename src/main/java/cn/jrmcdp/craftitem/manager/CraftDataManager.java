@@ -5,6 +5,7 @@ import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
+import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
@@ -202,9 +203,9 @@ public class CraftDataManager extends AbstractModule {
                 }
                 case 2 : {
                     Message.craft__process_fail_big.tm(player, score);
-                    ItemStack itemStack = craftData.takeRandomMaterial(player);
-                    if (itemStack != null) {
-                        Message.craft__process_fail_lost_item.tm(player, itemStack.getAmount(), itemStack);
+                    MaterialInstance instance = craftData.takeRandomMaterial(player);
+                    if (instance != null) {
+                        Message.craft__process_fail_lost_item.tm(player, instance.getAmount(), instance.getSample());
                     }
                     break;
                 }
