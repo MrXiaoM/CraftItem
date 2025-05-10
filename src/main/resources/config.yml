@@ -34,6 +34,14 @@ Setting:
     ForgeFail: BLOCK_GLASS_BREAK
     ForgeTitle: BLOCK_ANVIL_LAND
 
+# 材料适配器设定
+# cn.jrmcdp.craftitem.func.MaterialAdapterManager
+Material-Adapters:
+  # 对于 MMOItems 物品的适配
+  MMOItems:
+    # 是否启用材料适配器。若启用适配器且锻造材料是 MI 物品，则仅匹配物品类型和物品ID，不匹配整个物品
+    enable: false
+
 # 困难锻造随机进行的小游戏列表
 RandomGames:
   - accurate_click_bar_3_easy
