@@ -166,6 +166,16 @@ public class Utils {
         return Optional.empty();
     }
 
+    public static <T> T valueOfOrNull(Class<T> type, String s, String... def) {
+        Optional<T> value = valueOf(type, s);
+        if (value.isPresent()) return value.get();
+        for (String string : def) {
+            Optional<T> v = valueOf(type, s);
+            if (v.isPresent()) return v.get();
+        }
+        return null;
+    }
+
     public static String getItemName(ItemStack itemStack) {
         if (itemStack == null) return "空";
         if (itemStack.hasItemMeta()) {

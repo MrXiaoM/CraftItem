@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -28,6 +29,7 @@ import top.mrxiaom.pluginbase.utils.Util;
 import java.util.*;
 
 import static cn.jrmcdp.craftitem.utils.Utils.valueOf;
+import static cn.jrmcdp.craftitem.utils.Utils.valueOfOrNull;
 
 @AutoRegister
 public class ConfigMain extends AbstractModule {
@@ -101,18 +103,25 @@ public class ConfigMain extends AbstractModule {
             int fadeOut = setting.getInt("ForgeTitle.FadeOut", 10);
             forgeTitle = new Title(title, subtitle, fadeIn, time, fadeOut);
 
-            soundClickInventory = valueOf(Sound.class, setting.getString("Sounds.ClickInventory"))
-                    .orElseGet(() -> valueOf(Sound.class, "UI_BUTTON_CLICK")
-                            .orElseGet(() -> valueOf(Sound.class, "CLICK").orElse(null)));
-            soundForgeSuccess = valueOf(Sound.class, setting.getString("Sounds.ForgeSuccess"))
-                    .orElseGet(() -> valueOf(Sound.class, "BLOCK_ANVIL_USE")
-                            .orElseGet(() -> valueOf(Sound.class, "ANVIL_USE").orElse(null)));
-            soundForgeFail = valueOf(Sound.class, setting.getString("Sounds.ForgeFail"))
-                    .orElseGet(() -> valueOf(Sound.class, "BLOCK_GLASS_BREAK")
-                            .orElseGet(() -> valueOf(Sound.class, "GLASS").orElse(null)));
-            soundForgeTitle = valueOf(Sound.class, setting.getString("Sounds.ForgeTitle"))
-                    .orElseGet(() -> valueOf(Sound.class, "BLOCK_ANVIL_LAND")
-                            .orElseGet(() -> valueOf(Sound.class, "ANVIL_LAND").orElse(null)));
+            soundClickInventory = valueOfOrNull(
+                    Sound.class,
+                    setting.getString("Sounds.ClickInventory"),
+                    "UI_BUTTON_CLICK", "CLICK");
+
+            soundForgeSuccess = valueOfOrNull(
+                    Sound.class,
+                    setting.getString("Sounds.ForgeSuccess"),
+                    "BLOCK_ANVIL_USE", "ANVIL_USE");
+
+            soundForgeFail = valueOfOrNull(
+                    Sound.class,
+                    setting.getString("Sounds.ForgeFail"),
+                    "BLOCK_GLASS_BREAK", "GLASS");
+
+            soundForgeTitle = valueOfOrNull(
+                    Sound.class,
+                    setting.getString("Sounds.ForgeTitle"),
+                    "BLOCK_ANVIL_LAND", "ANVIL_LAND");
         }
         randomGames = config.getStringList("RandomGames");
         timeForgeConditions.clear();
