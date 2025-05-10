@@ -32,7 +32,7 @@ public class ConfigUtils {
         if (separator != '.') {
             config.options().pathSeparator(separator);
         }
-        load(file);
+        load(config, file);
         return config;
     }
     public static YamlConfiguration loadPluginConfig(BukkitPlugin plugin, String file) {
