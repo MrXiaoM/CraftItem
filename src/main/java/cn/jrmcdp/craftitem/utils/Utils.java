@@ -110,12 +110,13 @@ public class Utils {
         return list;
     }
 
-    public static Map<ItemStack, Integer> getAmountMap(List<ItemStack> list) {
-        Map<ItemStack, Integer> map = new HashMap<>();
-        for (ItemStack itemStack : list) {
-            ItemStack item = itemStack.clone();
-            item.setAmount(1);
-            map.put(item, map.getOrDefault(item, 0) + itemStack.getAmount());
+    public static Map<MaterialInstance, Integer> getAmountMap(List<MaterialInstance> list) {
+        Map<MaterialInstance, Integer> map = new HashMap<>();
+        for (MaterialInstance material : list) {
+            MaterialInstance key = material.forCounter();
+            int amount = material.getSample().getAmount();
+
+            map.put(key, map.getOrDefault(key, 0) + amount);
         }
         return map;
     }

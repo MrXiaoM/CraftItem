@@ -22,11 +22,11 @@ import static cn.jrmcdp.craftitem.utils.Utils.takeItem;
 
 public class CraftData implements ConfigurationSerializable {
     public static class MaterialState {
-        public final ItemStack item;
+        public final MaterialInstance item;
         public final int amount;
         public final int target;
 
-        public MaterialState(ItemStack item, int amount, int target) {
+        public MaterialState(MaterialInstance item, int amount, int target) {
             this.item = item;
             this.amount = amount;
             this.target = target;
@@ -221,24 +221,13 @@ public class CraftData implements ConfigurationSerializable {
         return config.getCountLimit(player, getCountLimit());
     }
 
-    @SuppressWarnings({"unused"})
-    public boolean hasAllMaterial(Inventory gui) {
-        Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
-        for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
-            if (!gui.containsAtLeast(entry.getKey(), entry.getValue())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public boolean isNotEnoughMaterial(Player player) {
         List<MaterialState> state = getMaterialState(player.getInventory());
         state.removeIf(it -> it.amount >= it.target);
         if (!state.isEmpty()) {
             Message.craft__not_enough_material.tm(player);
             for (MaterialState entry : state) {
-                Message.craft__not_enough_material_details.tm(player, Utils.getItemName(entry.item), entry.amount, entry.target);
+                Message.craft__not_enough_material_details.tm(player, Utils.getItemName(entry.item.getSample()), entry.amount, entry.target);
             }
             return true;
         }
@@ -247,11 +236,11 @@ public class CraftData implements ConfigurationSerializable {
 
     public List<MaterialState> getMaterialState(Inventory gui) {
         List<MaterialState> list = new ArrayList<>();
-        Map<ItemStack, Integer> amountMap = Utils.getAmountMap(this.material);
-        for (Map.Entry<ItemStack, Integer> entry : amountMap.entrySet()) {
+        Map<MaterialInstance, Integer> amountMap = Utils.getAmountMap(this.loadedMaterial);
+        for (Map.Entry<MaterialInstance, Integer> entry : amountMap.entrySet()) {
             int amount = 0;
             for (ItemStack i : gui.getContents()) {
-                if (entry.getKey().isSimilar(i)) amount += i.getAmount();
+                if (entry.getKey().getAdapter().match(i)) amount += i.getAmount();
             }
             list.add(new MaterialState(entry.getKey(), amount, entry.getValue()));
         }
