@@ -25,7 +25,7 @@ public class ConfigForgeGui extends AbstractModule {
     private String title;
     private char[] chest;
     private char[] chestTime;
-    public final Map<String, Icon> items = new HashMap<>();
+    private final Map<String, Icon> items = new HashMap<>();
     private final ConfigUpdater updater;
     public ConfigForgeGui(CraftItem plugin) {
         super(plugin);
@@ -51,6 +51,10 @@ public class ConfigForgeGui extends AbstractModule {
 
     public char[] getChestTime() {
         return chestTime;
+    }
+
+    public Icon getIcon(String key) {
+        return items.get(key);
     }
 
     @Override

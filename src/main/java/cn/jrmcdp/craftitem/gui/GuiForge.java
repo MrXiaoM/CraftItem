@@ -1,7 +1,6 @@
 package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.manager.CraftDataManager;
 import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
@@ -70,17 +69,17 @@ public class GuiForge implements IHolder {
         if (craftData.getTime() > 0) {
             if (parent.plugin.config().isMeetTimeForgeCondition(playerData.getPlayer())) {
                 if (done) {
-                    icon = parent.items.get("时_完成");
+                    icon = parent.getIcon("时_完成");
                 } else if (processing) {
-                    icon = parent.items.get("时_进行中");
+                    icon = parent.getIcon("时_进行中");
                 } else {
-                    icon = parent.items.get("时");
+                    icon = parent.getIcon("时");
                 }
             } else {
-                icon = parent.items.get("时_条件不足");
+                icon = parent.getIcon("时_条件不足");
             }
         } else {
-            icon = parent.items.get("时_未开启");
+            icon = parent.getIcon("时_未开启");
         }
         long startTime = endTime == null ? 0 : (endTime - (craftData.getTime() * 1000));
         double progress = endTime == null ? 0.0d : Math.min(1.0d, (System.currentTimeMillis() - startTime) / (craftData.getTime() * 1000.0d));
@@ -274,10 +273,10 @@ public class GuiForge implements IHolder {
             return;
         }
         if ("返".equals(key)) { // 特殊图标
-            Icon icon = parent.items.get(key);
+            Icon icon = parent.getIcon(key);
             if (icon == null) return;
             if (category == null) {
-                Icon redirect = parent.items.get(icon.redirect);
+                Icon redirect = parent.getIcon(icon.redirect);
                 if (redirect != null) {
                     handleClick(redirect, player, event);
                 }
@@ -287,7 +286,7 @@ public class GuiForge implements IHolder {
             return;
         }
         // 其它图标
-        Icon icon = parent.items.get(key);
+        Icon icon = parent.getIcon(key);
         if (icon != null) {
             handleClick(icon, player, event);
         }
