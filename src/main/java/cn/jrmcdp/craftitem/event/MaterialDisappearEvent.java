@@ -58,7 +58,14 @@ public class MaterialDisappearEvent extends Event implements Cancellable {
         if (itemToDisappear == null) {
             setMaterialToDisappear(null);
         } else {
-            CraftItem.getInstance().warn("MaterialDisappearEvent.setItemToDisappear 已弃用，调用这个方法不会产生任何效果。请改用 MaterialDisappearEvent.setMaterialToDisappear");
+            String location = "<unknown>";
+            for (StackTraceElement element : new Exception().getStackTrace()) {
+                if (!element.getClassName().contains("cn.jrmcdp.craftitem")) {
+                    location = element.toString();
+                    break;
+                }
+            }
+            CraftItem.getInstance().warn("MaterialDisappearEvent.setItemToDisappear 已弃用，调用这个方法不会产生任何效果。请改用 MaterialDisappearEvent.setMaterialToDisappear\n  at " + location);
         }
     }
 
