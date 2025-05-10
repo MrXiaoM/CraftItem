@@ -46,6 +46,7 @@ public class GuiCategory implements IHolder {
         this.chest = chest;
         this.items = items;
         this.slotAmount = slotAmount;
+        this.slot = new String[chest.length];
         this.playerData = playerData;
         this.type = type;
         this.craftList = craftList;
