@@ -8,6 +8,7 @@ import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.utils.Prompter;
 import cn.jrmcdp.craftitem.utils.Utils;
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -314,7 +315,11 @@ public class GuiEdit implements IHolder {
                 Message title = Message.gui__edit_command_title;
                 Prompter.gui(player, 54, title, inv -> { // init
                     for (String line : craftData.getCommands()) {
-                        inv.addItem(Utils.getItemStack(Material.PAPER, line, Message.gui__edit_command_lore.list()));
+                        ItemStack itemStack = getItemStack(Material.PAPER, line, Message.gui__edit_command_lore.list());
+                        NBT.modify(itemStack, nbt -> {
+                            nbt.setString("CRAFTITEM_COMMAND", line);
+                        });
+                        inv.addItem(itemStack);
                     }
                 }, e -> { // onClick
                     e.setCancelled(true);
@@ -332,9 +337,12 @@ public class GuiEdit implements IHolder {
                     Prompter.onChat(player, message -> {
                         ItemStack itemStack = Utils.getItemStack(
                                 Material.PAPER,
-                                message.replace("&", "§"),
+                                message,
                                 Message.gui__edit_command_lore.list()
                         );
+                        NBT.modify(itemStack, nbt -> {
+                            nbt.setString("CRAFTITEM_COMMAND", message);
+                        });
                         inv.addItem(itemStack);
                         manager.plugin.getScheduler().runTask(() -> {
                             player.closeInventory();
@@ -347,9 +355,12 @@ public class GuiEdit implements IHolder {
                     List<String> commands = new ArrayList<>();
                     for (ItemStack itemStack : inv) {
                         if (itemStack == null || itemStack.getType().equals(Material.AIR)) continue;
-                        ItemMeta meta = itemStack.getItemMeta();
-                        if (meta == null || !meta.hasDisplayName()) continue;
-                        commands.add(meta.getDisplayName());
+                        String command = NBT.get(itemStack, nbt -> {
+                            return nbt.getString("CRAFTITEM_COMMAND");
+                        });
+                        if (command != null && !command.isEmpty()) {
+                            commands.add(command);
+                        }
                     }
                     craftData.setCommands(commands);
                     manager.save(getId(), craftData);
