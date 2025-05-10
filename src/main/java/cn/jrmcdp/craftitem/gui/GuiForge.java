@@ -238,7 +238,7 @@ public class GuiForge implements IHolder {
             }
         }
         inventory.setContents(is);
-        return null;
+        return inventory;
     }
 
     @Override
