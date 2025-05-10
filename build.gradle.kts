@@ -65,6 +65,7 @@ tasks {
             "net.kyori" to "kyori",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
             "top.mrxiaom.pluginbase" to "base",
+            "com.tcoded.folialib" to "folialib",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }
