@@ -39,12 +39,13 @@ dependencies {
     impl("net.kyori:adventure-text-minimessage:4.20.0")
     impl("de.tr7zw:item-nbt-api:2.15.0")
     impl("com.github.technicallycoded:FoliaLib:0.4.4")
-    impl("top.mrxiaom:PluginBase:1.4.1")
+    impl("top.mrxiaom:PluginBase:1.4.2")
     impl(project(":paper"))
 }
 
 java {
     withSourcesJar()
+    withJavadocJar()
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     if (JavaVersion.current() < javaVersion) {
         val lang = JavaLanguageVersion.of(targetJavaVersion)
@@ -79,11 +80,6 @@ tasks {
         }
     }
 
-    register<Jar>("javadocJar") {
-        dependsOn(javadoc)
-        archiveClassifier.set("javadoc")
-        from(javadoc.get().destinationDir)
-    }
     javadoc {
         (options as StandardJavadocDocletOptions).apply {
             links("https://hub.spigotmc.org/javadocs/spigot/")
@@ -104,8 +100,6 @@ publishing {
             groupId = project.group.toString()
             artifactId = project.name
             version = project.version.toString()
-
-            artifact(tasks.getByName("javadocJar"))
         }
     }
 }
