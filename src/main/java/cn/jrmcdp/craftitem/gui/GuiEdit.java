@@ -336,10 +336,13 @@ public class GuiEdit implements IHolder {
                                 Message.gui__edit_command_lore.list()
                         );
                         inv.addItem(itemStack);
-                        reopen();
-                        isChat.set(false);
+                        manager.plugin.getScheduler().runTask(() -> {
+                            player.closeInventory();
+                            player.openInventory(inv);
+                            isChat.set(false);
+                        });
                     });
-                }, inv -> { // onClose
+                }, inv -> { // onClose: return true -> unregister handlers
                     if (isChat.get()) return false;
                     List<String> commands = new ArrayList<>();
                     for (ItemStack itemStack : inv) {
