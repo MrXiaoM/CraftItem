@@ -331,7 +331,7 @@ public class GuiForge implements IHolder {
             return;
         }
         int cost = craftData.getCost();
-        if (!parent.plugin.options.economy().has(player, cost)) {
+        if (!parent.plugin.economy().has(player, cost)) {
             Message.craft__not_enough_money.tm(player);
             return;
         }
@@ -342,7 +342,7 @@ public class GuiForge implements IHolder {
             Message.craft__forge_limit.tm(player, Math.max(limit, 0));
             return;
         }
-        parent.plugin.options.economy().takeMoney(player, cost);
+        parent.plugin.economy().takeMoney(player, cost);
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
         final int multiple = RandomUtils.nextInt(3);
         player.closeInventory();
@@ -378,7 +378,7 @@ public class GuiForge implements IHolder {
         if (craftData.isDifficult() || combo <= 0) return;
 
         int costOneTime = craftData.getCost();
-        if (!parent.plugin.options.economy().has(player, costOneTime * combo)) {
+        if (!parent.plugin.economy().has(player, costOneTime * combo)) {
             Message.craft__not_enough_money.tm(player);
             return;
         }
@@ -396,7 +396,7 @@ public class GuiForge implements IHolder {
                 if (craftData.isNotEnoughMaterial(player)) return;
 
                 for (int i = 0; i < combo; i++) {
-                    parent.plugin.options.economy().takeMoney(player, costOneTime);
+                    parent.plugin.economy().takeMoney(player, costOneTime);
                     final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
                     final int multiple = RandomUtils.nextInt(3);
                     if (!manager.doForgeResult(this, player, win, multiple, null)) {
@@ -446,7 +446,7 @@ public class GuiForge implements IHolder {
         }
         if (!processing) { // 如果时长锻造未开始
             int cost = craftData.getTimeCost();
-            if (!parent.plugin.options.economy().has(player, cost)) {
+            if (!parent.plugin.economy().has(player, cost)) {
                 Message.craft__not_enough_money.tm(player);
                 return;
             }
@@ -458,7 +458,7 @@ public class GuiForge implements IHolder {
             }
 
             player.closeInventory();
-            parent.plugin.options.economy().takeMoney(player, cost);
+            parent.plugin.economy().takeMoney(player, cost);
             craftData.takeAllMaterial(player);
             long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
             playerData.setTime(key, endTime);

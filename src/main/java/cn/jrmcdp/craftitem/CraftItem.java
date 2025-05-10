@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
+import top.mrxiaom.pluginbase.economy.EnumEconomy;
+import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
@@ -47,7 +49,7 @@ public class CraftItem extends BukkitPlugin {
                 .adventure(true)
                 .database(false)
                 .reconnectDatabaseWhenReloadConfig(false)
-                .vaultEconomy(true)
+                .economy(EnumEconomy.VAULT)
                 .scanIgnore("cn.jrmcdp.craftitem.libs"));
         scheduler = new FoliaLibScheduler(this);
     }
@@ -66,6 +68,10 @@ public class CraftItem extends BukkitPlugin {
 
     public boolean isEnableConfigUpdater() {
         return enableConfigUpdater;
+    }
+
+    public IEconomy economy() {
+        return options.economy();
     }
 
     @Override

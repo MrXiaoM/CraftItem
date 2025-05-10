@@ -16,7 +16,6 @@ allprojects {
         maven("https://repo.codemc.io/repository/maven-public/")
         maven("https://jitpack.io")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
-        maven("https://s01.oss.sonatype.org/content/groups/public/")
     }
 
     tasks.withType<JavaCompile>().configureEach {
@@ -35,12 +34,12 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
-    impl("net.kyori:adventure-api:4.17.0")
+    impl("net.kyori:adventure-api:4.20.0")
     impl("net.kyori:adventure-platform-bukkit:4.3.4")
-    impl("net.kyori:adventure-text-minimessage:4.17.0")
-    impl("de.tr7zw:item-nbt-api:2.14.2-SNAPSHOT")
+    impl("net.kyori:adventure-text-minimessage:4.20.0")
+    impl("de.tr7zw:item-nbt-api:2.15.0")
     impl("com.github.technicallycoded:FoliaLib:0.4.4")
-    impl("top.mrxiaom:PluginBase:1.3.8")
+    impl("top.mrxiaom:PluginBase:1.4.1")
     impl(project(":paper"))
 }
 
@@ -86,7 +85,6 @@ tasks {
     }
     javadoc {
         (options as StandardJavadocDocletOptions).apply {
-            links("https://docs.oracle.com/javase/8/docs/api/")
             links("https://hub.spigotmc.org/javadocs/spigot/")
 
             locale("zh_CN")
