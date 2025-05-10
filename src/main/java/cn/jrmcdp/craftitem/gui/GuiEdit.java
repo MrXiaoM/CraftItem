@@ -195,6 +195,7 @@ public class GuiEdit implements IHolder {
             ItemStack currentItem, ItemStack cursor,
             InventoryView view, InventoryClickEvent event
     ) {
+        event.setCancelled(true);
         manager.plugin.config().playSoundClickInventory(player);
         if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();

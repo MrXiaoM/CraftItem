@@ -249,6 +249,7 @@ public class GuiForge implements IHolder {
             ItemStack currentItem, ItemStack cursor,
             InventoryView view, InventoryClickEvent event
     ) {
+        event.setCancelled(true);
         Player player = playerData.getPlayer();
         parent.plugin.config().playSoundClickInventory(player);
 

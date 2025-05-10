@@ -144,6 +144,7 @@ public class GuiCategory implements IHolder {
             ItemStack currentItem, ItemStack cursor,
             InventoryView view, InventoryClickEvent event
     ) {
+        event.setCancelled(true);
         final Player player = (Player)event.getWhoClicked();
         if (slot < 0 || slot >= chest.length) return;
         parent.plugin.config().playSoundClickInventory(player);
