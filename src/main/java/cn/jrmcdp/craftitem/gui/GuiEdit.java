@@ -184,6 +184,10 @@ public class GuiEdit implements IHolder {
         }
     }
 
+    private void reopen() {
+        manager.plugin.getScheduler().runTask(this::open);
+    }
+
     @Override
     public void onClick(
             InventoryAction action, ClickType click,
@@ -208,7 +212,7 @@ public class GuiEdit implements IHolder {
                     craftData.setMaterial(list);
                     manager.save(getId(), craftData);
                     checkMaterialSlots(player, list.size());
-                    open();
+                    reopen();
                 });
                 break;
             }
@@ -223,7 +227,7 @@ public class GuiEdit implements IHolder {
                         craftData.setChance(chance);
                         manager.save(getId(), craftData);
                     }
-                    open();
+                    reopen();
                 });
                 break;
             }
@@ -238,7 +242,7 @@ public class GuiEdit implements IHolder {
                         Integer chance = Util.parseInt(str).orElse(null);
                         if (chance == null) {
                             Message.not_integer.tm(player);
-                            open();
+                            reopen();
                             return;
                         }
                         list.add(chance);
@@ -254,7 +258,7 @@ public class GuiEdit implements IHolder {
                         craftData.setMultiple(list);
                         manager.save(getId(), craftData);
                     }
-                    open();
+                    reopen();
                 });
                 Prompter.onChat(player, consumeChat);
                 break;
@@ -270,7 +274,7 @@ public class GuiEdit implements IHolder {
                         craftData.setCost(cost);
                         manager.save(getId(), craftData);
                     }
-                    open();
+                    reopen();
                 });
                 break;
             }
@@ -285,7 +289,7 @@ public class GuiEdit implements IHolder {
                         craftData.setDisplayItem(item);
                         manager.save(getId(), craftData);
                     }
-                    open();
+                    reopen();
                 });
                 break;
             }
@@ -300,7 +304,7 @@ public class GuiEdit implements IHolder {
                     }
                     craftData.setItems(list);
                     manager.save(getId(), craftData);
-                    open();
+                    reopen();
                 });
                 break;
             }
@@ -331,7 +335,7 @@ public class GuiEdit implements IHolder {
                                 Message.gui__edit_command_lore.list()
                         );
                         inv.addItem(itemStack);
-                        open();
+                        reopen();
                         isChat.set(false);
                     });
                 }, inv -> { // onClose
@@ -345,7 +349,7 @@ public class GuiEdit implements IHolder {
                     }
                     craftData.setCommands(commands);
                     manager.save(getId(), craftData);
-                    open();
+                    reopen();
                     return true;
                 });
 
@@ -369,7 +373,7 @@ public class GuiEdit implements IHolder {
                             craftData.setTimeCost(cost);
                             manager.save(getId(), craftData);
                         }
-                        open();
+                        reopen();
                     });
                     break;
                 }
@@ -422,7 +426,7 @@ public class GuiEdit implements IHolder {
                         manager.save(getId(), craftData);
                         player.closeInventory();
                     }, inv -> {
-                        open();
+                        reopen();
                     });
                     return;
                 }
