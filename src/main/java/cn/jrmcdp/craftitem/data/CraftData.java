@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.data;
 
+import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
@@ -32,6 +33,7 @@ public class CraftData implements ConfigurationSerializable {
             this.target = target;
         }
     }
+    private final CraftItem plugin;
     private final ConfigMain config;
     private List<ItemStack> material;
     private List<MaterialInstance> loadedMaterial;
@@ -57,6 +59,7 @@ public class CraftData implements ConfigurationSerializable {
 
     public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.config = ConfigMain.inst();
+        this.plugin = config.plugin;
         this.setMaterial(material);
         this.chance = chance;
         this.multiple = multiple;
@@ -267,6 +270,22 @@ public class CraftData implements ConfigurationSerializable {
 
     public void takeAllMaterial(Player player) {
         takeItem(player, loadedMaterial);
+    }
+
+    public boolean checkCost(Player player) {
+        return checkCost(player, 1);
+    }
+
+    public boolean checkCost(Player player, int times) {
+        if (!plugin.economy().has(player, cost * times)) {
+            Message.craft__not_enough_money.tm(player);
+            return true;
+        }
+        return false;
+    }
+
+    public void doCost(Player player) {
+        plugin.economy().takeMoney(player, cost);
     }
 
     @NotNull
