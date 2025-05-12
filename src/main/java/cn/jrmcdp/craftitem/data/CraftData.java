@@ -39,7 +39,7 @@ public class CraftData implements ConfigurationSerializable {
     private List<MaterialInstance> loadedMaterial;
     private int chance;
     private List<Integer> multiple;
-    private int cost;
+    private int cost, costLevel;
     private ItemStack displayItem;
     private List<ItemStack> items;
     private List<String> commands;
@@ -47,17 +47,17 @@ public class CraftData implements ConfigurationSerializable {
      * 锻造时长 (秒)
      */
     private long time;
-    private int timeCost;
+    private int timeCost, timeCostLevel;
     private boolean difficult;
     private int guaranteeFailTimes;
     private int combo;
     private String countLimit;
     private String timeCountLimit;
     public CraftData() {
-        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, false, 0, 0, "", "");
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, 0, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, 0, false, 0, 0, "", "");
     }
 
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
+    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.config = ConfigMain.inst();
         this.plugin = config.plugin;
         this.setMaterial(material);
@@ -72,11 +72,13 @@ public class CraftData implements ConfigurationSerializable {
             multiple.add(i);
         }
         this.cost = cost;
+        this.costLevel = costLevel;
         this.displayItem = displayItem;
         this.items = items;
         this.commands = commands;
         this.time = time;
         this.timeCost = timeCost;
+        this.timeCostLevel = timeCostLevel;
         this.difficult = difficult;
         this.guaranteeFailTimes = guaranteeFailTimes;
         this.combo = combo;
@@ -105,6 +107,14 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setTimeCost(int timeCost) {
         this.timeCost = timeCost;
+    }
+
+    public int getTimeCostLevel() {
+        return timeCostLevel;
+    }
+
+    public void setTimeCostLevel(int timeCostLevel) {
+        this.timeCostLevel = timeCostLevel;
     }
 
     public boolean isDifficult() {
@@ -186,6 +196,14 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    public int getCostLevel() {
+        return this.costLevel;
+    }
+
+    public void setCostLevel(int costLevel) {
+        this.costLevel = costLevel;
     }
 
     public ItemStack getDisplayItem() {
@@ -281,10 +299,16 @@ public class CraftData implements ConfigurationSerializable {
             Message.craft__not_enough_money.tm(player);
             return true;
         }
+        if (player.getLevel() < costLevel * times) {
+            Message.craft__not_enough_level.tm(player);
+            return true;
+        }
         return false;
     }
 
     public void doCost(Player player) {
+        int level = player.getLevel();
+        player.setLevel(Math.max(0, level - costLevel));
         plugin.economy().takeMoney(player, cost);
     }
 
@@ -293,10 +317,16 @@ public class CraftData implements ConfigurationSerializable {
             Message.craft__not_enough_money.tm(player);
             return true;
         }
+        if (player.getLevel() < timeCostLevel) {
+            Message.craft__not_enough_level.tm(player);
+            return true;
+        }
         return false;
     }
 
     public void doCostTime(Player player) {
+        int level = player.getLevel();
+        player.setLevel(Math.max(0, level - timeCostLevel));
         plugin.economy().takeMoney(player, timeCost);
     }
 
@@ -308,11 +338,13 @@ public class CraftData implements ConfigurationSerializable {
         map.put("Chance", this.chance);
         map.put("Multiple", this.multiple);
         map.put("Cost", this.cost);
+        map.put("CostLevel", this.costLevel);
         map.put("DisplayItem", this.displayItem);
         map.put("Items", this.items);
         map.put("Commands", this.commands);
         map.put("TimeSecond", this.time);
         map.put("TimeCost", this.timeCost);
+        map.put("TimeCostLevel", this.timeCostLevel);
         map.put("Difficult", this.difficult);
         map.put("GuaranteeFailTimes", this.guaranteeFailTimes);
         map.put("Combo", this.combo);
@@ -330,11 +362,13 @@ public class CraftData implements ConfigurationSerializable {
                 get(map, "Chance", 0),
                 get(map, "Multiple", ArrayList::new), // List<Integer>
                 get(map, "Cost", 0),
+                get(map, "CostLevel", 0),
                 get(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
                 get(map, "Items", ArrayList::new), // List<ItemStack>
                 get(map, "Commands", ArrayList::new), // List<String>
                 Long.parseLong(String.valueOf(get(map, "TimeSecond", "0"))),
                 get(map, "TimeCost", 0),
+                get(map, "TimeCostLevel", 0),
                 get(map, "Difficult", false),
                 get(map, "GuaranteeFailTimes", 0),
                 get(map, "Combo", 0),

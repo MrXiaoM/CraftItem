@@ -47,6 +47,7 @@ public enum Message implements IHolderAccessor {
     craft__time_start("&a已开启时长锻造，时间结束后再次打开锻造书即可锻造成功。你也可以在锻造书中查看进度和剩余时间。"),
     craft__success("&a成功锻造出了 &e%s&a."),
     craft__not_enough_money("&e没有足够的金币来锻造."),
+    craft__not_enough_level("&e没有足够的经验等级来锻造."),
     craft__not_enough_material("&e身上没有足够的材料."),
     craft__not_enough_material_details("&7需要 %s&7 (&f%d &7/ &f%d&7)."),
     craft__forge_limit("&e当前已到达锻造次数上限&7 (%d)"),
@@ -90,6 +91,13 @@ public enum Message implements IHolderAccessor {
     ),
     gui__edit__item__cost__name("&a价格"),
     gui__edit__item__cost__lore(
+            "&7点击 查看/编辑",
+            "&7使用正整数",
+            "",
+            "&7当前: &e%d"
+    ),
+    gui__edit__item__cost_level__name("&a花费经验等级"),
+    gui__edit__item__cost_level__lore(
             "&7点击 查看/编辑",
             "&7使用正整数",
             "",
@@ -193,6 +201,7 @@ public enum Message implements IHolderAccessor {
     gui__edit_input_chance("&a请输入概率 正整数"),
     gui__edit_input_multiple("&a请按照格式填写倍率 \"5 10 20\" (小 中 大)"),
     gui__edit_input_cost("&a请输入金额 正整数"),
+    gui__edit_input_cost_level("&a请输入经验等级 正整数"),
     gui__edit_display_title("将要展示的物品放在第一格"),
     gui__edit_display_not_found("&c未找到第一格的物品"),
     gui__edit_item_title("奖励物品"),
@@ -204,7 +213,11 @@ public enum Message implements IHolderAccessor {
     gui__edit_command_lore("", "&4点击删除"),
     gui__edit_time_limit_count_title_normal("&0选择 普通/困难锻造限制组"),
     gui__edit_time_limit_count_title_time("&0选择 时长锻造限制组"),
-    gui__edit_time_cost("&a请输入锻造时长金额 正整数"),
+    gui__edit_time_cost_sum__tips(
+            "&a按以下格式修改数值 正整数",
+            "&e  M+数值 &f修改时长锻造价格，如&e M100 &f消耗100金币",
+            "&e  L+数值 &f修改时长锻造消耗经验等级，如&e L3 &f消耗3级经验"),
+    gui__edit_time_cost_sum__wrong_type("&e时长锻造消耗输入格式有误"),
 
     gui__category__not_found("&c未找到 &e%s"),
     gui__craft_info__lore__header(

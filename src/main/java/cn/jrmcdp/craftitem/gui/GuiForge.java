@@ -95,6 +95,7 @@ public class GuiForge implements IHolder {
                 Pair.of("<RemainTime>", remainTime),
                 Pair.of("<Time>", craftData.getTimeDisplay()),
                 Pair.of("<Cost>", craftData.getTimeCost()),
+                Pair.of("<CostLevel>", craftData.getTimeCostLevel()),
                 Pair.of("<LimitCountCurrent>", count),
                 Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),
                 Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.str(count, limit) : Message.craft__unlimited.str())
@@ -201,6 +202,7 @@ public class GuiForge implements IHolder {
                                 Pair.of("<ChanceName>", parent.plugin.config().getChanceName(craftData.getChance())),
                                 Pair.of("<Score>", playerData.getScore(id)),
                                 Pair.of("<Cost>", craftData.getCost()),
+                                Pair.of("<CostLevel>", craftData.getCostLevel()),
                                 Pair.of("<Combo>", craftData.getCombo()),
                                 Pair.of("<LimitCountCurrent>", count),
                                 Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),

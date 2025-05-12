@@ -35,6 +35,7 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6消耗 &e<CostLevel> &6级经验'
       - '  &8➥ &6可用次数 &e<LimitCount>'
   锻_连击:
     Type: ANVIL
@@ -45,6 +46,7 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6消耗 &e<CostLevel> &6级经验'
       - '  &8➥ &6可用次数 &e<LimitCount>'
       - ''
       - '&a左键 &7| &f锻造一次'
@@ -59,6 +61,7 @@ Item:
       - '  &8➥ &6难度 &e<ChanceName>'
       - '  &8➥ &6进度 &e<Score>%'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6消耗 &e<CostLevel> &6级经验'
       - '  &8➥ &6可用次数 &e<LimitCount>'
   时:
     Type: CLOCK
@@ -69,6 +72,7 @@ Item:
       - '&a信息:'
       - '  &8➥ &6耗时 &e<Time>'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6消耗 &e<CostLevel> &6级经验'
       - '  &8➥ &6可用次数 &e<LimitCount>'
       - ''
       - '&a&l点击提交材料和金币开始锻造'
@@ -85,6 +89,7 @@ Item:
       - '&a信息:'
       - '  &8➥ &6耗时 &e<Time>'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6消耗 &e<CostLevel> &6级经验'
       - '  &8➥ &6可用次数 &e<LimitCount>'
       - ''
       - '&c&l你不满足进行时长锻造的条件!'
@@ -99,6 +104,7 @@ Item:
       - '  &8➥ &3剩余 &b<RemainTime>'
       - '  &8➥ &6耗时 &e<Time>'
       - '  &8➥ &6价格 &e<Cost> &6㊎'
+      - '  &8➥ &6消耗 &e<CostLevel> &6级经验'
       - '  &8➥ &6可用次数 &e<LimitCount>'
   时_完成:
     Type: CLOCK

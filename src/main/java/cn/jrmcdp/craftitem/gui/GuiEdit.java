@@ -80,37 +80,43 @@ public class GuiEdit implements IHolder {
                             gui.craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                     ));
         }),
-        COST(3, gui -> {
+        COST_MONEY(3, gui -> {
             return getItemStack(getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.str(),
                     Message.gui__edit__item__cost__lore.list(
                             gui.craftData.getCost()
                     ));
         }),
-        DISPLAY(4, gui -> {
+        COST_LEVEL(4, gui -> {
+            return getItemStack(getMaterial("EXPERIENCE_BOTTLE"), Message.gui__edit__item__cost_level__name.str(),
+                    Message.gui__edit__item__cost_level__lore.list(
+                            gui.craftData.getCostLevel()
+                    ));
+        }),
+        DISPLAY(5, gui -> {
             return getItemStack(getMaterial("PAINTING"), Message.gui__edit__item__display__name.str(),
                     Message.gui__edit__item__display__lore.list(
                             gui.craftData.getDisplayItem()
                     ));
         }),
-        REWARD_ITEMS(5, gui -> {
+        REWARD_ITEMS(6, gui -> {
             return getItemStack(getMaterial("CHEST"), Message.gui__edit__item__item__name.str(),
                     Message.gui__edit__item__item__lore.list(
                             String.join("\n§7", Utils.itemToListString(gui.craftData.getItems()))
                     ));
         }),
-        REWARD_COMMANDS(6, gui -> {
+        REWARD_COMMANDS(7, gui -> {
             return getItemStack(getMaterial("PAPER"), Message.gui__edit__item__command__name.str(),
                     Message.gui__edit__item__command__lore.list(
                             String.join("\n§7", gui.craftData.getCommands())
                     ));
         }),
-        TIME(7, gui -> {
+        TIME(8, gui -> {
             return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.str(),
                     Message.gui__edit__item__time__lore.list(
                             gui.craftData.getTimeDisplay(), gui.craftData.getTimeCost()
                     ));
         }),
-        TIME_LIMIT(8, gui -> {
+        TIME_LIMIT(9, gui -> {
             String groupTime = gui.craftData.getTimeCountLimit();
             if (groupTime.trim().isEmpty()) groupTime = Message.gui__edit__unset.str();
             String groupNormal = gui.craftData.getCountLimit();
@@ -118,24 +124,24 @@ public class GuiEdit implements IHolder {
             return getItemStack(getMaterial("BUCKET"), Message.gui__edit__item__time_count_limit__name.str(),
                     Message.gui__edit__item__time_count_limit__lore.list(groupNormal, groupTime));
         }),
-        DIFFICULT(9, gui -> {
+        DIFFICULT(10, gui -> {
             return getItemStack(getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.str(),
                     Message.gui__edit__item__difficult__lore.list(
                             (gui.craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).str()
                     ));
         }),
-        FAIL_TIMES(10, gui -> {
+        FAIL_TIMES(11, gui -> {
             return getItemStack(getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.str(),
                     Message.gui__edit__item__fail_times__lore.list(
                             gui.craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(gui.craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.str()
                     ));
         }),
-        COMBO(11, gui -> {
+        COMBO(12, gui -> {
             return getItemStack(getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.str(),
                     Message.gui__edit__item__combo__lore.list(
                             gui.craftData.getCombo() > 0 ? String.valueOf(gui.craftData.getCombo()) : Message.gui__edit__unset.str()
                     ));
-        })
+        }),
 
         ;
         final int index;
@@ -274,7 +280,7 @@ public class GuiEdit implements IHolder {
                 Prompter.onChat(player, consumeChat);
                 break;
             }
-            case COST: { // 价格
+            case COST_MONEY: { // 价格
                 player.closeInventory();
                 Message.gui__edit_input_cost.tm(player);
                 Prompter.onChat(player, message -> {
@@ -283,6 +289,21 @@ public class GuiEdit implements IHolder {
                         Message.not_integer.tm(player);
                     } else {
                         craftData.setCost(cost);
+                        manager.save(getId(), craftData);
+                    }
+                    reopen();
+                });
+                break;
+            }
+            case COST_LEVEL: { // 花费经验等级
+                player.closeInventory();
+                Message.gui__edit_input_cost_level.tm(player);
+                Prompter.onChat(player, message -> {
+                    Integer costLevel = Util.parseInt(message).orElse(null);
+                    if (costLevel == null || costLevel < 0) {
+                        Message.not_integer.tm(player);
+                    } else {
+                        craftData.setCostLevel(costLevel);
                         manager.save(getId(), craftData);
                     }
                     reopen();
@@ -388,14 +409,35 @@ public class GuiEdit implements IHolder {
                     manager.save(getId(), craftData);
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     player.closeInventory();
-                    Message.gui__edit_time_cost.tm(player);
+                    Message.gui__edit_time_cost_sum__tips.tm(player);
                     Prompter.onChat(player, message -> {
-                        Integer cost = Util.parseInt(message).orElse(null);
-                        if (cost == null || cost < 0) {
-                            Message.not_integer.tm(player);
-                        } else {
-                            craftData.setTimeCost(cost);
-                            manager.save(getId(), craftData);
+                        char type = Character.toUpperCase(message.charAt(0));
+                        String args = message.substring(1);
+                        switch (type) {
+                            case 'M': {
+                                int cost = Util.parseInt(args).orElse(-1);
+                                if (cost < 0) {
+                                    Message.not_integer.tm(player);
+                                } else {
+                                    craftData.setTimeCost(cost);
+                                    manager.save(getId(), craftData);
+                                }
+                                break;
+                            }
+                            case 'L': {
+                                int cost = Util.parseInt(args).orElse(-1);
+                                if (cost < 0) {
+                                    Message.not_integer.tm(player);
+                                } else {
+                                    craftData.setTimeCostLevel(cost);
+                                    manager.save(getId(), craftData);
+                                }
+                                break;
+                            }
+                            default: {
+                                Message.gui__edit_time_cost_sum__wrong_type.tm(player);
+                                break;
+                            }
                         }
                         reopen();
                     });
