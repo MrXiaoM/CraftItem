@@ -288,6 +288,18 @@ public class CraftData implements ConfigurationSerializable {
         plugin.economy().takeMoney(player, cost);
     }
 
+    public boolean checkCostTime(Player player) {
+        if (!plugin.economy().has(player, timeCost)) {
+            Message.craft__not_enough_money.tm(player);
+            return true;
+        }
+        return false;
+    }
+
+    public void doCostTime(Player player) {
+        plugin.economy().takeMoney(player, timeCost);
+    }
+
     @NotNull
     public Map<String, Object> serialize() {
         // 注: 配置路径分隔符是 ' '(空格) 不是 '.'(点)

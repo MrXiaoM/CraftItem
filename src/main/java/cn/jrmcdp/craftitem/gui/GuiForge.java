@@ -437,7 +437,7 @@ public class GuiForge implements IHolder {
             return;
         }
         if (!processing) { // 如果时长锻造未开始
-            if (craftData.checkCost(player)) return;
+            if (craftData.checkCostTime(player)) return;
             if (craftData.isNotEnoughMaterial(player)) return;
             int limit = craftData.getTimeForgeCountLimit(player);
             if (limit < 0 || (limit > 0 && playerData.getTimeForgeCount(key) >= limit)) {
@@ -446,7 +446,7 @@ public class GuiForge implements IHolder {
             }
 
             player.closeInventory();
-            craftData.doCost(player);
+            craftData.doCostTime(player);
             craftData.takeAllMaterial(player);
             long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
             playerData.setTime(key, endTime);
