@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "cn.jrmcdp"
-version = "2.0.0-pre1"
+version = "2.0.0"
 
 val targetJavaVersion = 8
 allprojects {

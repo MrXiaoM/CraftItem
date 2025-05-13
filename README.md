@@ -1,7 +1,5 @@
 # CraftItem
 
-> 当前正在使用 PluginBase 对插件进行重构，正式发布之前可能存在一些问题，敬请期待
-
 [![Releases](https://img.shields.io/github/downloads/MrXiaoM/CraftItem/total)](https://plugins.mcio.dev/dl?repo=CraftItem)
 
 本插件 Fork 自 https://gitee.com/zhibumiao/CraftItem
