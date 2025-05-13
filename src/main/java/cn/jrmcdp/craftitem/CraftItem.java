@@ -33,7 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class CraftItem extends BukkitPlugin {
-    private static CraftItem plugin;
     private static InventoryFactory inventoryFactory;
     private ConfigMain config;
     private boolean enableConfigUpdater = false;
@@ -155,7 +154,7 @@ public class CraftItem extends BukkitPlugin {
 
     public void saveDefaultConfig() {
         if (!resolve("./config.yml").exists()) {
-            plugin.saveResource("config.yml");
+            saveResource("config.yml");
         }
         Util.mkdirs(resolve("./PlayerData"));
         for (String filename : new String[] {
@@ -165,7 +164,7 @@ public class CraftItem extends BukkitPlugin {
                 "Category.yml",
         }) {
             if (!resolve("./" + filename).exists()) {
-                plugin.saveResource(filename);
+                saveResource(filename);
             }
         }
     }
