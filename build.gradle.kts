@@ -11,36 +11,26 @@ val targetJavaVersion = 8
 allprojects {
     repositories {
         mavenCentral()
-        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven("https://repo.codemc.io/repository/maven-public/")
         maven("https://jitpack.io")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
     }
-
-    tasks.withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
-            options.release.set(targetJavaVersion)
-        }
-    }
 }
 
-fun DependencyHandlerScope.impl(dependencyNotation: Any): Dependency? {
-    return implementation(dependencyNotation)
-}
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+
+    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
 
-    impl("net.kyori:adventure-api:4.20.0")
-    impl("net.kyori:adventure-platform-bukkit:4.3.4")
-    impl("net.kyori:adventure-text-minimessage:4.20.0")
-    impl("de.tr7zw:item-nbt-api:2.15.0")
-    impl("com.github.technicallycoded:FoliaLib:0.4.4")
-    impl("top.mrxiaom:PluginBase:1.4.2")
-    impl(project(":paper"))
+    implementation("net.kyori:adventure-api:4.21.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
+    implementation("net.kyori:adventure-text-minimessage:4.21.0")
+    implementation("de.tr7zw:item-nbt-api:2.15.0")
+    implementation("com.github.technicallycoded:FoliaLib:0.4.4")
+    implementation("top.mrxiaom:PluginBase:1.4.2")
+    implementation(project(":paper"))
 }
 
 java {
@@ -66,10 +56,12 @@ tasks {
         archiveClassifier.set("")
         destinationDirectory.set(rootProject.file("out"))
         mapOf(
-            "net.kyori" to "kyori",
+            "org.intellij.lang.annotations" to "annotations.intellij",
+            "org.jetbrains.annotations" to "annotations.jetbrains",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
             "top.mrxiaom.pluginbase" to "base",
             "com.tcoded.folialib" to "folialib",
+            "net.kyori" to "kyori",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }
@@ -82,7 +74,12 @@ tasks {
             include("plugin.yml")
         }
     }
-
+    withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
+            options.release.set(targetJavaVersion)
+        }
+    }
     javadoc {
         (options as StandardJavadocDocletOptions).apply {
             links("https://hub.spigotmc.org/javadocs/spigot/")
