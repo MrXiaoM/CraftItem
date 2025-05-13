@@ -58,6 +58,9 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+    jar {
+        archiveClassifier.set("api")
+    }
     shadowJar {
         from("LICENSE")
         archiveClassifier.set("")
