@@ -33,10 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class CraftItem extends BukkitPlugin {
-    public static final String netKyori;
-    static {
-        netKyori = new String(new char[] { 'n', 'e', 't', '.', 'k', 'y', 'o', 'r', 'i' });
-    }
     private static CraftItem plugin;
     private static InventoryFactory inventoryFactory;
     private ConfigMain config;
@@ -84,8 +80,7 @@ public class CraftItem extends BukkitPlugin {
 
     @Override
     public void beforeEnable() {
-        if (Util.isPresent("com.destroystokyo.paper.utils.PaperPluginLogger")
-        && Util.isPresent(netKyori + ".adventure.text.Component")) try {
+        if (PaperInventoryFactory.test()) try {
             inventoryFactory = new PaperInventoryFactory();
         } catch (Throwable ignored) {
             inventoryFactory = new BukkitInventoryFactory();
