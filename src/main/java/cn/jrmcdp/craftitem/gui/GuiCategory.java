@@ -148,7 +148,7 @@ public class GuiCategory implements IHolder {
         event.setCancelled(true);
         final Player player = (Player)event.getWhoClicked();
         if (slot < 0 || slot >= chest.length) return;
-        parent.plugin.config().playSoundClickInventory(player);
+        parent.plugin.config().getSoundClickInventory().play(player);
         String key = chest[slot];
         switch (key) {
             case "上" : {

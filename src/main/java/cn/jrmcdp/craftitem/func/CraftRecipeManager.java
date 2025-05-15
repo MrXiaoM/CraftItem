@@ -121,7 +121,7 @@ public class CraftRecipeManager extends AbstractModule {
         int score = craftData.getMultiple().get(multiple);
         int oldValue = playerData.getScore(id);
         if (win) {
-            plugin.config().playSoundForgeSuccess(player);
+            plugin.config().getSoundForgeSuccess().play(player);
             int value = playerData.addScore(id, score);
             CraftSuccessEvent e = new CraftSuccessEvent(player, holder, oldValue, value, multiple);
             Bukkit.getPluginManager().callEvent(e);
@@ -182,7 +182,7 @@ public class CraftRecipeManager extends AbstractModule {
                 }
             }
         } else {
-            plugin.config().playSoundForgeFail(player);
+            plugin.config().getSoundForgeFail().play(player);
             int value = playerData.addScore(id, -score);
             CraftFailEvent e = new CraftFailEvent(player, holder, oldValue, value, multiple);
             Bukkit.getPluginManager().callEvent(e);
@@ -259,7 +259,7 @@ public class CraftRecipeManager extends AbstractModule {
                             return;
                         }
                         plugin.config().sendForgeTitle(player);
-                        plugin.config().playSoundForgeTitle(player);
+                        plugin.config().getSoundForgeTitle().play(player);
                         this.counter++;
                     }
                 }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);

@@ -210,7 +210,7 @@ public class GuiEdit implements IHolder {
             InventoryView view, InventoryClickEvent event
     ) {
         event.setCancelled(true);
-        manager.plugin.config().playSoundClickInventory(player);
+        manager.plugin.config().getSoundClickInventory().play(player);
         if (event.getRawSlot() < 0 || event.getRawSlot() >= invSize) return;
         final CraftData craftData = getCraftData();
         Slot slot = Slot.valueOf(slotIndex);

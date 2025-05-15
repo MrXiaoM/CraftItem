@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.config;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.data.Condition;
 import cn.jrmcdp.craftitem.config.data.NotDisappear;
+import cn.jrmcdp.craftitem.config.data.Sound;
 import cn.jrmcdp.craftitem.config.data.Title;
 import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.func.AbstractModule;
@@ -15,7 +16,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Registry;
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -38,12 +38,15 @@ public class ConfigMain extends AbstractModule {
     private List<Integer> chanceNamesKeys;
     private Map<Integer, String> chanceNames;
     private String chanceNameUnknown;
+
     private Map<String, List<String>> category;
     private Title forgeTitle;
-    private @Nullable Sound soundClickInventory;
-    private @Nullable Sound soundForgeSuccess;
-    private @Nullable Sound soundForgeFail;
-    private @Nullable Sound soundForgeTitle;
+
+    private Sound soundClickInventory;
+    private Sound soundForgeSuccess;
+    private Sound soundForgeFail;
+    private Sound soundForgeTitle;
+
     private List<String> randomGames;
     private final List<Condition> timeForgeConditions = new ArrayList<>();
     private final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
@@ -106,25 +109,10 @@ public class ConfigMain extends AbstractModule {
             int fadeOut = setting.getInt("ForgeTitle.FadeOut", 10);
             forgeTitle = new Title(title, subtitle, fadeIn, time, fadeOut);
 
-            soundClickInventory = valueOfOrNull(
-                    Sound.class,
-                    setting.getString("Sounds.ClickInventory"),
-                    "UI_BUTTON_CLICK", "CLICK");
-
-            soundForgeSuccess = valueOfOrNull(
-                    Sound.class,
-                    setting.getString("Sounds.ForgeSuccess"),
-                    "BLOCK_ANVIL_USE", "ANVIL_USE");
-
-            soundForgeFail = valueOfOrNull(
-                    Sound.class,
-                    setting.getString("Sounds.ForgeFail"),
-                    "BLOCK_GLASS_BREAK", "GLASS");
-
-            soundForgeTitle = valueOfOrNull(
-                    Sound.class,
-                    setting.getString("Sounds.ForgeTitle"),
-                    "BLOCK_ANVIL_LAND", "ANVIL_LAND");
+            soundClickInventory = new Sound(setting, "Sounds.ClickInventory", "UI_BUTTON_CLICK", "CLICK").setPitch(2.0f);
+            soundForgeSuccess = new Sound(setting, "Sounds.ForgeSuccess", "BLOCK_ANVIL_USE", "ANVIL_USE");
+            soundForgeFail = new Sound(setting, "Sounds.ForgeFail", "BLOCK_GLASS_BREAK", "GLASS");
+            soundForgeTitle = new Sound(setting, "Sounds.ForgeTitle", "BLOCK_ANVIL_LAND", "ANVIL_LAND").setPitch(0.8f);
         }
         randomGames = config.getStringList("RandomGames");
         timeForgeConditions.clear();
@@ -173,22 +161,22 @@ public class ConfigMain extends AbstractModule {
         return notDisappear.isNotDisappearItem(item);
     }
 
-    public void playSoundClickInventory(Player player) {
-        if (soundClickInventory == null) return;
-        player.playSound(player.getLocation(), soundClickInventory, 1.0f, 2.0f);
+    public Sound getSoundClickInventory() {
+        return soundClickInventory;
     }
-    public void playSoundForgeSuccess(Player player) {
-        if (soundForgeSuccess == null) return;
-        player.playSound(player.getLocation(), soundForgeSuccess, 1.0f, 1.0f);
+
+    public Sound getSoundForgeSuccess() {
+        return soundForgeSuccess;
     }
-    public void playSoundForgeFail(Player player) {
-        if (soundForgeFail == null) return;
-        player.playSound(player.getLocation(), soundForgeFail, 1.0f, 1.0f);
+
+    public Sound getSoundForgeFail() {
+        return soundForgeFail;
     }
-    public void playSoundForgeTitle(Player player) {
-        if (soundForgeTitle == null) return;
-        player.playSound(player.getLocation(), soundForgeTitle, 1.0f, 0.8f);
+
+    public Sound getSoundForgeTitle() {
+        return soundForgeTitle;
     }
+
     public void sendForgeTitle(Player player) {
         forgeTitle.send(player);
     }

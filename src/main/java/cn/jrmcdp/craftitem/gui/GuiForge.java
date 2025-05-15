@@ -252,7 +252,7 @@ public class GuiForge implements IHolder {
             InventoryView view, InventoryClickEvent event
     ) {
         event.setCancelled(true);
-        parent.plugin.config().playSoundClickInventory(player);
+        parent.plugin.config().getSoundClickInventory().play(player);
 
         if (!event.getClick().isRightClick() && !event.getClick().isLeftClick()) return;
         if (event.getRawSlot() < 0 || event.getRawSlot() >= chest.length) return;
