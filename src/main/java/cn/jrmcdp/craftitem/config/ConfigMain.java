@@ -68,6 +68,11 @@ public class ConfigMain extends AbstractModule {
     }
 
     @Override
+    public int priority() {
+        return 999;
+    }
+
+    @Override
     public void reloadConfig(MemoryConfiguration config) {
         if (plugin.isEnableConfigUpdater() && config instanceof YamlConfiguration) {
             updater.apply((YamlConfiguration) config, plugin.resolve("./config.yml"));
