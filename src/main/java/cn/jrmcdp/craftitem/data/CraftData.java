@@ -23,8 +23,17 @@ import static cn.jrmcdp.craftitem.utils.Utils.takeItem;
 
 public class CraftData implements ConfigurationSerializable {
     public static class MaterialState {
+        /**
+         * 材料物品
+         */
         public final MaterialInstance item;
+        /**
+         * 玩家当前拥有的材料数量
+         */
         public final int amount;
+        /**
+         * 玩家所需的材料数量
+         */
         public final int target;
 
         public MaterialState(MaterialInstance item, int amount, int target) {
@@ -32,26 +41,89 @@ public class CraftData implements ConfigurationSerializable {
             this.amount = amount;
             this.target = target;
         }
+
+        public boolean isEnough() {
+            return amount >= target;
+        }
     }
     private final CraftItem plugin;
     private final ConfigMain config;
+    /**
+     * 原始材料物品
+     */
     private List<ItemStack> material;
+    /**
+     * 已加载、经过处理的材料匹配器
+     */
     private List<MaterialInstance> loadedMaterial;
+    /**
+     * 单次锻造成功几率，0-100
+     */
     private int chance;
+    /**
+     * 锻造程度，在成功/失败时，对应增加/减少的进度。这个列表的长度必须为3
+     * <ul>
+     *   <li><code>index=0</code> 程度为小，如 小成功、小失败</li>
+     *   <li><code>index=1</code> 程度为中等，如 成功、失败</li>
+     *   <li><code>index=2</code> 程度为大，如 大成功、大失败</li>
+     * </ul>
+     */
     private List<Integer> multiple;
-    private int cost, costLevel;
+    /**
+     * 单次锻造需要花费的 Vault 金币
+     */
+    private int cost;
+    /**
+     * 单次锻造需要花费的经验等级
+     */
+    private int costLevel;
+    /**
+     * 锻造界面显示的图标物品
+     */
     private ItemStack displayItem;
+    /**
+     * 锻造成功给予的物品
+     */
     private List<ItemStack> items;
+    /**
+     * 锻造成功执行的命令列表
+     */
     private List<String> commands;
     /**
-     * 锻造时长 (秒)
+     * 时长锻造所需的时间 (秒)
      */
     private long time;
-    private int timeCost, timeCostLevel;
+    /**
+     * 时长锻造需要花费的 Vault 金币
+     */
+    private int timeCost;
+    /**
+     * 时长锻造需要花费的经验等级
+     */
+    private int timeCostLevel;
+    /**
+     * 是否开启困难锻造
+     */
     private boolean difficult;
+    /**
+     * 锻造保底次数
+     */
     private int guaranteeFailTimes;
+    /**
+     * 锻造连击次数
+     */
     private int combo;
+    /**
+     * 普通锻造/困难锻造 可用次数限制组
+     *
+     * 详见 {@link cn.jrmcdp.craftitem.config.ConfigMain#countLimitGroups}
+     */
     private String countLimit;
+    /**
+     * 时长锻造 可用次数限制组
+     *
+     * 详见 {@link cn.jrmcdp.craftitem.config.ConfigMain#countLimitGroups}
+     */
     private String timeCountLimit;
     public CraftData() {
         this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, 0, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, 0, false, 0, 0, "", "");
@@ -244,7 +316,7 @@ public class CraftData implements ConfigurationSerializable {
 
     public boolean isNotEnoughMaterial(Player player) {
         List<MaterialState> state = getMaterialState(player.getInventory());
-        state.removeIf(it -> it.amount >= it.target);
+        state.removeIf(MaterialState::isEnough);
         if (!state.isEmpty()) {
             Message.craft__not_enough_material.tm(player);
             for (MaterialState entry : state) {
@@ -261,7 +333,9 @@ public class CraftData implements ConfigurationSerializable {
         for (Map.Entry<MaterialInstance, Integer> entry : amountMap.entrySet()) {
             int amount = 0;
             for (ItemStack i : gui.getContents()) {
-                if (entry.getKey().getAdapter().match(i)) amount += i.getAmount();
+                if (entry.getKey().getAdapter().match(i)) {
+                    amount += i.getAmount();
+                }
             }
             list.add(new MaterialState(entry.getKey(), amount, entry.getValue()));
         }

@@ -112,6 +112,8 @@ public class CraftItem extends BukkitPlugin {
         AdventureUtil.sendMessage(sender, Message.prefix + "<white>由 MrXiaoM 重置! 原作者为 ZhiBuMiao.");
         enableConfigUpdater = ConfigUpdater.supportComments;
         if (!enableConfigUpdater) {
+            // 不支持注释的时候，通过 last-version 文件检查插件是否已更新。
+            // 如果更新了，提醒用户应该手动更新配置文件。
             File file = resolve("./last-version");
             boolean updated = true;
             if (file.exists()) {
