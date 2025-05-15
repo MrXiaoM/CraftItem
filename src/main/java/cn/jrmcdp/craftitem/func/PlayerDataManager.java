@@ -27,7 +27,7 @@ public class PlayerDataManager extends AbstractModule implements Listener {
     public PlayerData getOrCreatePlayerData(Player player) {
         PlayerData playerData = playerDataHashMap.get(player.getName());
         if (playerData == null) {
-            playerData = new PlayerData(player);
+            playerData = new PlayerData(plugin, player);
             playerDataHashMap.put(player.getName(), playerData);
         }
         return playerData;
