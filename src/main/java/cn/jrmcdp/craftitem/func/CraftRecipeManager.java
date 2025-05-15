@@ -58,6 +58,9 @@ public class CraftRecipeManager extends AbstractModule {
         String configPath = pluginConfig.getString("Setting.CraftRecipeFile", "./Craft.yml");
         inCurrentServer = configPath.startsWith("./");
         craftConfigFile = plugin.resolve(configPath);
+        if (!craftConfigFile.exists()) {
+            plugin.saveResource("Craft.yml", craftConfigFile);
+        }
         craftConfig = new YamlConfiguration();
         craftConfig.options().pathSeparator(' ');
         ConfigUtils.load(craftConfig, craftConfigFile);

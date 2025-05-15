@@ -161,7 +161,6 @@ public class CraftItem extends BukkitPlugin {
         Util.mkdirs(resolve("./PlayerData"));
         for (String filename : new String[] {
                 "Material.yml",
-                "Craft.yml",
                 "Gui.yml",
                 "Category.yml",
         }) {
