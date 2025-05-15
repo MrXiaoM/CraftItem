@@ -122,7 +122,7 @@ public class GuiCategory implements IHolder {
                 if (lore == null) lore = new ArrayList<>();
                 lore.addAll(Message.gui__craft_info__lore__header.list());
                 for (ItemStack itemStack : craftData.getItems())
-                    lore.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack), itemStack.getAmount()));
+                    lore.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack, getPlayer()), itemStack.getAmount()));
                 for (String command : craftData.getCommands()) {
                     String[] split = command.split("\\|\\|");
                     if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.str(split[1]));

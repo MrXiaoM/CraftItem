@@ -23,6 +23,7 @@ dependencies {
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
     implementation("net.kyori:adventure-api:4.21.0")
     implementation("net.kyori:adventure-platform-bukkit:4.4.0")

@@ -320,7 +320,7 @@ public class CraftData implements ConfigurationSerializable {
         if (!state.isEmpty()) {
             Message.craft__not_enough_material.tm(player);
             for (MaterialState entry : state) {
-                Message.craft__not_enough_material_details.tm(player, Utils.getItemName(entry.item.getSample()), entry.amount, entry.target);
+                Message.craft__not_enough_material_details.tm(player, Utils.getItemName(entry.item.getSample(), player), entry.amount, entry.target);
             }
             return true;
         }

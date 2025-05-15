@@ -102,10 +102,10 @@ public class Utils {
         return Material.STONE;
     }
 
-    public static List<String> itemToListString(Collection<ItemStack> collection) {
+    public static List<String> itemToListString(Collection<ItemStack> collection, Player player) {
         List<String> list = new ArrayList<>();
         for (ItemStack itemStack : collection) {
-            list.add("§a" + Utils.getItemName(itemStack) + "§fx" + itemStack.getAmount());
+            list.add("§a" + Utils.getItemName(itemStack, player) + "§fx" + itemStack.getAmount());
         }
         return list;
     }
@@ -180,13 +180,12 @@ public class Utils {
         return null;
     }
 
-    public static String getItemName(ItemStack itemStack) {
+    public static String getItemName(ItemStack itemStack, Player player) {
         if (itemStack == null) return "空";
         if (itemStack.hasItemMeta()) {
             ItemMeta meta = itemStack.getItemMeta();
             if (meta != null && meta.hasDisplayName()) return meta.getDisplayName();
         }
-        String name = itemStack.getType().name();
-        return ItemTranslation.get(name);
+        return ItemTranslation.get(itemStack, player);
     }
 }
