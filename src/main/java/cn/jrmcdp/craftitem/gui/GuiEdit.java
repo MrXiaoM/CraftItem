@@ -1,10 +1,10 @@
 package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.manager.CraftDataManager;
 import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
+import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.utils.Prompter;
 import cn.jrmcdp.craftitem.utils.Utils;
 import de.tr7zw.changeme.nbtapi.NBT;
@@ -41,7 +41,7 @@ public class GuiEdit implements IHolder {
     private int invSize = 0;
 
     private final Player player;
-    private final CraftDataManager manager = CraftDataManager.inst();
+    private final CraftRecipeManager manager = CraftRecipeManager.inst();
 
     public GuiEdit(Player player, String id, CraftData craftData) {
         this.player = player;

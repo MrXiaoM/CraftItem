@@ -12,26 +12,18 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import java.util.HashMap;
 import java.util.Map;
 
-@AutoRegister
-public class PlayerDataManager extends AbstractModule implements Listener {
-    public final Map<String, PlayerData> playerDataHashMap = new HashMap<>();
+@Deprecated
+@AutoRegister(priority = 1001)
+public class PlayerDataManager extends AbstractModule {
+    cn.jrmcdp.craftitem.func.PlayerDataManager manager;
     public PlayerDataManager(CraftItem plugin) {
         super(plugin);
-        registerEvents();
+        manager = cn.jrmcdp.craftitem.func.PlayerDataManager.inst();
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        playerDataHashMap.remove(event.getPlayer().getName());
-    }
-
+    @Deprecated
     public PlayerData getOrCreatePlayerData(Player player) {
-        PlayerData playerData = playerDataHashMap.get(player.getName());
-        if (playerData == null) {
-            playerData = new PlayerData(player);
-            playerDataHashMap.put(player.getName(), playerData);
-        }
-        return playerData;
+        return manager.getOrCreatePlayerData(player);
     }
 
     public static PlayerDataManager inst() {

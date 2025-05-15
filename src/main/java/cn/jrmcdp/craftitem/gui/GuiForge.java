@@ -1,12 +1,12 @@
 package cn.jrmcdp.craftitem.gui;
 
 import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.manager.CraftDataManager;
 import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
+import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.utils.RandomUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
@@ -44,7 +44,7 @@ public class GuiForge implements IHolder {
     public boolean done;
     public boolean processing;
     private final Set<Integer> timeSlots = new HashSet<>();
-    public final CraftDataManager manager = CraftDataManager.inst();
+    public final CraftRecipeManager manager = CraftRecipeManager.inst();
     public final ConfigForgeGui parent;
     public GuiForge(ConfigForgeGui parent, String title, @Nullable String category, Map<String, Icon> items, PlayerData playerData, String id, CraftData craftData) {
         this.parent = parent;

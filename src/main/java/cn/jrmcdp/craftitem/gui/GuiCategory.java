@@ -4,7 +4,7 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
-import cn.jrmcdp.craftitem.manager.CraftDataManager;
+import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class GuiCategory implements IHolder {
     private String[] slot;
 
     private int page;
-    private final CraftDataManager manager = CraftDataManager.inst();
+    private final CraftRecipeManager manager = CraftRecipeManager.inst();
     private final ConfigCategoryGui parent;
     public GuiCategory(ConfigCategoryGui parent, String title, String[] chest, Map<String, ItemStack> items, int slotAmount, PlayerData playerData, String type, List<String> craftList, int page) {
         this.parent = parent;
@@ -111,7 +111,7 @@ public class GuiCategory implements IHolder {
                     continue;
                 }
                 String name = iterator.next();
-                CraftData craftData = CraftDataManager.inst().getCraftData(name);
+                CraftData craftData = manager.getCraftData(name);
                 if (craftData == null) {
                     is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.str(name));
                     continue;

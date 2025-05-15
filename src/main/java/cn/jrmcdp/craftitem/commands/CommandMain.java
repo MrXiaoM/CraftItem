@@ -5,9 +5,9 @@ import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.AbstractModule;
+import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.gui.GuiEdit;
-import cn.jrmcdp.craftitem.manager.CraftDataManager;
-import cn.jrmcdp.craftitem.manager.PlayerDataManager;
+import cn.jrmcdp.craftitem.func.PlayerDataManager;
 import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -88,7 +88,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             return Message.no_player.tm(sender);
         }
         Player player = (Player)sender;
-        CraftDataManager manager = CraftDataManager.inst();
+        CraftRecipeManager manager = CraftRecipeManager.inst();
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.tm(player, args[1]);
@@ -102,7 +102,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             return Message.no_player.tm(sender);
         }
         Player player = (Player)sender;
-        CraftDataManager manager = CraftDataManager.inst();
+        CraftRecipeManager manager = CraftRecipeManager.inst();
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData != null) {
             return Message.create__found.tm(player, args[1]);
@@ -119,7 +119,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             return Message.no_player.tm(sender);
         }
         Player player = (Player)sender;
-        CraftData craftData = CraftDataManager.inst().getCraftData(args[1]);
+        CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.tm(player, args[1]);
         }
@@ -140,7 +140,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
             player = (Player)sender;
         }
-        CraftData craftData = CraftDataManager.inst().getCraftData(args[1]);
+        CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.tm(player, args[1]);
         }
@@ -184,7 +184,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
             player = (Player)sender;
         }
-        CraftData craftData = CraftDataManager.inst().getCraftData(args[1]);
+        CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.tm(player, args[1]);
         }
@@ -250,7 +250,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                     return list;
                 }
                 List<String> list = new ArrayList<>();
-                for (String s : CraftDataManager.inst().getCraftDataMap().keySet()) {
+                for (String s : CraftRecipeManager.inst().getCraftDataMap().keySet()) {
                     if (s.startsWith(arg1)) {
                         list.add(s);
                     }
