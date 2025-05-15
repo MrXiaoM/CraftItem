@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.PAPI;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -101,8 +102,13 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         if (!(sender instanceof Player)) {
             return Message.no_player.tm(sender);
         }
+        boolean hasConfirm = args.length > 2 && args[2].equals("confirm");
         Player player = (Player)sender;
         CraftRecipeManager manager = CraftRecipeManager.inst();
+        if (!manager.isInCurrentServer() && !hasConfirm) {
+            return Message.craft__edit_not_confirm.tm(player,
+                    Pair.of("%command%", args[0] + " " + args[1]));
+        }
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData != null) {
             return Message.create__found.tm(player, args[1]);
@@ -118,8 +124,14 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         if (!(sender instanceof Player)) {
             return Message.no_player.tm(sender);
         }
+        boolean hasConfirm = args.length > 2 && args[2].equals("confirm");
         Player player = (Player)sender;
-        CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
+        CraftRecipeManager manager = CraftRecipeManager.inst();
+        if (!manager.isInCurrentServer() && !hasConfirm) {
+            return Message.craft__edit_not_confirm.tm(player,
+                    Pair.of("%command%", args[0] + " " + args[1]));
+        }
+        CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.tm(player, args[1]);
         }
@@ -272,6 +284,15 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
         }
         if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("edit")) {
+                List<String> list = new ArrayList<>();
+                if (!CraftRecipeManager.inst().isInCurrentServer()) {
+                    if ("confirm".startsWith(args[1])) {
+                        list.add("confirm");
+                    }
+                }
+                return list;
+            }
             if (args[0].equalsIgnoreCase("category") || args[0].equalsIgnoreCase("open") || args[0].equalsIgnoreCase("get")) {
                 return null;
             }

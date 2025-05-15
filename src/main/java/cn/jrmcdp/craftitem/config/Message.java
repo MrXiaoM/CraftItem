@@ -44,6 +44,15 @@ public enum Message implements IHolderAccessor {
     full_inventory("&c背包已满, &d%s&ex%d &c掉了出来."),
 
     craft__not_found("&c未找到 &e%s&c."),
+    craft__edit_not_confirm(
+            "",
+            "  &e&l警告&f 你正在尝试编辑与其它服务端共用的配置文件。",
+            "  &f请确保在其它服务端没有其它管理员在编辑，否则你的修改",
+            "  &f将覆盖其他人的修改。",
+            "  &f请在编辑之前执行一次重载，以免覆盖来自其它服务端的修改。",
+            "  &b在阅读并理解上述警告后，使用以下命令确认编辑",
+            "  &e/craftitem %command% confirm"
+    ),
     craft__time_start("&a已开启时长锻造，时间结束后再次打开锻造书即可锻造成功。你也可以在锻造书中查看进度和剩余时间。"),
     craft__success("&a成功锻造出了 &e%s&a."),
     craft__not_enough_money("&e没有足够的金币来锻造."),
