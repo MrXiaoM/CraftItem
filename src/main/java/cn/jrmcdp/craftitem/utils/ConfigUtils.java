@@ -80,9 +80,10 @@ public class ConfigUtils {
 
     public static void load(YamlConfiguration config, File file) {
         if (!file.exists()) return;
-        try {
-            FileInputStream stream = new FileInputStream(file);
-            config.load(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        try (FileInputStream stream = new FileInputStream(file);
+             Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)
+        ) {
+            config.load(reader);
         } catch (FileNotFoundException ignored) {
         } catch (IOException | InvalidConfigurationException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, e);
