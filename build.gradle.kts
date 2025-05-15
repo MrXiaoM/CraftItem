@@ -11,8 +11,8 @@ val targetJavaVersion = 8
 allprojects {
     repositories {
         mavenCentral()
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
         maven("https://repo.codemc.io/repository/maven-public/")
+        maven("https://repo.helpch.at/releases/")
         maven("https://jitpack.io")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
     }
