@@ -33,7 +33,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length > 0) {
-            String perm = command.getName() + ".command." + args[0];
+            String perm = plugin.getDescription().getName().toLowerCase() + ".command." + args[0];
             switch (args[0].toLowerCase()) {
                 case "reload":
                     if (!sender.hasPermission(perm)) {
@@ -216,6 +216,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         return Message.reload.tm(sender);
     }
 
+    private List<String> emptyList = new ArrayList<>();
     private List<String> args0 = Lists.newArrayList(
             "category",
             "open",
@@ -225,30 +226,42 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             "edit",
             "reload"
     );
+    private List<String> showRecipeCommands = Lists.newArrayList(
+            "open",
+            "get",
+            "delete",
+            "edit"
+    );
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        switch (args.length) {
-            case 1 : {
-                String arg0 = args[0].toLowerCase();
+        if (args.length > 0) {
+            String perm = plugin.getDescription().getName().toLowerCase() + ".command." + args[0];
+            if (!sender.hasPermission(perm)) {
+                return emptyList;
+            }
+        }
+        if (args.length == 1) {
+            String arg0 = args[0].toLowerCase();
+            List<String> list = new ArrayList<>();
+            for (String s : args0) {
+                if (s.startsWith(arg0)) {
+                    list.add(s);
+                }
+            }
+            return list;
+        }
+        if (args.length == 2) {
+            String arg1 = args[1].toLowerCase();
+            if (args[0].equalsIgnoreCase("category")) {
                 List<String> list = new ArrayList<>();
-                for (String s : args0) {
-                    if (s.startsWith(arg0)) {
+                for (String s : plugin.config().getCategory().keySet()) {
+                    if (s.startsWith(arg1)) {
                         list.add(s);
                     }
                 }
                 return list;
             }
-            case 2 : {
-                String arg1 = args[1].toLowerCase();
-                if (args[0].equalsIgnoreCase("category")) {
-                    List<String> list = new ArrayList<>();
-                    for (String s : plugin.config().getCategory().keySet()) {
-                        if (s.startsWith(arg1)) {
-                            list.add(s);
-                        }
-                    }
-                    return list;
-                }
+            if (showRecipeCommands.contains(args[0].toLowerCase())) {
                 List<String> list = new ArrayList<>();
                 for (String s : CraftRecipeManager.inst().getCraftDataMap().keySet()) {
                     if (s.startsWith(arg1)) {
@@ -258,6 +271,11 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 return list;
             }
         }
-        return null;
+        if (args.length == 3) {
+            if (args[0].equalsIgnoreCase("category") || args[0].equalsIgnoreCase("open") || args[0].equalsIgnoreCase("get")) {
+                return null;
+            }
+        }
+        return emptyList;
     }
 }
