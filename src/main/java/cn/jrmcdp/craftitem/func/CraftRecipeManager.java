@@ -25,6 +25,7 @@ import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,16 +42,25 @@ public class CraftRecipeManager extends AbstractModule {
     private List<String> craftSuccessCommands;
     private List<String> craftFailCommands;
     private List<String> craftDoneCommands;
+    private File craftConfigFile;
+    private boolean inCurrentServer;
 
     public CraftRecipeManager(CraftItem plugin) {
         super(plugin);
     }
 
+    public boolean isInCurrentServer() {
+        return inCurrentServer;
+    }
+
     @Override
     public void reloadConfig(MemoryConfiguration pluginConfig) {
+        String configPath = pluginConfig.getString("Setting.CraftRecipeFile", "./Craft.yml");
+        inCurrentServer = configPath.startsWith("./");
+        craftConfigFile = plugin.resolve(configPath);
         craftConfig = new YamlConfiguration();
         craftConfig.options().pathSeparator(' ');
-        ConfigUtils.load(craftConfig, plugin.resolve("./Craft.yml"));
+        ConfigUtils.load(craftConfig, craftConfigFile);
         craftDataMap.clear();
         for (String key : craftConfig.getKeys(false)) {
             Object object = craftConfig.get(key, null);
@@ -61,6 +71,7 @@ public class CraftRecipeManager extends AbstractModule {
                 logger.warning("无法读取 Craft.yml 的项目 " + key + ": " + object);
             }
         }
+        info("加载了 " + craftDataMap.size() + " 个锻造配方");
         craftSuccessCommands = pluginConfig.getStringList("Events.ForgeSuccess");
         craftFailCommands = pluginConfig.getStringList("Events.ForgeFail");
         craftDoneCommands = pluginConfig.getStringList("Events.ForgeDone");
@@ -77,12 +88,13 @@ public class CraftRecipeManager extends AbstractModule {
     public void save(String id, CraftData craftData) {
         craftDataMap.put(id, craftData);
         craftConfig.set(id, craftData);
-        ConfigUtils.savePluginConfig(plugin, "./Craft.yml", craftConfig);
+        ConfigUtils.save(craftConfig, craftConfigFile);
     }
+
     public void delete(String id) {
         craftDataMap.remove(id);
         craftConfig.set(id, null);
-        ConfigUtils.savePluginConfig(plugin, "./Craft.yml", craftConfig);
+        ConfigUtils.save(craftConfig, craftConfigFile);
     }
 
     public boolean doForgeResult(GuiForge holder, Player player, boolean win, int multiple, Runnable cancel) {

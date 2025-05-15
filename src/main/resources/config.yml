@@ -1,4 +1,8 @@
 Setting:
+  # 储存锻造配方的数据文件路径
+  # 以 ./ 开头则相对于 服务端/plugins/CraftItem 的路径
+  # 反之为相对于 服务端 的路径，或者绝对路径
+  CraftRecipeFile: './Craft.yml'
   # 成功率所显示的信息
   ChanceName:
     "10": "<red><u>九死一生</u>" # 低于等于 10 的概率
