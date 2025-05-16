@@ -9,6 +9,7 @@ import cn.jrmcdp.craftitem.event.CraftFailEvent;
 import cn.jrmcdp.craftitem.event.CraftSuccessEvent;
 import cn.jrmcdp.craftitem.gui.GuiForge;
 import cn.jrmcdp.craftitem.utils.ConfigUtils;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,6 +19,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.mrxiaom.pluginbase.api.IAction;
@@ -26,9 +28,7 @@ import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
@@ -44,6 +44,7 @@ public class CraftRecipeManager extends AbstractModule {
     private List<String> craftDoneCommands;
     private File craftConfigFile;
     private boolean inCurrentServer;
+    private boolean requirePermission;
 
     public CraftRecipeManager(CraftItem plugin) {
         super(plugin);
@@ -51,6 +52,10 @@ public class CraftRecipeManager extends AbstractModule {
 
     public boolean isInCurrentServer() {
         return inCurrentServer;
+    }
+
+    public boolean isRequirePermission() {
+        return requirePermission;
     }
 
     @Override
@@ -78,6 +83,7 @@ public class CraftRecipeManager extends AbstractModule {
         craftSuccessCommands = pluginConfig.getStringList("Events.ForgeSuccess");
         craftFailCommands = pluginConfig.getStringList("Events.ForgeFail");
         craftDoneCommands = pluginConfig.getStringList("Events.ForgeDone");
+        requirePermission = pluginConfig.getBoolean("Setting.RequirePermission", true);
     }
 
     public Map<String, CraftData> getCraftDataMap() {
@@ -86,6 +92,31 @@ public class CraftRecipeManager extends AbstractModule {
 
     public CraftData getCraftData(String key) {
         return craftDataMap.get(key);
+    }
+
+    public String getPermission(String craftKey) {
+        return "craftitem.open." + craftKey;
+    }
+
+    public boolean hasPermission(Permissible p, String craftKey) {
+        return p.hasPermission(getPermission(craftKey));
+    }
+
+    public List<String> getCraftKeys(Permissible p) {
+        return filter(p, getCraftDataMap().keySet());
+    }
+
+    public List<String> filter(Permissible p, Collection<String> craftKeys) {
+        if (requirePermission) {
+            List<String> list = new ArrayList<>();
+            for (String s : craftKeys) {
+                if (hasPermission(p, s)) {
+                    list.add(s);
+                }
+            }
+            return list;
+        }
+        return Lists.newArrayList(craftKeys);
     }
 
     public void save(String id, CraftData craftData) {

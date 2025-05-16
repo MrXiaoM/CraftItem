@@ -49,7 +49,7 @@ public class GuiCategory implements IHolder {
         this.slot = new String[chest.length];
         this.playerData = playerData;
         this.type = type;
-        this.craftList = craftList;
+        this.craftList = manager.filter(getPlayer(), craftList);
         this.page = page;
     }
 
@@ -162,6 +162,10 @@ public class GuiCategory implements IHolder {
             case "方" : {
                 String name = getSlot()[event.getRawSlot()];
                 if (name == null) return;
+                if (!manager.hasPermission(player, name)) {
+                    Message.no_permission.tm(getPlayer(), manager.getPermission(name));
+                    return;
+                }
                 ConfigForgeGui.inst().openGui(getPlayerData(), name, manager.getCraftData(name), type);
             }
         }

@@ -37,6 +37,9 @@ Setting:
     ForgeSuccess: BLOCK_ANVIL_USE
     ForgeFail: BLOCK_GLASS_BREAK
     ForgeTitle: BLOCK_ANVIL_LAND
+  # 是否要求玩家拥有 "craftitem.open.配方ID" 权限才能打开相应锻造菜单
+  # 如果玩家没有权限，锻造配方在分类菜单中也不会显示
+  RequirePermission: true
 
 # 材料适配器设定
 # cn.jrmcdp.craftitem.func.MaterialAdapterManager

@@ -152,9 +152,13 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
             player = (Player)sender;
         }
-        CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
+        CraftRecipeManager manager = CraftRecipeManager.inst();
+        CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
             return Message.craft__not_found.tm(player, args[1]);
+        }
+        if (!manager.hasPermission(player, args[1])) {
+            return Message.no_permission.tm(sender, manager.getPermission(args[1]));
         }
         PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
         ConfigForgeGui.inst().openGui(playerData, args[1], craftData, null);
@@ -275,7 +279,8 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
             if (showRecipeCommands.contains(args[0].toLowerCase())) {
                 List<String> list = new ArrayList<>();
-                for (String s : CraftRecipeManager.inst().getCraftDataMap().keySet()) {
+                List<String> keys = CraftRecipeManager.inst().getCraftKeys(sender);
+                for (String s : keys) {
                     if (s.startsWith(arg1)) {
                         list.add(s);
                     }
