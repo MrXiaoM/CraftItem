@@ -42,9 +42,9 @@ public class CraftItem extends BukkitPlugin {
 
     public CraftItem() {
         super(new OptionsBuilder()
-                .bungee(false)
+                .bungee(true)
                 .adventure(true)
-                .database(false)
+                .database(true)
                 .reconnectDatabaseWhenReloadConfig(false)
                 .economy(EnumEconomy.VAULT)
                 .scanIgnore("cn.jrmcdp.craftitem.libs"));

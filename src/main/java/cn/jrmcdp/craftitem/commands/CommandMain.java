@@ -219,14 +219,22 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     }
 
     private boolean runReload(CommandSender sender, String[] args) {
-        if (args.length == 2 && args[1].equalsIgnoreCase("messages")) {
-            YamlConfiguration cfg = new YamlConfiguration();
-            for (Message message : Message.values()) {
-                Object defValue = message.holder().defaultValue;
-                cfg.set(message.holder().key, defValue);
+        if (args.length == 2) {
+            if (args[1].equalsIgnoreCase("messages")) {
+                YamlConfiguration cfg = new YamlConfiguration();
+                for (Message message : Message.values()) {
+                    Object defValue = message.holder().defaultValue;
+                    cfg.set(message.holder().key, defValue);
+                }
+                File file = plugin.resolve("./Message.yml");
+                ConfigUtils.savePluginConfig(plugin, "./Message.yml", cfg);
             }
-            File file = plugin.resolve("./Message.yml");
-            ConfigUtils.savePluginConfig(plugin, "./Message.yml", cfg);
+            if (args[1].equalsIgnoreCase("database")) {
+                plugin.options.database().reloadConfig();
+                plugin.options.database().reconnect();
+                PlayerDataManager.inst().reloadConfig(plugin.getConfig());
+                return Message.reload_database.tm(sender);
+            }
         }
         plugin.reloadConfig();
         return Message.reload.tm(sender);
@@ -257,44 +265,25 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
         }
         if (args.length == 1) {
-            String arg0 = args[0].toLowerCase();
-            List<String> list = new ArrayList<>();
-            for (String s : args0) {
-                if (s.startsWith(arg0)) {
-                    list.add(s);
-                }
-            }
-            return list;
+            return startsWith(args[0].toLowerCase(), args0);
         }
         if (args.length == 2) {
             String arg1 = args[1].toLowerCase();
             if (args[0].equalsIgnoreCase("category")) {
-                List<String> list = new ArrayList<>();
-                for (String s : plugin.config().getCategory().keySet()) {
-                    if (s.startsWith(arg1)) {
-                        list.add(s);
-                    }
-                }
-                return list;
+                return startsWith(arg1, plugin.config().getCategory().keySet());
+            }
+            if (args[0].equalsIgnoreCase("reload") && sender.isOp()) {
+                return startsWith(arg1, "database", "messages");
             }
             if (showRecipeCommands.contains(args[0].toLowerCase())) {
-                List<String> list = new ArrayList<>();
-                List<String> keys = CraftRecipeManager.inst().getCraftKeys(sender);
-                for (String s : keys) {
-                    if (s.startsWith(arg1)) {
-                        list.add(s);
-                    }
-                }
-                return list;
+                return startsWith(arg1, CraftRecipeManager.inst().getCraftKeys(sender));
             }
         }
         if (args.length == 3) {
             if (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("edit")) {
                 List<String> list = new ArrayList<>();
                 if (!CraftRecipeManager.inst().isInCurrentServer()) {
-                    if ("confirm".startsWith(args[1])) {
-                        list.add("confirm");
-                    }
+                    return startsWith(args[2], "confirm");
                 }
                 return list;
             }
@@ -303,5 +292,26 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
         }
         return emptyList;
+    }
+
+    private static List<String> startsWith(String input, String... array) {
+        List<String> list = new ArrayList<>();
+        String lower = input.toLowerCase();
+        for (String s : array) {
+            if (s.startsWith(lower)) {
+                list.add(s);
+            }
+        }
+        return list;
+    }
+    private static List<String> startsWith(String input, Iterable<String> iterable) {
+        List<String> list = new ArrayList<>();
+        String lower = input.toLowerCase();
+        for (String s : iterable) {
+            if (s.startsWith(lower)) {
+                list.add(s);
+            }
+        }
+        return list;
     }
 }
