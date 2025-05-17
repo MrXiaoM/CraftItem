@@ -152,11 +152,21 @@ public class GuiCategory implements IHolder {
         String key = chest[slot];
         switch (key) {
             case "上" : {
-                if (!upPage()) Message.page__already_first.tm(player);
+                if (!upPage()) {
+                    Message.page__already_first.tm(player);
+                    return;
+                }
+                page--;
+                manager.plugin.getScheduler().runTask(this::open);
                 return;
             }
             case "下" : {
-                if (!downPage()) Message.page__already_last.tm(player);
+                if (!downPage()) {
+                    Message.page__already_last.tm(player);
+                    return;
+                }
+                page++;
+                manager.plugin.getScheduler().runTask(this::open);
                 return;
             }
             case "方" : {
