@@ -15,6 +15,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
@@ -31,6 +32,7 @@ import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Locale;
 
 public class CraftItem extends BukkitPlugin {
     private static InventoryFactory inventoryFactory;
@@ -93,7 +95,14 @@ public class CraftItem extends BukkitPlugin {
         ActionProviders.registerActionProvider(ActionBack.PROVIDER);
         LanguageManager.inst()
                 .setLangFile("messages.yml")
-                .register(Message.class, Message::holder);
+                .register(Message.class, Message::holder)
+                .setProcessor((holder, key, value) -> {
+                    if (value instanceof ItemStack) {
+                        // TODO: 语言移到配置文件
+                        return ItemTranslation.get((ItemStack) value, "zh_cn");
+                    }
+                    return value;
+                });
     }
 
     public void onSecond() {

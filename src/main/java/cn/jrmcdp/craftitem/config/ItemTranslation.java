@@ -92,4 +92,14 @@ public class ItemTranslation extends AbstractModule {
         }
         return get(item.getType().name());
     }
+
+    public static String get(ItemStack item, String locale) {
+        if (supportTranslationKey && textUseComponent) {
+            return "<translate:" + item.getTranslationKey() + ">";
+        }
+        if (supportLangUtils) {
+            return LanguageHelper.getItemName(item, locale);
+        }
+        return get(item.getType().name());
+    }
 }
