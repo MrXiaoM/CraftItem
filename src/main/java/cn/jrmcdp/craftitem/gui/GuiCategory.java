@@ -67,8 +67,6 @@ public class GuiCategory implements IHolder {
 
     public boolean upPage() {
         if (page < 1) return false;
-        page--;
-        open();
         return true;
     }
 
@@ -78,8 +76,6 @@ public class GuiCategory implements IHolder {
         int startIndex = Math.min(size, nextIndex);
         int endIndex = Math.min(size, nextIndex + parent.getSlotAmount());
         if (craftList.subList(startIndex, endIndex).isEmpty()) return false;
-        page++;
-        open();
         return true;
     }
 
