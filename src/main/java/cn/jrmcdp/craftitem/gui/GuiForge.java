@@ -10,6 +10,7 @@ import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.utils.RandomUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -28,6 +29,8 @@ import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.*;
+
+import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class GuiForge implements IHolder {
     private final Player player;
@@ -176,17 +179,20 @@ public class GuiForge implements IHolder {
                 }
                 case "物": {
                     ItemStack item = craftData.getDisplayItem().clone();
-                    ItemMeta meta = item.getItemMeta();
-                    List<String> lore = meta == null ? null : meta.getLore();
+                    List<Component> lore = AdventureItemStack.getItemLore(item);
                     if (lore == null) lore = new ArrayList<>();
-                    lore.addAll(Message.gui__craft_info__lore__header.list());
+                    List<String> tail = new ArrayList<>();
                     for (ItemStack itemStack : craftData.getItems())
-                        lore.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack, getPlayer()), itemStack.getAmount()));
+                        tail.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack, getPlayer()), itemStack.getAmount()));
                     for (String command : craftData.getCommands()) {
                         String[] split = command.split("\\|\\|");
-                        if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.str(split[1]));
+                        if (split.length > 1) tail.add(Message.gui__craft_info__lore__command.str(split[1]));
                     }
-                    AdventureItemStack.setItemLoreMiniMessage(item, lore);
+                    if (!tail.isEmpty()) {
+                        lore.addAll(miniMessage(Message.gui__craft_info__lore__header.list()));
+                        lore.addAll(miniMessage(tail));
+                        AdventureItemStack.setItemLore(item, lore);
+                    }
                     is[i] = item;
                     break;
                 }
