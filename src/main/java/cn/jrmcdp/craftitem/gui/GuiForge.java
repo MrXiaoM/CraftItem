@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.*;
 
@@ -182,11 +183,17 @@ public class GuiForge implements IHolder {
                     List<Component> lore = AdventureItemStack.getItemLore(item);
                     if (lore == null) lore = new ArrayList<>();
                     List<String> tail = new ArrayList<>();
-                    for (ItemStack itemStack : craftData.getItems())
-                        tail.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack, getPlayer()), itemStack.getAmount()));
+                    for (ItemStack itemStack : craftData.getItems()) {
+                        String itemName = Utils.getItemName(itemStack, getPlayer());
+                        int amount = itemStack.getAmount();
+                        tail.add(Message.gui__craft_info__lore__item.str(itemName, amount));
+                    }
                     for (String command : craftData.getCommands()) {
-                        String[] split = command.split("\\|\\|");
-                        if (split.length > 1) tail.add(Message.gui__craft_info__lore__command.str(split[1]));
+                        List<String> split = Util.split(command, "||", 2);
+                        String str = split.size() > 1 ? split.get(1) : "";
+                        if (str.trim().isEmpty()) {
+                            tail.add(Message.gui__craft_info__lore__command.str(str));
+                        }
                     }
                     if (!tail.isEmpty()) {
                         lore.addAll(miniMessage(Message.gui__craft_info__lore__header.list()));
