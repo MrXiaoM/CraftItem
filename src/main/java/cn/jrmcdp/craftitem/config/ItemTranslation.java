@@ -94,6 +94,11 @@ public class ItemTranslation extends AbstractModule {
     }
 
     public static String get(ItemStack item, String locale) {
+        ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
+        String displayName = meta.hasDisplayName() ? meta.getDisplayName() : null;
+        if (displayName != null) {
+            return displayName;
+        }
         if (supportTranslationKey && textUseComponent) {
             return "<translate:" + item.getTranslationKey() + ">";
         }
