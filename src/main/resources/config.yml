@@ -41,6 +41,10 @@ Setting:
   # 如果玩家没有权限，锻造配方在分类菜单中也不会显示
   RequirePermission: true
 
+# 使用 LangUtils 时的配置
+LangUtils:
+  Language: zh_cn
+
 # 材料适配器设定
 # cn.jrmcdp.craftitem.func.MaterialAdapterManager
 Material-Adapters:

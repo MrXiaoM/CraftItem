@@ -39,6 +39,7 @@ public class CraftItem extends BukkitPlugin {
     private ConfigMain config;
     private boolean enableConfigUpdater = false;
     private IRunTask timer;
+    private String langUtilsLanguage;
 
     public CraftItem() {
         super(new OptionsBuilder()
@@ -98,8 +99,7 @@ public class CraftItem extends BukkitPlugin {
                 .register(Message.class, Message::holder)
                 .setProcessor((holder, key, value) -> {
                     if (value instanceof ItemStack) {
-                        // TODO: 语言移到配置文件
-                        return ItemTranslation.get((ItemStack) value, "zh_cn");
+                        return ItemTranslation.get((ItemStack) value, langUtilsLanguage);
                     }
                     return value;
                 });
@@ -186,8 +186,8 @@ public class CraftItem extends BukkitPlugin {
     }
 
     @Override
-    public void reloadConfig() {
-        config = ConfigMain.inst();
-        super.reloadConfig();
+    protected void beforeReloadConfig(FileConfiguration config) {
+        this.config = ConfigMain.inst();
+        this.langUtilsLanguage = config.getString("LangUtils.Language", "zh_cn");
     }
 }
