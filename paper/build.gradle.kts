@@ -4,7 +4,9 @@ plugins {
 
 val targetJavaVersion = 8
 repositories {
-    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/") {
+        mavenContent { includeGroup("com.destroystokyo.paper") }
+    }
 }
 
 dependencies {
