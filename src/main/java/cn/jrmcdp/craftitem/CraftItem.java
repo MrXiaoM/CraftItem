@@ -23,7 +23,9 @@ import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
 import top.mrxiaom.pluginbase.economy.EnumEconomy;
 import top.mrxiaom.pluginbase.economy.IEconomy;
+import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.func.LanguageManager;
+import top.mrxiaom.pluginbase.gui.IGui;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -106,10 +108,11 @@ public class CraftItem extends BukkitPlugin {
     }
 
     public void onSecond() {
+        GuiManager manager = GuiManager.inst();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            InventoryHolder holder = player.getOpenInventory().getTopInventory().getHolder();
-            if (holder instanceof IHolder) {
-                ((IHolder) holder).onSecond();
+            IGui gui = manager.getOpeningGui(player);
+            if (gui instanceof IHolder) {
+                ((IHolder) gui).onSecond();
             }
         }
     }
