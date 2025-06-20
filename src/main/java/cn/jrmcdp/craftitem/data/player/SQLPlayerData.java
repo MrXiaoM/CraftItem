@@ -1,56 +1,59 @@
 package cn.jrmcdp.craftitem.data.player;
 
-import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.utils.ConfigUtils;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+import cn.jrmcdp.craftitem.func.PlayerDataManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
-public class YamlPlayerData implements IPlayerData {
-    private final CraftItem plugin;
-    private final YamlConfiguration config;
-    private final File configFile;
+public class SQLPlayerData implements IPlayerData {
+    private static class HashMap<K, V> extends java.util.HashMap<K, V> {
+        private boolean modified;
+        public boolean checkModified() {
+            if (modified) {
+                modified = false;
+                return true;
+            }
+            return false;
+        }
+        @Override
+        public V put(K key, V value) {
+            modified = true;
+            return super.put(key, value);
+        }
+        @Override
+        public V remove(Object key) {
+            modified = true;
+            return super.remove(key);
+        }
+    }
+    public final PlayerDataManager database;
     public final Player player;
 
     /**
      * 各配方的进度，用于 普通锻造 困难锻造
      */
-    private final Map<String, Integer> normalScoreMap = new HashMap<>();
+    private final HashMap<String, Integer> normalScoreMap = new HashMap<>();
     /**
      * 各配方的普通/困难锻造进行过的次数
      */
-    private final Map<String, Integer> normalCountMap = new HashMap<>();
+    private final HashMap<String, Integer> normalCountMap = new HashMap<>();
     /**
      * 各配方的锻造失败次数，用于保底
      */
-    private final Map<String, Integer> normalFailMap = new HashMap<>();
+    private final HashMap<String, Integer> normalFailMap = new HashMap<>();
     /**
      * 各配方的时长锻造结束时间 (毫秒级时间戳)
      */
-    private final Map<String, Long> timeEndMap = new HashMap<>();
+    private final HashMap<String, Long> timeEndMap = new HashMap<>();
     /**
      * 各配方的时长锻造进行过的次数
      */
-    private final Map<String, Integer> timeCountMap = new HashMap<>();
+    private final HashMap<String, Integer> timeCountMap = new HashMap<>();
 
-    public YamlPlayerData(CraftItem plugin, String folder, Player player) {
-        this.plugin = plugin;
-        this.configFile = new File(plugin.resolve(folder), player.getName() + ".yml");
+    public SQLPlayerData(PlayerDataManager database, Player player) {
+        this.database = database;
         this.player = player;
-        this.config = new YamlConfiguration();
-        this.config.options().pathSeparator(' ');
-        ConfigUtils.load(config, configFile);
-        fromConfig("ForgeData", (section, key) -> this.normalScoreMap.put(key, section.getInt(key)));
-        fromConfig("ForgeCountData", (section, key) -> this.normalCountMap.put(key, section.getInt(key)));
-        fromConfig("FailForgeData", (section, key) -> this.normalFailMap.put(key, section.getInt(key)));
-        fromConfig("TimeForgeData", (section, key) -> this.timeEndMap.put(key, section.getLong(key)));
-        fromConfig("TimeForgeCountData", (section, key) -> this.timeCountMap.put(key, section.getInt(key)));
     }
 
     @Override
@@ -141,25 +144,26 @@ public class YamlPlayerData implements IPlayerData {
         setFailTimes(key, 0);
     }
 
+    public void reload() {
+
+    }
+
     @Override
     public void save() {
-        toConfig("ForgeData", this.normalScoreMap);
-        toConfig("ForgeCountData", this.normalCountMap);
-        toConfig("FailForgeData", this.normalFailMap);
-        toConfig("TimeForgeData", this.timeEndMap);
-        toConfig("TimeForgeCountData", this.timeCountMap);
-        ConfigUtils.save(this.config, this.configFile);
-    }
+        if (normalScoreMap.checkModified()) {
 
-    private void fromConfig(String key, BiConsumer<ConfigurationSection, String> consumer) {
-        ConfigurationSection section = this.config.getConfigurationSection(key);
-        if (section != null) for (String k : section.getKeys(false)) {
-            consumer.accept(section, k);
         }
-    }
+        if (normalCountMap.checkModified()) {
 
-    private <T> void toConfig(String section, Map<String, T> map) {
-        this.config.set(section, null);
-        map.forEach((key, value) -> this.config.set(section + " " + key, value));
+        }
+        if (normalFailMap.checkModified()) {
+
+        }
+        if (timeEndMap.checkModified()) {
+
+        }
+        if (timeCountMap.checkModified()) {
+
+        }
     }
 }

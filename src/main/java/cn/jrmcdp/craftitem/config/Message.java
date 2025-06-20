@@ -22,6 +22,7 @@ import static top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder.wrap;
 public enum Message implements IHolderAccessor {
     prefix("&4&lCraftItem &8>> &e"),
     reload("&a配置文件重载成功."),
+    reload_no_database("&a当前使用 YAML 储存数据，无需重连数据库."),
     reload_database("&a已重新连接数据库."),
     no_permission("&c缺少权限 &e%s&c."),
     no_player("&e此命令只有玩家能执行."),

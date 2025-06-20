@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.DatabaseHolder;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
@@ -34,7 +35,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length > 0) {
-            String perm = plugin.getDescription().getName().toLowerCase() + ".command." + args[0];
+            String perm = plugin.getDescription().getName().toLowerCase() + ".command." + args[0].toLowerCase();
             switch (args[0].toLowerCase()) {
                 case "reload":
                     if (!sender.hasPermission(perm)) {
@@ -160,8 +161,10 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         if (!manager.hasPermission(player, args[1])) {
             return Message.no_permission.tm(sender, manager.getPermission(args[1]));
         }
-        PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
-        ConfigForgeGui.inst().openGui(playerData, args[1], craftData, null);
+        plugin.getScheduler().runTaskAsync(() -> {
+            PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
+            ConfigForgeGui.inst().openGui(playerData, args[1], craftData, null);
+        });
         return false;
     }
 
@@ -182,8 +185,10 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         if (list == null) {
             return Message.category__not_found.tm(player, args[1]);
         }
-        PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
-        ConfigCategoryGui.inst().openGui(playerData, args[1], list, 0);
+        plugin.getScheduler().runTaskAsync(() -> {
+            PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
+            ConfigCategoryGui.inst().openGui(playerData, args[1], list, 0);
+        });
         return true;
     }
 
@@ -230,8 +235,12 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 ConfigUtils.savePluginConfig(plugin, "./Message.yml", cfg);
             }
             if (args[1].equalsIgnoreCase("database")) {
-                plugin.options.database().reloadConfig();
-                plugin.options.database().reconnect();
+                DatabaseHolder db = plugin.options.database();
+                db.reloadConfig();
+                if (db.getDriver() == null) {
+                    return Message.reload_no_database.tm(sender);
+                }
+                db.reconnect();
                 PlayerDataManager.inst().reloadConfig(plugin.getConfig());
                 return Message.reload_database.tm(sender);
             }

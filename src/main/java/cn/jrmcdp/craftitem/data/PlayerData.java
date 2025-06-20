@@ -19,13 +19,17 @@ public class PlayerData {
 
     @Deprecated
     public PlayerData(Player player) {
-        this(CraftItem.getPlugin(), player);
+        this(PlayerDataManager.inst().createData(player), player);
     }
 
+    @Deprecated
     public PlayerData(CraftItem plugin, Player player) {
+        this(PlayerDataManager.inst().createData(player), player);
+    }
+
+    public PlayerData(IPlayerData impl, Player player) {
         this.player = player;
-        // TODO: 对接数据库
-        this.impl = new YamlPlayerData(plugin, "./PlayerData", player);
+        this.impl = impl;
     }
 
     public Player getPlayer() {
