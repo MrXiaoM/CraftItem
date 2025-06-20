@@ -25,6 +25,9 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
+    implementation("com.zaxxer:HikariCP:4.0.3")
+    implementation("org.slf4j:slf4j-nop:2.0.16")
+    implementation("org.jetbrains:annotations:24.0.0")
     implementation("net.kyori:adventure-api:4.22.0")
     implementation("net.kyori:adventure-platform-bukkit:4.4.0")
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
@@ -59,6 +62,8 @@ tasks {
         mapOf(
             "org.intellij.lang.annotations" to "annotations.intellij",
             "org.jetbrains.annotations" to "annotations.jetbrains",
+            "com.zaxxer.hikari" to "hikari",
+            "org.slf4j" to "slf4j",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
             "top.mrxiaom.pluginbase" to "base",
             "com.tcoded.folialib" to "folialib",
