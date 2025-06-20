@@ -72,10 +72,7 @@ public class PlayerDataManager extends AbstractModule implements Listener, IData
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        PlayerData data = removePlayerDataCache(event.getPlayer());
-        if (data != null) {
-            data.save();
-        }
+        removePlayerDataCache(event.getPlayer());
     }
 
     @NotNull
