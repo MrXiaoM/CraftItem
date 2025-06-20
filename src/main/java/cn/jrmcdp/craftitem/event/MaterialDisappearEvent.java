@@ -31,8 +31,8 @@ public class MaterialDisappearEvent extends Event implements Cancellable {
         this.craftData = craftData;
         this.material = material;
         this.materialToDisappear = materialToDisappear;
-        this.item = material.getSample();
-        this.itemToDisappear = materialToDisappear.getSample();
+        this.item = material.getSample().clone();
+        this.itemToDisappear = item.clone();
     }
 
     public Player getPlayer() {
@@ -79,7 +79,7 @@ public class MaterialDisappearEvent extends Event implements Cancellable {
 
     public void setMaterialToDisappear(MaterialInstance materialToDisappear) {
         this.materialToDisappear = materialToDisappear;
-        this.itemToDisappear = materialToDisappear == null ? null : materialToDisappear.getSample();
+        this.itemToDisappear = materialToDisappear == null ? null : materialToDisappear.getSample().clone();
     }
 
     @Override
