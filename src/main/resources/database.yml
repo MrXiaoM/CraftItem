@@ -3,7 +3,6 @@
 # goto: 'path/to/database.yml'
 
 # 数据库类型，可选 yaml, sqlite 和 mysql
-# 【开发中】sqlite 和 mysql 暂不可用
 type: yaml
 # 表名前缀
 table_prefix: 'craftitem_'
