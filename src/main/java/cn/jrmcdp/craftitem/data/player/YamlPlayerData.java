@@ -41,7 +41,13 @@ public class YamlPlayerData implements IPlayerData {
 
     public YamlPlayerData(CraftItem plugin, String folder, Player player) {
         this.plugin = plugin;
-        this.configFile = new File(plugin.resolve(folder), player.getName() + ".yml");
+        // 旧版本插件数据兼容 - 使用玩家名储存
+        File file = new File(plugin.resolve(folder), player.getName() + ".yml");
+        // 旧版文件不存在时，才使用 uuid 储存
+        if (!file.exists()) {
+            file = new File(plugin.resolve(folder), player.getUniqueId() + ".yml");
+        }
+        this.configFile = file;
         this.player = player;
         this.config = new YamlConfiguration();
         this.config.options().pathSeparator(' ');
@@ -143,6 +149,8 @@ public class YamlPlayerData implements IPlayerData {
 
     @Override
     public void save() {
+        this.config.set("Player.UUID", player.getUniqueId().toString());
+        this.config.set("Player.LastKnownName", player.getName());
         toConfig("ForgeData", this.normalScoreMap);
         toConfig("ForgeCountData", this.normalCountMap);
         toConfig("FailForgeData", this.normalFailMap);
