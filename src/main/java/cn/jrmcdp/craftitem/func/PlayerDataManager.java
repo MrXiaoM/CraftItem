@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.database.IDatabase;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,6 +41,9 @@ public class PlayerDataManager extends AbstractModule implements Listener, IData
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         useYaml = plugin.options.database().getDriver() == null;
+        if (useYaml) {
+            Util.mkdirs(plugin.resolve("./PlayerData"));
+        }
     }
 
     @Override

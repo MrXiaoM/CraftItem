@@ -172,7 +172,6 @@ public class CraftItem extends BukkitPlugin {
         if (!resolve("./config.yml").exists()) {
             saveResource("config.yml");
         }
-        Util.mkdirs(resolve("./PlayerData"));
         for (String filename : new String[] {
                 "Material.yml",
                 "Gui.yml",
