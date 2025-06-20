@@ -17,6 +17,7 @@ import top.mrxiaom.pluginbase.database.IDatabase;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +25,16 @@ import java.util.Map;
 @AutoRegister
 public class PlayerDataManager extends AbstractModule implements Listener, IDatabase {
     private final Map<String, PlayerData> playerDataHashMap = new HashMap<>();
-    private String TABLE_PLAYERS;
+    public String TABLE_PLAYERS_NORMAL, TABLE_PLAYERS_TIME;
     private boolean useYaml;
     public PlayerDataManager(CraftItem plugin) {
         super(plugin);
         plugin.options.registerDatabase(this);
         registerEvents();
+    }
+
+    public Connection getConnection() {
+        return plugin.getConnection();
     }
 
     @Override
@@ -39,8 +44,30 @@ public class PlayerDataManager extends AbstractModule implements Listener, IData
 
     @Override
     public void reload(Connection conn, String prefix) throws SQLException {
-        TABLE_PLAYERS = prefix + "players";
-        // TODO: 创建表
+        TABLE_PLAYERS_NORMAL = prefix + "players_normal";
+        TABLE_PLAYERS_TIME = prefix + "players_time";
+
+        try (PreparedStatement ps = conn.prepareStatement(
+                "CREATE TABLE if NOT EXISTS `" + TABLE_PLAYERS_NORMAL + "`(" +
+                    "`uuid` VARCHAR(48)," +
+                    "`name` VARCHAR(48)," +
+                    "`craft` VARCHAR(64)," +
+                    "`score` INT," +
+                    "`count` INT," +
+                    "`fail` INT," +
+                    "PRIMARY KEY (`uuid`, `craft`)" +
+                ");"
+        )) { ps.execute(); }
+        try (PreparedStatement ps = conn.prepareStatement(
+                "CREATE TABLE if NOT EXISTS `" + TABLE_PLAYERS_TIME + "`(" +
+                    "`uuid` VARCHAR(48)," +
+                    "`name` VARCHAR(48)," +
+                    "`craft` VARCHAR(64)," +
+                    "`end_time` BIGINT," +
+                    "`count` INT," +
+                    "PRIMARY KEY (`uuid`, `craft`)" +
+                ");"
+        )) { ps.execute(); }
     }
 
     @EventHandler
