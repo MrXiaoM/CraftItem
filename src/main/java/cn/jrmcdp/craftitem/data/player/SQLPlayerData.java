@@ -208,14 +208,16 @@ public class SQLPlayerData implements IPlayerData {
     public void save() {
         Set<String> normalKeys = combine(normalScoreMap, normalCountMap, normalFailMap);
         Set<String> timeKeys = combine(timeEndMap, timeCountMap);
-        boolean hasNormalUpdated = !normalKeys.isEmpty();
-        boolean hasTimeUpdated = !timeKeys.isEmpty();
-        if (!hasNormalUpdated && !hasTimeUpdated) return;
+        if (normalKeys.isEmpty() && timeKeys.isEmpty()) return;
+        database.plugin.getScheduler().runTaskAsync(() -> save(normalKeys, timeKeys));
+    }
+
+    private void save(Set<String> normalKeys, Set<String> timeKeys) {
         try (Connection conn = database.getConnection()) {
             boolean isMySQL = database.plugin.options.database().isMySQL();
             String uuid = player.getUniqueId().toString();
             String name = player.getName();
-            if (hasNormalUpdated) {
+            if (!normalKeys.isEmpty()) {
                 try (PreparedStatement ps = conn.prepareStatement(isMySQL
                         ? "INSERT INTO `" + database.TABLE_PLAYERS_NORMAL + "`(`uuid`,`name`,`craft`,`score`,`count`,`fail`) VALUES(?,?,?,?,?,?) on duplicate key update `name`=?, `score`=?, `count`=?, `fail`=?;"
                         : "INSERT OR REPLACE INTO `" + database.TABLE_PLAYERS_NORMAL + "`(`uuid`,`name`,`craft`,`score`,`count`,`fail`) VALUES(?,?,?,?,?,?);"
@@ -238,7 +240,7 @@ public class SQLPlayerData implements IPlayerData {
                     ps.executeBatch();
                 }
             }
-            if (hasTimeUpdated) {
+            if (!timeKeys.isEmpty()) {
                 try (PreparedStatement ps = conn.prepareStatement(isMySQL
                         ? "INSERT INTO `" + database.TABLE_PLAYERS_TIME + "`(`uuid`,`name`,`craft`,`end_time`,`count`) VALUES(?,?,?,?,?) on duplicate key update `name`=?, `end_time`=?, `count`=?;"
                         : "INSERT OR REPLACE INTO `" + database.TABLE_PLAYERS_TIME + "`(`uuid`,`name`,`craft`,`end_time`,`count`) VALUES(?,?,?,?,?);"
