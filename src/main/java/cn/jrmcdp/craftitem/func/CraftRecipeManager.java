@@ -99,7 +99,7 @@ public class CraftRecipeManager extends AbstractModule {
     }
 
     public boolean hasPermission(Permissible p, String craftKey) {
-        return p.hasPermission(getPermission(craftKey));
+        return !requirePermission || p.hasPermission(getPermission(craftKey));
     }
 
     public List<String> getCraftKeys(Permissible p) {
