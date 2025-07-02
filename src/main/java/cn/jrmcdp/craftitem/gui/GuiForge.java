@@ -24,10 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import top.mrxiaom.pluginbase.utils.AdventureItemStack;
-import top.mrxiaom.pluginbase.utils.PAPI;
-import top.mrxiaom.pluginbase.utils.Pair;
-import top.mrxiaom.pluginbase.utils.Util;
+import top.mrxiaom.pluginbase.utils.*;
 
 import java.util.*;
 
@@ -181,8 +178,20 @@ public class GuiForge implements IHolder {
                 case "物": {
                     ItemStack item = craftData.getDisplayItem().clone();
                     List<Component> lore = AdventureItemStack.getItemLore(item);
-                    if (lore == null) lore = new ArrayList<>();
+                    if (lore == null) {
+                        ItemMeta meta = item.getItemMeta();
+                        if (meta.hasLore()) {
+                            List<String> loreRaw = meta.getLore();
+                            if (loreRaw != null) {
+                                lore = AdventureUtil.miniMessage(loreRaw);
+                            }
+                        }
+                        if (lore == null) {
+                            lore = new ArrayList<>();
+                        }
+                    }
                     List<String> tail = new ArrayList<>();
+                    tail.addAll(Message.gui__craft_info__lore__header.list());
                     for (ItemStack itemStack : craftData.getItems()) {
                         String itemName = Utils.getItemName(itemStack, getPlayer());
                         int amount = itemStack.getAmount();
@@ -196,7 +205,6 @@ public class GuiForge implements IHolder {
                         }
                     }
                     if (!tail.isEmpty()) {
-                        lore.addAll(miniMessage(Message.gui__craft_info__lore__header.list()));
                         lore.addAll(miniMessage(tail));
                         AdventureItemStack.setItemLore(item, lore);
                     }
