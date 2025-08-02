@@ -163,6 +163,11 @@ public class Utils {
                     Keyed matched = registry.match(s);
                     if (matched != null) {
                         return Optional.of((T) matched);
+                    } else {
+                        matched = registry.match(s.replace("_", "."));
+                        if (matched != null) {
+                            return Optional.of((T) matched);
+                        }
                     }
                 }
             }
