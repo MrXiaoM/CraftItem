@@ -14,6 +14,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
@@ -25,6 +26,7 @@ import top.mrxiaom.pluginbase.gui.IGui;
 import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
+import top.mrxiaom.pluginbase.utils.item.ItemEditor;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.*;
@@ -59,6 +61,15 @@ public class CraftItem extends BukkitPlugin {
         info("正在添加 " + libraries.size() + " 个依赖库到类加载器");
         for (URL library : libraries) {
             this.classLoader.addURL(library);
+        }
+    }
+
+    @Override
+    public @NotNull ItemEditor initItemEditor() {
+        try {
+            return new PaperItemEditor();
+        } catch (Throwable e) {
+            return super.initItemEditor();
         }
     }
 
