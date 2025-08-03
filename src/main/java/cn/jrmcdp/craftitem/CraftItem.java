@@ -10,14 +10,10 @@ import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.FileUtil;
-import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
@@ -26,15 +22,15 @@ import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.gui.IGui;
+import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
-import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Locale;
+import java.util.List;
 
 public class CraftItem extends BukkitPlugin {
     private static InventoryFactory inventoryFactory;
@@ -43,7 +39,7 @@ public class CraftItem extends BukkitPlugin {
     private IRunTask timer;
     private String langUtilsLanguage;
 
-    public CraftItem() {
+    public CraftItem() throws Exception {
         super(new OptionsBuilder()
                 .bungee(true)
                 .adventure(true)
@@ -52,6 +48,18 @@ public class CraftItem extends BukkitPlugin {
                 .economy(EnumEconomy.VAULT)
                 .scanIgnore("cn.jrmcdp.craftitem.libs"));
         scheduler = new FoliaLibScheduler(this);
+
+        info("正在检查依赖库状态");
+        File librariesDir = new File(this.getDataFolder(), "libraries");
+        DefaultLibraryResolver resolver = new DefaultLibraryResolver(getLogger(), librariesDir);
+
+        resolver.addLibrary(BuildConstants.LIBRARIES);
+
+        List<URL> libraries = resolver.doResolve();
+        info("正在添加 " + libraries.size() + " 个依赖库到类加载器");
+        for (URL library : libraries) {
+            this.classLoader.addURL(library);
+        }
     }
 
     public static CraftItem getPlugin() {
@@ -129,24 +137,7 @@ public class CraftItem extends BukkitPlugin {
             // 不支持注释的时候，通过 last-version 文件检查插件是否已更新。
             // 如果更新了，提醒用户应该手动更新配置文件。
             File file = resolve("./last-version");
-            boolean updated = true;
-            if (file.exists()) {
-                try (FileInputStream fis = new FileInputStream(file);
-                     InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
-                    int len; char[] buffer = new char[1024];
-                    StringBuilder sb = new StringBuilder();
-                    while ((len = reader.read(buffer)) != -1) {
-                        sb.append(buffer, 0, len);
-                    }
-                    String last = sb.toString().trim().replace("\r", "").replace("\n", "");
-                    if (!last.equals(version)) {
-                        updated = true;
-                    } else {
-                        updated = false;
-                    }
-                } catch (Throwable ignored) {
-                }
-            }
+            boolean updated = checkUpdated(file, version);
             if (updated) {
                 try (FileOutputStream fos = new FileOutputStream(file);
                      OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
@@ -157,6 +148,24 @@ public class CraftItem extends BukkitPlugin {
                 AdventureUtil.sendMessage(sender, Message.prefix + "<yellow><u>https://github.com/MrXiaoM/CraftItem/tree/main/src/main/resources");
             }
         }
+    }
+
+    private static boolean checkUpdated(File file, String version) {
+        boolean updated = true;
+        if (file.exists()) {
+            try (FileInputStream fis = new FileInputStream(file);
+                 InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
+                int len; char[] buffer = new char[1024];
+                StringBuilder sb = new StringBuilder();
+                while ((len = reader.read(buffer)) != -1) {
+                    sb.append(buffer, 0, len);
+                }
+                String last = sb.toString().trim().replace("\r", "").replace("\n", "");
+                updated = !last.equals(version);
+            } catch (Throwable ignored) {
+            }
+        }
+        return updated;
     }
 
     @Override

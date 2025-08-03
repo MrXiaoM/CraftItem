@@ -2,11 +2,13 @@ plugins {
     java
     `maven-publish`
     id("top.mrxiaom.shadow")
+    id("com.github.gmazzo.buildconfig") version "5.6.7"
 }
 
 group = "cn.jrmcdp"
 version = "2.0.6"
 
+val pluginBaseVersion = "1.5.6"
 val targetJavaVersion = 8
 allprojects {
     repositories {
@@ -18,6 +20,12 @@ allprojects {
     }
 }
 
+val libraries = arrayListOf<String>()
+fun DependencyHandlerScope.library(dependencyNotation: String) {
+    compileOnly(dependencyNotation)
+    libraries.add(dependencyNotation)
+}
+
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
 
@@ -25,16 +33,28 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
-    implementation("com.zaxxer:HikariCP:4.0.3")
-    implementation("org.slf4j:slf4j-nop:2.0.16")
-    implementation("org.jetbrains:annotations:24.0.0")
-    implementation("net.kyori:adventure-api:4.22.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
-    implementation("net.kyori:adventure-text-minimessage:4.22.0")
+    library("com.zaxxer:HikariCP:4.0.3")
+    library("org.jetbrains:annotations:24.0.0")
+    library("net.kyori:adventure-api:4.22.0")
+    library("net.kyori:adventure-platform-bukkit:4.4.0")
+    library("net.kyori:adventure-text-minimessage:4.22.0")
+
     implementation("de.tr7zw:item-nbt-api:2.15.2-SNAPSHOT")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
-    implementation("top.mrxiaom:PluginBase:1.5.6")
+    implementation("top.mrxiaom:PluginBase:$pluginBaseVersion")
+    implementation("top.mrxiaom:LibrariesResolver:$pluginBaseVersion:all") { isTransitive = false }
     implementation(project(":paper"))
+}
+
+buildConfig {
+    className("BuildConstants")
+    packageName("cn.jrmcdp.craftitem")
+
+    val librariesVararg = libraries.joinToString(", ") { "\"$it\"" }
+
+    buildConfigField("String", "VERSION", "\"${project.version}\"")
+    buildConfigField("java.time.Instant", "BUILD_TIME", "java.time.Instant.ofEpochSecond(${System.currentTimeMillis() / 1000L}L)")
+    buildConfigField("String[]", "LIBRARIES", "new String[] { $librariesVararg }")
 }
 
 java {
@@ -52,14 +72,9 @@ tasks {
     shadowJar {
         from("LICENSE")
         mapOf(
-            "org.intellij.lang.annotations" to "annotations.intellij",
-            "org.jetbrains.annotations" to "annotations.jetbrains",
-            "com.zaxxer.hikari" to "hikari",
-            "org.slf4j" to "slf4j",
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
             "top.mrxiaom.pluginbase" to "base",
             "com.tcoded.folialib" to "folialib",
-            "net.kyori" to "kyori",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }
