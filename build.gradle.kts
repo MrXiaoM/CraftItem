@@ -33,7 +33,7 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.22.0")
     implementation("de.tr7zw:item-nbt-api:2.15.2-SNAPSHOT")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4")
-    implementation("top.mrxiaom:PluginBase:1.5.4")
+    implementation("top.mrxiaom:PluginBase:1.5.6")
     implementation(project(":paper"))
 }
 
