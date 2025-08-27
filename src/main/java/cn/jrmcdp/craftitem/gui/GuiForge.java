@@ -157,7 +157,7 @@ public class GuiForge implements IHolder {
 
     @Override
     public Inventory newInventory() {
-        inventory = CraftItem.getInventoryFactory().create(this, chest.length, PAPI.setPlaceholders(player, title));
+        inventory = parent.plugin.createInventory(this, chest.length, PAPI.setPlaceholders(player, title));
         Player player = getPlayer();
         ItemStack[] is = new ItemStack[chest.length];
         Iterator<ItemStack> iterator = craftData.getMaterial().iterator();

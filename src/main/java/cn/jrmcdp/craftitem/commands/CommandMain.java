@@ -229,7 +229,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 YamlConfiguration cfg = new YamlConfiguration();
                 for (Message message : Message.values()) {
                     Object defValue = message.holder().defaultValue;
-                    cfg.set(message.holder().key, defValue);
+                    cfg.set(message.holder().key(), defValue);
                 }
                 File file = plugin.resolve("./Message.yml");
                 ConfigUtils.savePluginConfig(plugin, "./Message.yml", cfg);

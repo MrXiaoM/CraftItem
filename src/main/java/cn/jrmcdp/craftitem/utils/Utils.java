@@ -11,6 +11,7 @@ import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,6 +25,14 @@ import java.util.logging.Logger;
 public class Utils {
     public static List<String> replace(List<String> list, Pair<String, Object>... replacements) {
         return Pair.replace(list, replacements);
+    }
+
+    public static InventoryHolder getHolder(Inventory inv) {
+        try {
+            return inv.getHolder();
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 
     /**

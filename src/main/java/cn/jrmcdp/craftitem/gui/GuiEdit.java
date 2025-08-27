@@ -169,7 +169,7 @@ public class GuiEdit implements IHolder {
     @Override
     public Inventory newInventory() {
         ItemStack[] items = new ItemStack[invSize = 18];
-        inventory = CraftItem.getInventoryFactory().create(this, items.length, Message.gui__edit_title.str(this.id));
+        inventory = manager.plugin.createInventory(this, items.length, Message.gui__edit_title.str(this.id));
         for (Slot slot : Slot.values()) {
             items[slot.index] = slot.icon.apply(this);
         }
@@ -354,7 +354,7 @@ public class GuiEdit implements IHolder {
                 }, e -> { // onClick
                     e.setCancelled(true);
                     Inventory inv = e.getClickedInventory();
-                    if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
+                    if (inv == null || !(Utils.getHolder(inv) instanceof Prompter)) return;
                     if (!isAir(e.getCursor())) return;
                     if (!isAir(e.getCurrentItem())) {
                         inv.setItem(e.getSlot(), null);
@@ -476,7 +476,7 @@ public class GuiEdit implements IHolder {
                         }
                     }, e -> {
                         Inventory inv = e.getClickedInventory();
-                        if (inv == null || !(inv.getHolder() instanceof Prompter)) return;
+                        if (inv == null || !(Utils.getHolder(inv) instanceof Prompter)) return;
                         ItemStack item = e.getCurrentItem();
                         if (item == null || !item.getType().equals(Material.PAPER)) return;
                         ItemMeta meta = item.getItemMeta();

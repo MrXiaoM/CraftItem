@@ -1,8 +1,8 @@
 package cn.jrmcdp.craftitem.gui;
 
-import top.mrxiaom.pluginbase.gui.IGui;
+import top.mrxiaom.pluginbase.gui.IGuiHolder;
 
-public interface IHolder extends IGui, IAutoCloseHolder {
+public interface IHolder extends IGuiHolder, IAutoCloseHolder {
     default void onSecond() {
 
     }

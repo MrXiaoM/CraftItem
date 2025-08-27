@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.actions;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.ConfigCategoryGui;
 import cn.jrmcdp.craftitem.gui.GuiForge;
+import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -28,7 +29,7 @@ public class ActionBack implements IAction {
     public void run(Player player, @Nullable List<Pair<String, Object>> replacements) {
         Inventory inv = player.getOpenInventory().getTopInventory();
         if (inv == null) return;
-        InventoryHolder holder = inv.getHolder();
+        InventoryHolder holder = Utils.getHolder(inv);
         if (holder instanceof GuiForge) {
             GuiForge gui = (GuiForge) holder;
             String category = gui.getCategory();

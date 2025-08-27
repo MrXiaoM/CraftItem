@@ -92,7 +92,7 @@ public class GuiCategory implements IHolder {
 
     @Override
     public Inventory newInventory() {
-        inventory = CraftItem.getInventoryFactory().create(this, chest.length, title.replace("<Category>", type));
+        inventory = parent.plugin.createInventory(this, chest.length, title.replace("<Category>", type));
 
         ItemStack[] is = new ItemStack[chest.length];
         Iterator<String> iterator = craftList.subList(

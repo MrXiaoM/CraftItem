@@ -8,7 +8,7 @@ plugins {
 group = "cn.jrmcdp"
 version = "2.0.6"
 
-val pluginBaseVersion = "1.5.6"
+val pluginBaseVersion = "1.6.2"
 val targetJavaVersion = 8
 allprojects {
     repositories {
@@ -41,9 +41,10 @@ dependencies {
     library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
     implementation("de.tr7zw:item-nbt-api:2.15.2-SNAPSHOT")
-    implementation("com.github.technicallycoded:FoliaLib:0.4.4")
-    implementation("top.mrxiaom:PluginBase:$pluginBaseVersion")
-    implementation("top.mrxiaom:LibrariesResolver:$pluginBaseVersion:all") { isTransitive = false }
+    implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
+    implementation("top.mrxiaom.pluginbase:library:$pluginBaseVersion")
+    implementation("top.mrxiaom.pluginbase:paper:${pluginBaseVersion}")
+    implementation("top.mrxiaom:LibrariesResolver:$pluginBaseVersion:all")
     implementation(project(":paper"))
 }
 

@@ -1,11 +1,12 @@
 package cn.jrmcdp.craftitem;
 
 import cn.jrmcdp.craftitem.actions.ActionBack;
-import cn.jrmcdp.craftitem.config.*;
+import cn.jrmcdp.craftitem.config.ConfigMain;
+import cn.jrmcdp.craftitem.config.ItemTranslation;
+import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.gui.IHolder;
 import cn.jrmcdp.craftitem.minigames.GameManager;
-import cn.jrmcdp.craftitem.utils.*;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
@@ -13,6 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.BukkitPlugin;
@@ -22,10 +24,12 @@ import top.mrxiaom.pluginbase.economy.EnumEconomy;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.func.LanguageManager;
-import top.mrxiaom.pluginbase.gui.IGui;
+import top.mrxiaom.pluginbase.gui.IGuiHolder;
+import top.mrxiaom.pluginbase.paper.PaperFactory;
 import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
+import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
@@ -35,7 +39,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class CraftItem extends BukkitPlugin {
-    private static InventoryFactory inventoryFactory;
     private ConfigMain config;
     private boolean enableConfigUpdater = false;
     private IRunTask timer;
@@ -66,11 +69,12 @@ public class CraftItem extends BukkitPlugin {
 
     @Override
     public @NotNull ItemEditor initItemEditor() {
-        try {
-            return new PaperItemEditor();
-        } catch (Throwable e) {
-            return super.initItemEditor();
-        }
+        return PaperFactory.createItemEditor();
+    }
+
+    @Override
+    public @NotNull InventoryFactory initInventoryFactory() {
+        return PaperFactory.createInventoryFactory();
     }
 
     public static CraftItem getPlugin() {
@@ -81,8 +85,12 @@ public class CraftItem extends BukkitPlugin {
         return GameManager.inst();
     }
 
+    /**
+     * @see CraftItem#createInventory(InventoryHolder, int, String)
+     */
+    @Deprecated
     public static InventoryFactory getInventoryFactory() {
-        return inventoryFactory;
+        return getPlugin().inventory;
     }
 
     public boolean isEnableConfigUpdater() {
@@ -103,15 +111,6 @@ public class CraftItem extends BukkitPlugin {
 
     @Override
     public void beforeEnable() {
-        try {
-            if (PaperInventoryFactory.test()) {
-                inventoryFactory = new PaperInventoryFactory();
-            } else {
-                inventoryFactory = new BukkitInventoryFactory();
-            }
-        } catch (Throwable ignored) {
-            inventoryFactory = new BukkitInventoryFactory();
-        }
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
         ActionProviders.registerActionProvider(ActionBack.PROVIDER);
@@ -129,7 +128,7 @@ public class CraftItem extends BukkitPlugin {
     public void onSecond() {
         GuiManager manager = GuiManager.inst();
         for (Player player : Bukkit.getOnlinePlayers()) {
-            IGui gui = manager.getOpeningGui(player);
+            IGuiHolder gui = manager.getOpeningGui(player);
             if (gui instanceof IHolder) {
                 ((IHolder) gui).onSecond();
             }
