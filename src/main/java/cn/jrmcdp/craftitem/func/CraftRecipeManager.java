@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.func;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.MaterialInstance;
@@ -22,8 +23,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
@@ -39,9 +42,10 @@ import static top.mrxiaom.pluginbase.actions.ActionProviders.loadActions;
 public class CraftRecipeManager extends AbstractModule {
     private YamlConfiguration craftConfig;
     private final Map<String, CraftData> craftDataMap = new HashMap<>();
-    private List<String> craftSuccessCommands;
-    private List<String> craftFailCommands;
-    private List<String> craftDoneCommands;
+    private List<IAction> craftSuccessCommands;
+    private List<IAction> craftFailCommands;
+    private List<IAction> craftDoneCommands;
+    private List<IAction> craftReopenGuiCommands;
     private File craftConfigFile;
     private boolean inCurrentServer;
     private boolean requirePermission;
@@ -80,9 +84,10 @@ public class CraftRecipeManager extends AbstractModule {
             }
         }
         info("加载了 " + craftDataMap.size() + " 个锻造配方");
-        craftSuccessCommands = pluginConfig.getStringList("Events.ForgeSuccess");
-        craftFailCommands = pluginConfig.getStringList("Events.ForgeFail");
-        craftDoneCommands = pluginConfig.getStringList("Events.ForgeDone");
+        craftSuccessCommands = loadActions(pluginConfig, "Events.ForgeSuccess");
+        craftFailCommands = loadActions(pluginConfig, "Events.ForgeFail");
+        craftDoneCommands = loadActions(pluginConfig, "Events.ForgeDone");
+        craftReopenGuiCommands = loadActions(pluginConfig, "Events.ReopenGui");
         requirePermission = pluginConfig.getBoolean("Setting.RequirePermission", true);
     }
 
@@ -131,6 +136,14 @@ public class CraftRecipeManager extends AbstractModule {
         ConfigUtils.save(craftConfig, craftConfigFile);
     }
 
+    public void doReopenForgeGui(GuiForge holder) {
+        if (craftReopenGuiCommands.isEmpty()) {
+            holder.parent.openGui(holder.getPlayerData(), holder.getId(), holder.getCraftData(), holder.getCategory());
+        } else {
+            ActionProviders.run(plugin, holder.getPlayer(), craftReopenGuiCommands);
+        }
+    }
+
     public boolean doForgeResult(GuiForge holder, Player player, boolean win, int multiple, Runnable cancel) {
         String id = holder.getId();
         CraftData craftData = holder.getCraftData();
@@ -164,15 +177,12 @@ public class CraftRecipeManager extends AbstractModule {
                 score = value - oldValue;
             }
             if (!craftSuccessCommands.isEmpty()) {
-                List<String> list = replace(craftSuccessCommands,
-                        Pair.of("%craft%", holder.getId()),
-                        Pair.of("%modifier%", e.getMultiple() - 1),
-                        Pair.of("%progress%", value),
-                        Pair.of("%value%", score));
-                List<IAction> actions = loadActions(list);
-                for (IAction action : actions) {
-                    action.run(player);
-                }
+                ListPair<String, Object> r = new ListPair<>();
+                r.add("%craft%", holder.getId());
+                r.add("%modifier%", e.getMultiple() - 1);
+                r.add("%progress%", value);
+                r.add("%value%", score);
+                ActionProviders.run(plugin, player, craftSuccessCommands, r);
             }
             if (value == 100) {
                 craftData.takeAllMaterial(player);
@@ -188,12 +198,9 @@ public class CraftRecipeManager extends AbstractModule {
                     }
                 }
                 if (!craftDoneCommands.isEmpty()) {
-                    List<String> list = replace(craftDoneCommands,
-                            Pair.of("%craft%", holder.getId()));
-                    List<IAction> actions = loadActions(list);
-                    for (IAction action : actions) {
-                        action.run(player);
-                    }
+                    ListPair<String, Object> r = new ListPair<>();
+                    r.add("%craft%", holder.getId());
+                    ActionProviders.run(plugin, player, craftDoneCommands, r);
                 }
                 for (String str : craftData.getCommands()) {
                     String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
@@ -225,15 +232,12 @@ public class CraftRecipeManager extends AbstractModule {
                 score = value - oldValue;
             }
             if (!craftFailCommands.isEmpty()) {
-                List<String> list = replace(craftFailCommands,
-                        Pair.of("%craft%", holder.getId()),
-                        Pair.of("%modifier%", e.getMultiple() - 1),
-                        Pair.of("%progress%", value),
-                        Pair.of("%value%", score));
-                List<IAction> actions = loadActions(list);
-                for (IAction action : actions) {
-                    action.run(player);
-                }
+                ListPair<String, Object> r = new ListPair<>();
+                r.add("%craft%", holder.getId());
+                r.add("%modifier%", e.getMultiple() - 1);
+                r.add("%progress%", value);
+                r.add("%value%", score);
+                ActionProviders.run(plugin, player, craftFailCommands, r);
             }
             switch (e.getMultiple()) {
                 case 0 : {
@@ -260,7 +264,7 @@ public class CraftRecipeManager extends AbstractModule {
                 if (cancel != null) cancel.run();
                 return;
             }
-            holder.parent.openGui(playerData, id, craftData, holder.getCategory());
+            doReopenForgeGui(holder);
         }, 10);
         return true;
     }

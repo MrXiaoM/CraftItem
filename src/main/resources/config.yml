@@ -145,6 +145,9 @@ Events:
   # 额外变量:
   # %craft% 配方名
   ForgeDone: []
+  # 覆盖锻造完成后重新打开菜单的动作，如果列表为空，则不覆盖
+  # 可用 '[reopen]' 重新打开菜单
+  ReopenGui: []
 
 # Offset characters' unicodes
 # Never edit this unless you know what you are doing

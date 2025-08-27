@@ -456,7 +456,7 @@ public class GuiForge implements IHolder {
                 String cmd = str.split("\\|\\|")[0];
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
             }
-            parent.openGui(playerData, id, craftData, category);
+            manager.doReopenForgeGui(this);
             return;
         }
         if (!processing) { // 如果时长锻造未开始
@@ -474,7 +474,7 @@ public class GuiForge implements IHolder {
             playerData.setTime(key, endTime);
             playerData.save(); // 开始时长锻造
             Message.craft__time_start.tm(player);
-            parent.openGui(playerData, id, craftData, category);
+            manager.doReopenForgeGui(this);
         }
     }
 }
