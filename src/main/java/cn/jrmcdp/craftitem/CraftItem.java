@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem;
 
 import cn.jrmcdp.craftitem.actions.ActionBack;
+import cn.jrmcdp.craftitem.actions.ActionReopen;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.ItemTranslation;
 import cn.jrmcdp.craftitem.config.Message;
@@ -113,7 +114,7 @@ public class CraftItem extends BukkitPlugin {
     public void beforeEnable() {
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
-        ActionProviders.registerActionProvider(ActionBack.PROVIDER);
+        ActionProviders.registerActionProviders(ActionBack.PROVIDER, ActionReopen.PROVIDER);
         LanguageManager.inst()
                 .setLangFile("messages.yml")
                 .register(Message.class, Message::holder)

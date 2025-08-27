@@ -19,7 +19,7 @@ public class ActionReopen implements IAction {
     public static final ActionReopen INSTANCE;
     static {
         INSTANCE = new ActionReopen();
-        PROVIDER = s -> s.equals("[back]") || s.equals("back") ? INSTANCE : null;
+        PROVIDER = s -> s.equals("[reopen]") || s.equals("reopen") ? INSTANCE : null;
     }
     private ActionReopen() {
     }
