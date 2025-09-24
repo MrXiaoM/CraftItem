@@ -4,6 +4,7 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MaterialAdapterManager extends AbstractModule {
     boolean enableMMOItems;
     boolean enableMythicMobs;
+    boolean enableItemsAdder;
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
     }
@@ -31,6 +33,7 @@ public class MaterialAdapterManager extends AbstractModule {
     public void reloadConfig(MemoryConfiguration config) {
         enableMMOItems = config.getBoolean("Material-Adapters.MMOItems.enable", false);
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", false);
+        enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", false);
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
@@ -53,6 +56,18 @@ public class MaterialAdapterManager extends AbstractModule {
                         String mythicId = nbt.getString("MYTHIC_ITEM");
                         if (mythicId != null && !mythicId.isEmpty()) {
                             return new MythicMobsMaterial(mythicId);
+                        }
+                        return null;
+                    });
+                }
+                if (enableItemsAdder && adapter == null) {
+                    adapter = NBT.get(item, nbt -> {
+                        ReadableNBT itemsadder = nbt.getCompound("itemsadder");
+                        if (itemsadder == null) return null;
+                        String namespace = itemsadder.getString("namespace");
+                        String id = itemsadder.getString("id");
+                        if (namespace != null && !namespace.isEmpty() && id != null && !id.isEmpty()) {
+                            return new ItemsAdderMaterial(namespace, id);
                         }
                         return null;
                     });

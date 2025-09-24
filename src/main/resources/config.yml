@@ -55,6 +55,9 @@ Material-Adapters:
   MythicMobs:
     # 是否启用材料适配器。若启用适配器且锻造材料是 MythicMobs 物品，则仅匹配物品ID，不匹配整个物品
     enable: false
+  ItemsAdder:
+    # 是否启用材料适配器。若启用适配器且锻造材料是 ItemsAdder 物品，则仅匹配物品命名空间与物品ID，不匹配整个物品
+    enable: false
 
 # 困难锻造随机进行的小游戏列表
 RandomGames:
