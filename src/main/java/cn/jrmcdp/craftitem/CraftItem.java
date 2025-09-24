@@ -31,6 +31,7 @@ import top.mrxiaom.pluginbase.func.LanguageManager;
 import top.mrxiaom.pluginbase.gui.IGuiHolder;
 import top.mrxiaom.pluginbase.paper.PaperFactory;
 import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
+import top.mrxiaom.pluginbase.resolver.utils.ClassLoaderWrapper;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 import top.mrxiaom.pluginbase.utils.Util;
@@ -40,6 +41,7 @@ import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -60,7 +62,13 @@ public class CraftItem extends BukkitPlugin {
         scheduler = new FoliaLibScheduler(this);
 
         info("正在检查依赖库状态");
-        File librariesDir = new File(this.getDataFolder(), "libraries");
+        URLClassLoader oldLoader = (URLClassLoader) getClassLoader();
+        ClassLoaderWrapper classLoader = ClassLoaderWrapper.isSupportLibraryLoader
+                ? new ClassLoaderWrapper(ClassLoaderWrapper.findLibraryLoader(oldLoader))
+                : new ClassLoaderWrapper(oldLoader);
+        File librariesDir = ClassLoaderWrapper.isSupportLibraryLoader
+                ? new File("libraries") // 防止出现依赖版本不同的问题
+                : new File(this.getDataFolder(), "libraries");
         DefaultLibraryResolver resolver = new DefaultLibraryResolver(getLogger(), librariesDir);
 
         resolver.addLibrary(BuildConstants.LIBRARIES);
@@ -68,7 +76,7 @@ public class CraftItem extends BukkitPlugin {
         List<URL> libraries = resolver.doResolve();
         info("正在添加 " + libraries.size() + " 个依赖库到类加载器");
         for (URL library : libraries) {
-            this.classLoader.addURL(library);
+            classLoader.addURL(library);
         }
     }
 
