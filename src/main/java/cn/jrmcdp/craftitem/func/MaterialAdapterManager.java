@@ -2,10 +2,7 @@ package cn.jrmcdp.craftitem.func;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.data.MaterialInstance;
-import cn.jrmcdp.craftitem.func.entry.adapter.IMaterialAdapter;
-import cn.jrmcdp.craftitem.func.entry.adapter.MMOItemsMaterial;
-import cn.jrmcdp.craftitem.func.entry.adapter.NoneAdapter;
-import cn.jrmcdp.craftitem.func.entry.adapter.VanillaMaterial;
+import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -20,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @AutoRegister
 public class MaterialAdapterManager extends AbstractModule {
     boolean enableMMOItems;
+    boolean enableMythicMobs;
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
     }
@@ -32,6 +30,7 @@ public class MaterialAdapterManager extends AbstractModule {
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         enableMMOItems = config.getBoolean("Material-Adapters.MMOItems.enable", false);
+        enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", false);
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
@@ -45,6 +44,15 @@ public class MaterialAdapterManager extends AbstractModule {
                         String id = nbt.getString("MMOITEMS_ITEM_ID");
                         if (type != null && !type.isEmpty() && id != null && !id.isEmpty()) {
                             return new MMOItemsMaterial(type, id);
+                        }
+                        return null;
+                    });
+                }
+                if (enableMythicMobs && adapter == null) {
+                    adapter = NBT.get(item, nbt -> {
+                        String mythicId = nbt.getString("MYTHIC_ITEM");
+                        if (mythicId != null && !mythicId.isEmpty()) {
+                            return new MythicMobsMaterial(mythicId);
                         }
                         return null;
                     });
