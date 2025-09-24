@@ -50,15 +50,20 @@ LangUtils:
 Material-Adapters:
   # 是否按材料适配器所获取的 ID，重新生成新物品，展示给玩家
   Use-New-Icon: false
+
   # 对于 MMOItems 物品的适配
   MMOItems:
     # 是否启用材料适配器。若启用适配器且锻造材料是 MI 物品，则仅匹配物品类型和物品ID，不匹配整个物品
     enable: false
+
+  # 对于 MythicMobs 物品的适配
   MythicMobs:
-    # 是否启用材料适配器。若启用适配器且锻造材料是 MythicMobs 物品，则仅匹配物品ID，不匹配整个物品
+    # 是否启用材料适配器。若启用适配器且锻造材料是 MM 物品，则仅匹配物品ID，不匹配整个物品
     enable: false
+
+  # 对于 ItemsAdder 物品的适配
   ItemsAdder:
-    # 是否启用材料适配器。若启用适配器且锻造材料是 ItemsAdder 物品，则仅匹配物品命名空间与物品ID，不匹配整个物品
+    # 是否启用材料适配器。若启用适配器且锻造材料是 IA 物品，则仅匹配物品命名空间与物品ID，不匹配整个物品
     enable: false
 
 # 困难锻造随机进行的小游戏列表
