@@ -6,6 +6,9 @@ import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.ItemTranslation;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.data.CraftData;
+import cn.jrmcdp.craftitem.depend.mythic.IMythic;
+import cn.jrmcdp.craftitem.depend.mythic.Mythic4;
+import cn.jrmcdp.craftitem.depend.mythic.Mythic5;
 import cn.jrmcdp.craftitem.gui.IHolder;
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
@@ -30,6 +33,7 @@ import top.mrxiaom.pluginbase.paper.PaperFactory;
 import top.mrxiaom.pluginbase.resolver.DefaultLibraryResolver;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
+import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
 import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
@@ -44,7 +48,7 @@ public class CraftItem extends BukkitPlugin {
     private boolean enableConfigUpdater = false;
     private IRunTask timer;
     private String langUtilsLanguage;
-
+    private IMythic mythic;
     public CraftItem() throws Exception {
         super(new OptionsBuilder()
                 .bungee(true)
@@ -102,6 +106,10 @@ public class CraftItem extends BukkitPlugin {
         return options.economy();
     }
 
+    public IMythic getMythic() {
+        return mythic;
+    }
+
     @Override
     public void beforeLoad() {
         MinecraftVersion.replaceLogger(getLogger());
@@ -112,6 +120,12 @@ public class CraftItem extends BukkitPlugin {
 
     @Override
     public void beforeEnable() {
+        if (Util.isPresent("io.lumine.mythic.bukkit.MythicBukkit")) {
+            mythic = new Mythic5();
+        }
+        if (Util.isPresent("io.lumine.xikage.mythicmobs.MythicMobs")) {
+            mythic = new Mythic4();
+        }
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
         ActionProviders.registerActionProviders(ActionBack.PROVIDER, ActionReopen.PROVIDER);

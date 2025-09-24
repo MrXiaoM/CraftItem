@@ -9,14 +9,13 @@ import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
-import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @AutoRegister
 public class MaterialAdapterManager extends AbstractModule {
+    boolean useNewIcon;
     boolean enableMMOItems;
     boolean enableMythicMobs;
     boolean enableItemsAdder;
@@ -31,6 +30,7 @@ public class MaterialAdapterManager extends AbstractModule {
 
     @Override
     public void reloadConfig(MemoryConfiguration config) {
+        useNewIcon = config.getBoolean("Material-Adapters.Use-New-Icon", false);
         enableMMOItems = config.getBoolean("Material-Adapters.MMOItems.enable", false);
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", false);
         enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", false);
@@ -79,7 +79,17 @@ public class MaterialAdapterManager extends AbstractModule {
             if (adapter == null) {
                 adapter = NoneAdapter.INSTANCE;
             }
-            list.add(new MaterialInstance(item, adapter, item.getAmount()));
+            if (adapter != null && useNewIcon && adapter.supportNewIcon()) {
+                ItemStack sample = adapter.getNewIcon(plugin);
+                if (sample != null) {
+                    sample.setAmount(item.getAmount());
+                } else {
+                    sample = item;
+                }
+                list.add(new MaterialInstance(sample.clone(), adapter, sample.getAmount()));
+            } else {
+                list.add(new MaterialInstance(item.clone(), adapter, item.getAmount()));
+            }
         }
         return list;
     }

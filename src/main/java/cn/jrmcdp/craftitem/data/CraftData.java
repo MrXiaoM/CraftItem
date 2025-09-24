@@ -327,6 +327,10 @@ public class CraftData implements ConfigurationSerializable {
         return false;
     }
 
+    public List<MaterialInstance> getLoadedMaterial() {
+        return Collections.unmodifiableList(this.loadedMaterial);
+    }
+
     public List<MaterialState> getMaterialState(Inventory gui) {
         List<MaterialState> list = new ArrayList<>();
         Map<MaterialInstance, Integer> amountMap = Utils.getAmountMap(this.loadedMaterial);

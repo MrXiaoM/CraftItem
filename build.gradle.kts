@@ -19,6 +19,10 @@ allprojects {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
     }
 }
+repositories {
+    maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven/")
+}
 
 val libraries = arrayListOf<String>()
 fun DependencyHandlerScope.library(dependencyNotation: String) {
@@ -32,6 +36,16 @@ dependencies {
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
+
+    // MMOItems
+    compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
+    compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
+    // MythicMobs
+    compileOnly("io.lumine:Mythic-Dist:4.13.0")
+    compileOnly("io.lumine:Mythic:5.6.2")
+    compileOnly("io.lumine:LumineUtils:1.20-SNAPSHOT")
+    // ItemsAdder
+    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 
     library("com.zaxxer:HikariCP:4.0.3")
     library("org.jetbrains:annotations:24.0.0")

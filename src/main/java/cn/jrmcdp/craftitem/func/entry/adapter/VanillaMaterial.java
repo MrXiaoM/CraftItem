@@ -1,5 +1,6 @@
 package cn.jrmcdp.craftitem.func.entry.adapter;
 
+import cn.jrmcdp.craftitem.CraftItem;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -10,6 +11,15 @@ public class VanillaMaterial implements IMaterialAdapter {
         this.sample = sample.clone();
         this.sample.setAmount(1);
     }
+    @Override
+    public boolean supportNewIcon() {
+        return false;
+    }
+    @Override
+    public ItemStack getNewIcon(CraftItem plugin) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public boolean match(ItemStack item) {
         return sample.isSimilar(item);

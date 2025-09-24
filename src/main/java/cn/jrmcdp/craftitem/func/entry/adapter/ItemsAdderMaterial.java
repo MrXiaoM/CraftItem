@@ -1,7 +1,9 @@
 package cn.jrmcdp.craftitem.func.entry.adapter;
 
+import cn.jrmcdp.craftitem.CraftItem;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,6 +15,17 @@ public class ItemsAdderMaterial implements IMaterialAdapter {
     public ItemsAdderMaterial(String namespace, String id) {
         this.namespace = namespace;
         this.id = id;
+    }
+
+    @Override
+    public boolean supportNewIcon() {
+        return true;
+    }
+
+    @Override
+    public ItemStack getNewIcon(CraftItem plugin) {
+        CustomStack instance = CustomStack.getInstance(namespace + ":" + id);
+        return instance == null ? null : instance.getItemStack();
     }
 
     @Override

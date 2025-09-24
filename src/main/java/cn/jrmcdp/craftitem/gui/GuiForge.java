@@ -5,6 +5,7 @@ import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
+import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.minigames.GameData;
@@ -160,7 +161,12 @@ public class GuiForge implements IHolder {
         inventory = parent.plugin.createInventory(this, chest.length, PAPI.setPlaceholders(player, title));
         Player player = getPlayer();
         ItemStack[] is = new ItemStack[chest.length];
-        Iterator<ItemStack> iterator = craftData.getMaterial().iterator();
+        List<MaterialInstance> loadedMaterials = craftData.getLoadedMaterial();
+        List<ItemStack> materialList = new ArrayList<>();
+        for (MaterialInstance instance : loadedMaterials) {
+            materialList.add(instance.getSample().clone());
+        }
+        Iterator<ItemStack> iterator = materialList.iterator();
         for (int i = 0; i < chest.length; i++) {
             String key = String.valueOf(chest[i]);
             switch (key) {

@@ -1,6 +1,10 @@
 package cn.jrmcdp.craftitem.func.entry.adapter;
 
+import cn.jrmcdp.craftitem.CraftItem;
 import de.tr7zw.changeme.nbtapi.NBT;
+import net.Indyuce.mmoitems.MMOItems;
+import net.Indyuce.mmoitems.api.Type;
+import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,6 +17,22 @@ public class MMOItemsMaterial implements IMaterialAdapter {
     public MMOItemsMaterial(String type, String id) {
         this.type = type;
         this.id = id;
+    }
+
+    @Override
+    public boolean supportNewIcon() {
+        return true;
+    }
+
+    @Override
+    public ItemStack getNewIcon(CraftItem plugin) {
+        MMOItems mi = MMOItems.plugin;
+        Type type = mi.getTypes().get(this.type);
+        if (type == null) return null;
+        MMOItemTemplate template = mi.getTemplates().getTemplate(type, id);
+        return template == null ? null : template
+                .newBuilder().build()
+                .newBuilder().build(true);
     }
 
     @Override

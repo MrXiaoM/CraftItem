@@ -8,6 +8,8 @@ softdepend:
   - PlaceholderAPI
   - MythicLib
   - MMOItems
+  - MythicMobs
+  - ItemsAdder
   - LangUtils
 api-version: 1.13
 folia-supported: true

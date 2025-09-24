@@ -1,5 +1,7 @@
 package cn.jrmcdp.craftitem.func.entry.adapter;
 
+import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.depend.mythic.IMythic;
 import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +13,20 @@ public class MythicMobsMaterial implements IMaterialAdapter {
 
     public MythicMobsMaterial(String id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean supportNewIcon() {
+        return true;
+    }
+
+    @Override
+    public ItemStack getNewIcon(CraftItem plugin) {
+        IMythic mythic = plugin.getMythic();
+        if (mythic != null) {
+            return mythic.getItem(id);
+        }
+        return null;
     }
 
     @Override
