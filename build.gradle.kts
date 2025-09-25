@@ -22,6 +22,7 @@ allprojects {
 repositories {
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven/")
+    maven("https://repo.momirealms.net/releases/")
 }
 
 val libraries = arrayListOf<String>()
@@ -46,6 +47,8 @@ dependencies {
     compileOnly("io.lumine:LumineUtils:1.20-SNAPSHOT")
     // ItemsAdder
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
+    // CustomFishing
+    compileOnly("net.momirealms:custom-fishing:2.3.3")
 
     library("com.zaxxer:HikariCP:4.0.3")
     library("org.jetbrains:annotations:24.0.0")

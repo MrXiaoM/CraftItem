@@ -19,6 +19,7 @@ public class MaterialAdapterManager extends AbstractModule {
     boolean enableMMOItems;
     boolean enableMythicMobs;
     boolean enableItemsAdder;
+    boolean enableCustomFishing;
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
     }
@@ -34,6 +35,7 @@ public class MaterialAdapterManager extends AbstractModule {
         enableMMOItems = config.getBoolean("Material-Adapters.MMOItems.enable", false);
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", false);
         enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", false);
+        enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", false);
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
@@ -68,6 +70,15 @@ public class MaterialAdapterManager extends AbstractModule {
                         String id = itemsadder.getString("id");
                         if (namespace != null && !namespace.isEmpty() && id != null && !id.isEmpty()) {
                             return new ItemsAdderMaterial(namespace, id);
+                        }
+                        return null;
+                    });
+                }
+                if (enableCustomFishing && adapter == null) {
+                    adapter = NBT.get(item, nbt -> {
+                        String id = nbt.resolveOrNull("CustomFishing.id", String.class);
+                        if (id != null && !id.isEmpty()) {
+                            return new CustomFishingMaterial(id);
                         }
                         return null;
                     });
