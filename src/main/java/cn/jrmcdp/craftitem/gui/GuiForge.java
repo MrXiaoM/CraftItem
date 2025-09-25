@@ -367,7 +367,7 @@ public class GuiForge implements IHolder {
             Message.craft__forge_limit.tm(player, Math.max(limit, 0));
             return;
         }
-        craftData.doCost(player);
+        if (craftData.doCost(player)) return;
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
         final int multiple = RandomUtils.nextInt(3);
         player.closeInventory();
@@ -417,7 +417,7 @@ public class GuiForge implements IHolder {
                 if (craftData.isNotEnoughMaterial(player)) return;
 
                 for (int i = 0; i < combo; i++) {
-                    craftData.doCost(player);
+                    if (craftData.doCost(player)) break;
                     final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
                     final int multiple = RandomUtils.nextInt(3);
                     if (!manager.doForgeResult(this, player, win, multiple, null)) {
@@ -474,7 +474,7 @@ public class GuiForge implements IHolder {
                 return;
             }
 
-            craftData.doCostTime(player);
+            if (craftData.doCostTime(player)) return;
             craftData.takeAllMaterial(player);
             long endTime = System.currentTimeMillis() + craftData.getTime() * 1000L;
             playerData.setTime(key, endTime);

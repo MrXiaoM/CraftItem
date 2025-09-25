@@ -384,10 +384,18 @@ public class CraftData implements ConfigurationSerializable {
         return false;
     }
 
-    public void doCost(Player player) {
+    public boolean doCost(Player player) {
         int level = player.getLevel();
+        if (!plugin.economy().takeMoney(player, cost)) {
+            Message.craft__not_enough_money.tm(player);
+            return true;
+        }
+        if (level < costLevel) {
+            Message.craft__not_enough_level.tm(player);
+            return true;
+        }
         player.setLevel(Math.max(0, level - costLevel));
-        plugin.economy().takeMoney(player, cost);
+        return false;
     }
 
     public boolean checkCostTime(Player player) {
@@ -402,10 +410,18 @@ public class CraftData implements ConfigurationSerializable {
         return false;
     }
 
-    public void doCostTime(Player player) {
+    public boolean doCostTime(Player player) {
         int level = player.getLevel();
+        if (!plugin.economy().takeMoney(player, timeCost)) {
+            Message.craft__not_enough_money.tm(player);
+            return true;
+        }
+        if (level < timeCostLevel) {
+            Message.craft__not_enough_level.tm(player);
+            return true;
+        }
         player.setLevel(Math.max(0, level - timeCostLevel));
-        plugin.economy().takeMoney(player, timeCost);
+        return false;
     }
 
     @NotNull
