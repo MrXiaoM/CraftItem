@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "cn.jrmcdp"
-version = "2.0.6"
+version = "2.0.7"
 
 val pluginBaseVersion = "1.6.4"
 val targetJavaVersion = 8
@@ -54,7 +54,7 @@ dependencies {
     library("net.kyori:adventure-text-minimessage:4.22.0")
     library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
-    implementation("de.tr7zw:item-nbt-api:2.15.2-SNAPSHOT")
+    implementation("de.tr7zw:item-nbt-api:2.15.2")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     implementation("top.mrxiaom.pluginbase:library:$pluginBaseVersion")
     implementation("top.mrxiaom.pluginbase:paper:${pluginBaseVersion}")
