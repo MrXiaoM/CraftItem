@@ -17,7 +17,7 @@ import static top.mrxiaom.pluginbase.utils.AdventureUtil.miniMessage;
 
 public class AdventureManagerImpl {
     public static void sendMessage(CommandSender sender, String message) {
-        AdventureUtil.adventure().sender(sender).sendMessage(miniMessage(message));
+        AdventureUtil.sendMessage(sender, message);
     }
 
     public static void sendTitle(Player player, String title, String subtitle, int in, int duration, int out) {
@@ -25,7 +25,7 @@ public class AdventureManagerImpl {
     }
     
     public static void sendTitle(Player player, Component title, Component subtitle, int in, int duration, int out) {
-        Audience audience = AdventureUtil.adventure().player(player);
+        Audience audience = AdventureUtil.of(player);
         Title.Times times = Title.Times.times(
                 Duration.ofMillis(in * 50L),
                 Duration.ofMillis(duration * 50L),
@@ -35,13 +35,12 @@ public class AdventureManagerImpl {
     }
     
     public static void sendActionbar(Player player, String s) {
-        Audience audience = AdventureUtil.adventure().player(player);
-        audience.sendActionBar(miniMessage(s));
+        AdventureUtil.sendActionBar(player, s);
     }
     
     public static void sendSound(Player player, Sound.Source source, Key key, float volume, float pitch) {
         Sound sound = Sound.sound(key, source, volume, pitch);
-        Audience au = AdventureUtil.adventure().player(player);
+        Audience au = AdventureUtil.of(player);
         au.playSound(sound);
     }
 }
