@@ -57,7 +57,7 @@ dependencies {
     library("net.kyori:adventure-text-minimessage:4.22.0")
     library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
-    implementation("de.tr7zw:item-nbt-api:2.15.2")
+    implementation("de.tr7zw:item-nbt-api:2.15.3-SNAPSHOT")
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     implementation("top.mrxiaom.pluginbase:library:$pluginBaseVersion")
     implementation("top.mrxiaom.pluginbase:paper:${pluginBaseVersion}")
