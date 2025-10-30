@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.config.data;
 
 import cn.jrmcdp.craftitem.utils.Utils;
 import org.bukkit.entity.Player;
-import top.mrxiaom.pluginbase.utils.PAPI;
+import top.mrxiaom.pluginbase.utils.depend.PAPI;
 import top.mrxiaom.pluginbase.utils.Util;
 
 public class Condition {

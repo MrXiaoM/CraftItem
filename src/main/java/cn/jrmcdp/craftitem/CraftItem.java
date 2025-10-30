@@ -62,16 +62,12 @@ public class CraftItem extends BukkitPlugin {
         scheduler = new FoliaLibScheduler(this);
 
         info("正在检查依赖库状态");
-        URLClassLoader oldLoader = (URLClassLoader) getClassLoader();
-        ClassLoaderWrapper classLoader = ClassLoaderWrapper.isSupportLibraryLoader
-                ? new ClassLoaderWrapper(ClassLoaderWrapper.findLibraryLoader(oldLoader))
-                : new ClassLoaderWrapper(oldLoader);
         File librariesDir = ClassLoaderWrapper.isSupportLibraryLoader
                 ? new File("libraries") // 防止出现依赖版本不同的问题
                 : new File(this.getDataFolder(), "libraries");
         DefaultLibraryResolver resolver = new DefaultLibraryResolver(getLogger(), librariesDir);
 
-        resolver.addLibrary(BuildConstants.LIBRARIES);
+        resolver.addResolvedLibrary(BuildConstants.RESOLVED_LIBRARIES);
 
         List<URL> libraries = resolver.doResolve();
         info("正在添加 " + libraries.size() + " 个依赖库到类加载器");

@@ -13,6 +13,8 @@ softdepend:
   - LangUtils
 api-version: 1.13
 folia-supported: true
+libraries:
+  - "org.jetbrains:annotations:24.0.0"
 commands:
   CraftItem:
     aliases:

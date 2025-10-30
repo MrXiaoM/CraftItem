@@ -26,6 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.*;
+import top.mrxiaom.pluginbase.utils.depend.PAPI;
 
 import java.util.*;
 
@@ -204,7 +205,7 @@ public class GuiForge implements IHolder {
                         tail.add(Message.gui__craft_info__lore__item.str(itemName, amount));
                     }
                     for (String command : craftData.getCommands()) {
-                        List<String> split = Util.split(command, "||", 2);
+                        List<String> split = CollectionUtils.split(command, '|', 2);
                         String str = split.size() > 1 ? split.get(1) : "";
                         if (str.trim().isEmpty()) {
                             tail.add(Message.gui__craft_info__lore__command.str(str));
