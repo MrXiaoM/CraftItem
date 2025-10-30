@@ -12,7 +12,7 @@ buildscript {
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
 group = "cn.jrmcdp"
-version = "2.0.7"
+version = "2.0.8"
 
 val pluginBaseModules = listOf("library", "paper", "l10n", "actions", "gui", "misc")
 val pluginBaseVersion = "1.7.0"
