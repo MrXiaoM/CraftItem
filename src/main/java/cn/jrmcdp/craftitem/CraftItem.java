@@ -18,6 +18,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -142,6 +144,15 @@ public class CraftItem extends BukkitPlugin {
                     }
                     return value;
                 });
+        if (Util.isPresent("org.bukkit.event.server.ServerLoadEvent")) {
+            Bukkit.getPluginManager().registerEvents(new Listener() {
+                public void onServerLoad(ServerLoadEvent e) {
+                    if (!e.getType().equals(ServerLoadEvent.LoadType.STARTUP)) return;
+                    HandlerList.unregisterAll(this);
+                    reloadConfig();
+                }
+            }, this);
+        }
     }
 
     public void onSecond() {
