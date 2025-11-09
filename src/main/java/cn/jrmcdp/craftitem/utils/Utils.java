@@ -38,7 +38,7 @@ public class Utils {
     /**
      * CraftInventory#first(item, withAmount:false)
      */
-    private static int first(Inventory inv, IMaterialAdapter item) {
+    private static int first(Player player, Inventory inv, IMaterialAdapter item) {
         if (item == null) {
             return -1;
         } else {
@@ -46,7 +46,7 @@ public class Utils {
             int i = 0;
             while (true) {
                 if (i >= inventory.length) return -1;
-                if (inventory[i] != null && item.match(inventory[i])) break;
+                if (inventory[i] != null && item.match(player, inventory[i])) break;
                 ++i;
             }
             return i;
@@ -67,7 +67,7 @@ public class Utils {
             int toDelete = item.getAmount();
 
             while (true) {
-                int first = first(inv, item.getAdapter()); // modified
+                int first = first(player, inv, item.getAdapter()); // modified
                 if (first == -1) {
                     item.setAmount(toDelete);
                     leftover.put(i, item.getSample());

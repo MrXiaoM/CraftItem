@@ -6,7 +6,9 @@ import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.template.MMOItemTemplate;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -36,7 +38,7 @@ public class MMOItemsMaterial implements IMaterialAdapter {
     }
 
     @Override
-    public boolean match(ItemStack item) {
+    public boolean match(@Nullable Player player, ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR)) return false;
         return NBT.get(item, nbt -> {
             return type.equals(nbt.getString("MMOITEMS_ITEM_TYPE")) && id.equals(nbt.getString("MMOITEMS_ITEM_ID"));

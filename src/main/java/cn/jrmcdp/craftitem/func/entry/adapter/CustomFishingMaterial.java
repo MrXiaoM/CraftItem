@@ -11,7 +11,9 @@ import net.momirealms.customfishing.api.mechanic.fishing.CustomFishingHook;
 import net.momirealms.customfishing.api.mechanic.item.ItemManager;
 import net.momirealms.customfishing.common.plugin.CustomFishingPlugin;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -35,7 +37,7 @@ public class CustomFishingMaterial implements IMaterialAdapter {
     }
 
     @Override
-    public boolean match(ItemStack item) {
+    public boolean match(@Nullable Player player, ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR)) return false;
         return NBT.get(item, nbt -> {
             return id.equals(nbt.resolveOrNull("CustomFishing.id", String.class));

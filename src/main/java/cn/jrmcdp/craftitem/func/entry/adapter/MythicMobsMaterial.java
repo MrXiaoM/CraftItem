@@ -4,7 +4,9 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.depend.mythic.IMythic;
 import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -30,7 +32,7 @@ public class MythicMobsMaterial implements IMaterialAdapter {
     }
 
     @Override
-    public boolean match(ItemStack item) {
+    public boolean match(@Nullable Player player, ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR)) return false;
         return NBT.get(item, nbt -> {
             return id.equals(nbt.getString("MYTHIC_ITEM"));

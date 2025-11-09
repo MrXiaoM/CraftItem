@@ -5,7 +5,9 @@ import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -29,7 +31,7 @@ public class ItemsAdderMaterial implements IMaterialAdapter {
     }
 
     @Override
-    public boolean match(ItemStack item) {
+    public boolean match(@Nullable Player player, ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR)) return false;
         return NBT.get(item, nbt -> {
             ReadableNBT itemsadder = nbt.getCompound("itemsadder");

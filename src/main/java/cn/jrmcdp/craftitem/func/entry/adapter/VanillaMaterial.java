@@ -1,7 +1,9 @@
 package cn.jrmcdp.craftitem.func.entry.adapter;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -21,7 +23,7 @@ public class VanillaMaterial implements IMaterialAdapter {
     }
 
     @Override
-    public boolean match(ItemStack item) {
+    public boolean match(@Nullable Player player, ItemStack item) {
         return sample.isSimilar(item);
     }
 

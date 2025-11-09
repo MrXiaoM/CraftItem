@@ -315,7 +315,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public boolean isNotEnoughMaterial(Player player) {
-        List<MaterialState> state = getMaterialState(player.getInventory());
+        List<MaterialState> state = getMaterialState(player, player.getInventory());
         state.removeIf(MaterialState::isEnough);
         if (!state.isEmpty()) {
             Message.craft__not_enough_material.tm(player);
@@ -331,13 +331,17 @@ public class CraftData implements ConfigurationSerializable {
         return Collections.unmodifiableList(this.loadedMaterial);
     }
 
+    @Deprecated
     public List<MaterialState> getMaterialState(Inventory gui) {
+        return getMaterialState(null, gui);
+    }
+    public List<MaterialState> getMaterialState(Player player, Inventory gui) {
         List<MaterialState> list = new ArrayList<>();
         Map<MaterialInstance, Integer> amountMap = Utils.getAmountMap(this.loadedMaterial);
         for (Map.Entry<MaterialInstance, Integer> entry : amountMap.entrySet()) {
             int amount = 0;
             for (ItemStack i : gui.getContents()) {
-                if (entry.getKey().getAdapter().match(i)) {
+                if (entry.getKey().getAdapter().match(player, i)) {
                     amount += i.getAmount();
                 }
             }
