@@ -11,7 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 @AutoRegister
 public class MaterialAdapterManager extends AbstractModule {
@@ -20,8 +23,17 @@ public class MaterialAdapterManager extends AbstractModule {
     boolean enableMythicMobs;
     boolean enableItemsAdder;
     boolean enableCustomFishing;
+    private final Map<String, Function<ItemStack, IMaterialAdapter>> externalAdapters = new HashMap<>();
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
+    }
+
+    public void register(String id, Function<ItemStack, IMaterialAdapter> func) {
+        externalAdapters.put(id, func);
+    }
+
+    public void unregister(String id) {
+        externalAdapters.remove(id);
     }
 
     @Override
@@ -43,6 +55,14 @@ public class MaterialAdapterManager extends AbstractModule {
         for (ItemStack item : materials) {
             IMaterialAdapter adapter = null;
             if (item != null && !item.getType().equals(Material.AIR)) {
+                if (adapter == null) {
+                    for (Function<ItemStack, IMaterialAdapter> func : externalAdapters.values()) {
+                        adapter = func.apply(item);
+                        if (adapter != null) {
+                            break;
+                        }
+                    }
+                }
                 if (enableMMOItems && adapter == null) {
                     adapter = NBT.get(item, nbt -> {
                         String type = nbt.getString("MMOITEMS_ITEM_TYPE");
