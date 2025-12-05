@@ -7,15 +7,14 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.0")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.1")
 }
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
 group = "cn.jrmcdp"
 version = "2.0.8"
 
-val pluginBaseModules = listOf("library", "paper", "l10n", "actions", "gui", "misc")
-val pluginBaseVersion = "1.7.0"
+val pluginBaseModules = base.modules.run{ listOf(library, paper, l10n, actions, gui, misc) }
 val targetJavaVersion = 8
 allprojects {
     repositories {
@@ -60,9 +59,9 @@ dependencies {
 
     implementation("de.tr7zw:item-nbt-api:2.15.3")
     for (artifact in pluginBaseModules) {
-        implementation("top.mrxiaom.pluginbase:$artifact:$pluginBaseVersion")
+        implementation(artifact)
     }
-    implementation("top.mrxiaom:LibrariesResolver-Lite:$pluginBaseVersion")
+    implementation(base.resolver.lite)
     implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     implementation(project(":paper"))
 }
