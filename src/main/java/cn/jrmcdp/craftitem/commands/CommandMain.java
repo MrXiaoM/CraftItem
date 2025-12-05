@@ -3,12 +3,15 @@ package cn.jrmcdp.craftitem.commands;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.*;
 import cn.jrmcdp.craftitem.data.CraftData;
+import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.gui.GuiEdit;
 import cn.jrmcdp.craftitem.func.PlayerDataManager;
 import cn.jrmcdp.craftitem.utils.ConfigUtils;
+import cn.jrmcdp.craftitem.utils.Utils;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -78,11 +81,42 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                         return Message.no_permission.tm(sender, perm);
                     }
                     return runDelete(sender, args);
+                case "log":
+                    if (args.length < 2) break;
+                    if (!sender.hasPermission(perm)) {
+                        return Message.no_permission.tm(sender, perm);
+                    }
+                    return runLog(sender, args);
                 default:
                     break;
             }
         }
         return Message.help.tm(sender);
+    }
+
+    private boolean runLog(CommandSender sender, String[] args) {
+        CraftRecipeManager manager = CraftRecipeManager.inst();
+        CraftData craftData = manager.getCraftData(args[1]);
+        if (craftData == null) {
+            return Message.craft__not_found.tm(sender, args[1]);
+        }
+        Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+        if (p == null) {
+            return t(sender, "require at least 1 player online");
+        }
+        List<MaterialInstance> materialList = craftData.getLoadedMaterial();
+        t(sender, "Craft properties '" + args[1] + "' has " + materialList.size() + " material(s):");
+        for (int i = 0; i < materialList.size(); i++) {
+            MaterialInstance inst = materialList.get(i);
+            String itemName;
+            if (sender instanceof Player) {
+                itemName = Utils.getItemName(inst.getSample(), (Player) sender);
+            } else {
+                itemName = Utils.getItemName(inst.getSample(), p);
+            }
+            t(sender, "- [" + i + "]" + itemName + "&r (x" + inst.getAmount() +") -- " + inst.getAdapter().getAdapterType());
+        }
+        return true;
     }
 
     private boolean runDelete(CommandSender sender, String[] args) {
@@ -257,17 +291,19 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             "create",
             "delete",
             "edit",
+            "log",
             "reload"
     );
     private List<String> showRecipeCommands = Lists.newArrayList(
             "open",
             "get",
             "delete",
+            "log",
             "edit"
     );
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (args.length > 0) {
+        if (args.length > 1) {
             String perm = plugin.getDescription().getName().toLowerCase() + ".command." + args[0];
             if (!sender.hasPermission(perm)) {
                 return emptyList;
