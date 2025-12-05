@@ -60,6 +60,7 @@ public class ConfigMain extends AbstractModule {
         updater.prefixMatch("Setting.")
                 .fullMatch("RandomGames")
                 .prefixMatch("TimeFormat.")
+                .prefixMatch("Material-Adapters.")
                 .fullMatch("DoNotDisappear.Material")
                 .fullMatch("DoNotDisappear.Name")
                 .fullMatch("DoNotDisappear.Lore")

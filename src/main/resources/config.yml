@@ -54,22 +54,22 @@ Material-Adapters:
   # 对于 MMOItems 物品的适配
   MMOItems:
     # 是否启用材料适配器。若启用适配器且锻造材料是 MI 物品，则仅匹配物品类型和物品ID，不匹配整个物品
-    enable: false
+    enable: true
 
   # 对于 MythicMobs 物品的适配
   MythicMobs:
     # 是否启用材料适配器。若启用适配器且锻造材料是 MM 物品，则仅匹配物品ID，不匹配整个物品
-    enable: false
+    enable: true
 
   # 对于 ItemsAdder 物品的适配
   ItemsAdder:
     # 是否启用材料适配器。若启用适配器且锻造材料是 IA 物品，则仅匹配物品命名空间与物品ID，不匹配整个物品
-    enable: false
+    enable: true
 
   # 对于 CustomFishing 物品的适配
   CustomFishing:
     # 是否启用材料适配器。若启用适配器且锻造材料是鱼类，则仅匹配物品ID (CustomFishing.id 标签)，不匹配整个物品
-    enable: false
+    enable: true
 
 # 困难锻造随机进行的小游戏列表
 RandomGames:

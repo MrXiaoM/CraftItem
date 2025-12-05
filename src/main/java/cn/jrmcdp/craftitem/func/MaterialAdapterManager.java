@@ -44,10 +44,10 @@ public class MaterialAdapterManager extends AbstractModule {
     @Override
     public void reloadConfig(MemoryConfiguration config) {
         useNewIcon = config.getBoolean("Material-Adapters.Use-New-Icon", false);
-        enableMMOItems = config.getBoolean("Material-Adapters.MMOItems.enable", false);
-        enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", false);
-        enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", false);
-        enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", false);
+        enableMMOItems = config.getBoolean("Material-Adapters.MMOItems.enable", true);
+        enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", true);
+        enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", true);
+        enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", true);
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
