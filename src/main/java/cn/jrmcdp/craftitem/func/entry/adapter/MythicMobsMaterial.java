@@ -35,7 +35,7 @@ public class MythicMobsMaterial implements IMaterialAdapter {
     public boolean match(@Nullable Player player, ItemStack item) {
         if (item == null || item.getType().equals(Material.AIR)) return false;
         return NBT.get(item, nbt -> {
-            return id.equals(nbt.getString("MYTHIC_ITEM"));
+            return id.equals(nbt.getString("MYTHIC_TYPE"));
         });
     }
 

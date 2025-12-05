@@ -75,7 +75,7 @@ public class MaterialAdapterManager extends AbstractModule {
                 }
                 if (enableMythicMobs && adapter == null) {
                     adapter = NBT.get(item, nbt -> {
-                        String mythicId = nbt.getString("MYTHIC_ITEM");
+                        String mythicId = nbt.getString("MYTHIC_TYPE");
                         if (mythicId != null && !mythicId.isEmpty()) {
                             return new MythicMobsMaterial(mythicId);
                         }
