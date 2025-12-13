@@ -259,7 +259,7 @@ public class CraftRecipeManager extends AbstractModule {
             }
         }
         playerData.save();
-        Bukkit.getScheduler().runTaskLater(CraftItem.getPlugin(), () -> {
+        CraftItem.getPlugin().getScheduler().runTaskLater(() -> {
             if (!player.isOnline()) {
                 if (cancel != null) cancel.run();
                 return;
