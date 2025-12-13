@@ -21,10 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IAction;
+import top.mrxiaom.pluginbase.api.IRunTask;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.ListPair;
 import top.mrxiaom.pluginbase.utils.depend.PAPI;
@@ -32,6 +31,9 @@ import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
@@ -272,35 +274,35 @@ public class CraftRecipeManager extends AbstractModule {
     public void playForgeAnimate(Player player, BiConsumer<Runnable, Runnable> consumer) {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
-            public void onPlayerQuit(PlayerQuitEvent eventB) {
-                if (eventB.getPlayer().equals(player))
+            public void onPlayerQuit(PlayerQuitEvent event) {
+                if (event.getPlayer().equals(player))
                     clear();
             }
 
             public void clear() {
-                task.cancel();
+                IRunTask task = this.task.get();
+                if (task != null) task.cancel();
                 HandlerList.unregisterAll(this);
             }
 
-            final BukkitTask task;
+            AtomicReference<IRunTask> task;
             {
                 Runnable clear = this::clear;
-                task = (new BukkitRunnable() {
-                    int counter = 1;
-                    // 因为事件执行可能会阻塞，加个完成标志避免定时器重复执行
-                    boolean doneFlag = false;
-                    public void run() {
-                        if (doneFlag) return;
-                        if (this.counter >= 3) {
-                            doneFlag = true;
-                            consumer.accept(clear, this::cancel);
-                            return;
-                        }
-                        plugin.config().sendForgeTitle(player);
-                        plugin.config().getSoundForgeTitle().play(player);
-                        this.counter++;
+                AtomicInteger counter = new AtomicInteger(1);
+                AtomicBoolean doneFlag = new AtomicBoolean(false);
+                this.task = new AtomicReference<>(null);
+                this.task.set(CraftItem.getPlugin().getScheduler().runTaskTimer(() -> {
+                    if (doneFlag.get()) return;
+                    if (counter.get() >= 3) {
+                        doneFlag.set(true);
+                        consumer.accept(clear, task.get()::cancel);
+                        return;
                     }
-                }).runTaskTimer(CraftItem.getPlugin(), 5L, 15L);
+                    plugin.config().sendForgeTitle(player);
+                    plugin.config().getSoundForgeTitle().play(player);
+                    counter.incrementAndGet();
+
+                }, 5L, 15L));
             }
         }, CraftItem.getPlugin());
     }

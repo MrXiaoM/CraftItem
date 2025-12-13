@@ -4,7 +4,6 @@ import cn.jrmcdp.craftitem.minigames.GameData;
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import top.mrxiaom.pluginbase.api.IRunTask;
 
 public abstract class AbstractGamingPlayer implements GamingPlayer, Runnable {
