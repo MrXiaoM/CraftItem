@@ -454,15 +454,17 @@ public class GuiForge implements IHolder {
             playerData.save(); // 锻造结束，给予奖励
             Message.craft__success.tm(player, craftData.getDisplayItem());
             for (ItemStack item : craftData.getItems()) {
-                for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
+                for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item.clone() }).values()) {
                     player.getWorld().dropItem(player.getLocation(), add);
                     Message.full_inventory.tm(player, add, add.getAmount());
                 }
             }
-            for (String str : craftData.getCommands()) {
-                String cmd = str.split("\\|\\|")[0];
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
-            }
+            manager.plugin.getScheduler().runTask(() -> {
+                for (String str : craftData.getCommands()) {
+                    String cmd = str.split("\\|\\|")[0];
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
+                }
+            });
             manager.doReopenForgeGui(this);
             return;
         }

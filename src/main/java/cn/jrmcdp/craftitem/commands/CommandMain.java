@@ -237,7 +237,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             if (!(sender instanceof Player)) {
                 return Message.no_player.tm(sender);
             }
-            player = (Player)sender;
+            player = (Player) sender;
         }
         CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
         if (craftData == null) {
@@ -245,15 +245,17 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         }
         Message.craft__success.tm(player, craftData.getDisplayItem());
         for (ItemStack item : craftData.getItems()) {
-            for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
-                player.getWorld().dropItem(player.getLocation(), add);
+            for (ItemStack add : player.getInventory().addItem(new ItemStack[]{item.clone()}).values()) {
+                plugin.getScheduler().runAtLocation(player.getLocation(), loc -> player.getWorld().dropItem(loc, add));
                 Message.full_inventory.tm(player, add, add.getAmount());
             }
         }
-        for (String str : craftData.getCommands()) {
-            String cmd = str.split("\\|\\|")[0];
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
-        }
+        plugin.getScheduler().runTask(() -> {
+            for (String str : craftData.getCommands()) {
+                String cmd = str.split("\\|\\|")[0];
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
+            }
+        });
         return true;
     }
 

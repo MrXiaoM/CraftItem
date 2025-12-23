@@ -37,7 +37,7 @@ public class Prompter implements IAutoCloseHolder {
     public static void gui(Player player, int size, Message title, List<ItemStack> items, Consumer<Inventory> consumer) {
         gui(player, size, title, inv -> {
             for (ItemStack item : items) {
-                inv.addItem(item);
+                inv.addItem(item.clone());
             }
         }, null, consumer);
     }

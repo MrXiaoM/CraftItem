@@ -194,7 +194,7 @@ public class CraftRecipeManager extends AbstractModule {
                 playerData.addForgeCount(id, 1);
                 Message.craft__success.tm(player, craftData.getDisplayItem());
                 for (ItemStack item : craftData.getItems()) {
-                    for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item }).values()) {
+                    for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item.clone() }).values()) {
                         player.getWorld().dropItem(player.getLocation(), add);
                         Message.full_inventory.tm(player, add, add.getAmount());
                     }
@@ -204,10 +204,12 @@ public class CraftRecipeManager extends AbstractModule {
                     r.add("%craft%", holder.getId());
                     ActionProviders.run(plugin, player, craftDoneCommands, r);
                 }
-                for (String str : craftData.getCommands()) {
-                    String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
-                }
+                plugin.getScheduler().runTask(() -> {
+                    for (String str : craftData.getCommands()) {
+                        String cmd = str.split("\\|\\|")[0].replace("%fail_times%", failTimes);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PAPI.setPlaceholders(player, cmd));
+                    }
+                });
             } else {
                 switch (e.getMultiple()) {
                     case 0 : {
