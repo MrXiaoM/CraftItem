@@ -64,55 +64,55 @@ public class GuiEdit implements IHolder {
     enum Slot {
         MATERIAL(0, gui -> { // 材料
             return getItemStack(getMaterial("WHEAT"), Message.gui__edit__item__material__name.str(),
-                    Message.gui__edit__item__material__lore.list(
+                    Message.gui__edit__item__material__lore.listFormat(
                             String.join("\n§7", Utils.itemToListString(gui.craftData.getMaterial(), gui.getPlayer()))
                     ));
         }),
         SUCCESSFUL_RATE(1, gui -> { // 成功率
             return getItemStack(getMaterial("COMPASS"), Message.gui__edit__item__successful_rate__name.str(),
-                    Message.gui__edit__item__successful_rate__lore.list(
+                    Message.gui__edit__item__successful_rate__lore.listFormat(
                             gui.craftData.getChance()
                     ));
         }),
         MULTIPLE(2, gui -> { // 倍率
             return getItemStack(getMaterial("HOPPER"), Message.gui__edit__item__multiple__name.str(),
-                    Message.gui__edit__item__multiple__lore.list(
+                    Message.gui__edit__item__multiple__lore.listFormat(
                             gui.craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                     ));
         }),
         COST_MONEY(3, gui -> { // 价格
             return getItemStack(getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.str(),
-                    Message.gui__edit__item__cost__lore.list(
+                    Message.gui__edit__item__cost__lore.listFormat(
                             gui.craftData.getCost()
                     ));
         }),
         COST_LEVEL(4, gui -> { // 花费经验等级
             return getItemStack(getMaterial("EXPERIENCE_BOTTLE"), Message.gui__edit__item__cost_level__name.str(),
-                    Message.gui__edit__item__cost_level__lore.list(
+                    Message.gui__edit__item__cost_level__lore.listFormat(
                             gui.craftData.getCostLevel()
                     ));
         }),
         DISPLAY(5, gui -> { // 显示物品
             return getItemStack(getMaterial("PAINTING"), Message.gui__edit__item__display__name.str(),
-                    Message.gui__edit__item__display__lore.list(
+                    Message.gui__edit__item__display__lore.listFormat(
                             gui.craftData.getDisplayItem()
                     ));
         }),
         REWARD_ITEMS(6, gui -> { // 奖励物品
             return getItemStack(getMaterial("CHEST"), Message.gui__edit__item__item__name.str(),
-                    Message.gui__edit__item__item__lore.list(
+                    Message.gui__edit__item__item__lore.listFormat(
                             String.join("\n§7", Utils.itemToListString(gui.craftData.getItems(), gui.getPlayer()))
                     ));
         }),
         REWARD_COMMANDS(7, gui -> { // 奖励命令
             return getItemStack(getMaterial("PAPER"), Message.gui__edit__item__command__name.str(),
-                    Message.gui__edit__item__command__lore.list(
+                    Message.gui__edit__item__command__lore.listFormat(
                             String.join("\n§7", gui.craftData.getCommands())
                     ));
         }),
         TIME(8, gui -> { // 锻造时长
             return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.str(),
-                    Message.gui__edit__item__time__lore.list(
+                    Message.gui__edit__item__time__lore.listFormat(
                             gui.craftData.getTimeDisplay(), gui.craftData.getTimeCost()
                     ));
         }),
@@ -122,23 +122,23 @@ public class GuiEdit implements IHolder {
             String groupNormal = gui.craftData.getCountLimit();
             if (groupNormal.trim().isEmpty()) groupNormal = Message.gui__edit__unset.str();
             return getItemStack(getMaterial("BUCKET"), Message.gui__edit__item__time_count_limit__name.str(),
-                    Message.gui__edit__item__time_count_limit__lore.list(groupNormal, groupTime));
+                    Message.gui__edit__item__time_count_limit__lore.listFormat(groupNormal, groupTime));
         }),
         DIFFICULT(10, gui -> { // 困难锻造
             return getItemStack(getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.str(),
-                    Message.gui__edit__item__difficult__lore.list(
+                    Message.gui__edit__item__difficult__lore.listFormat(
                             (gui.craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).str()
                     ));
         }),
         FAIL_TIMES(11, gui -> { // 保底次数
             return getItemStack(getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.str(),
-                    Message.gui__edit__item__fail_times__lore.list(
+                    Message.gui__edit__item__fail_times__lore.listFormat(
                             gui.craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(gui.craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.str()
                     ));
         }),
         COMBO(12, gui -> { // 连击次数
             return getItemStack(getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.str(),
-                    Message.gui__edit__item__combo__lore.list(
+                    Message.gui__edit__item__combo__lore.listFormat(
                             gui.craftData.getCombo() > 0 ? String.valueOf(gui.craftData.getCombo()) : Message.gui__edit__unset.str()
                     ));
         }),
@@ -169,7 +169,7 @@ public class GuiEdit implements IHolder {
     @Override
     public Inventory newInventory() {
         ItemStack[] items = new ItemStack[invSize = 18];
-        inventory = manager.plugin.createInventory(this, items.length, Message.gui__edit_title.str(this.id));
+        inventory = manager.plugin.createInventory(this, items.length, Message.gui__edit_title.strFormat(this.id));
         for (Slot slot : Slot.values()) {
             items[slot.index] = slot.icon.apply(this);
         }

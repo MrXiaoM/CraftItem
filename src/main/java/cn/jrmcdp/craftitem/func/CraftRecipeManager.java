@@ -192,11 +192,11 @@ public class CraftRecipeManager extends AbstractModule {
                 playerData.clearScore(id);
                 playerData.clearFailTimes(id);
                 playerData.addForgeCount(id, 1);
-                Message.craft__success.tm(player, craftData.getDisplayItem());
+                Message.craft__success.tmf(player, craftData.getDisplayItem());
                 for (ItemStack item : craftData.getItems()) {
                     for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item.clone() }).values()) {
                         player.getWorld().dropItem(player.getLocation(), add);
-                        Message.full_inventory.tm(player, add, add.getAmount());
+                        Message.full_inventory.tmf(player, add, add.getAmount());
                     }
                 }
                 if (!craftDoneCommands.isEmpty()) {
@@ -213,15 +213,15 @@ public class CraftRecipeManager extends AbstractModule {
             } else {
                 switch (e.getMultiple()) {
                     case 0 : {
-                        Message.craft__process_success_small.tm(player, score);
+                        Message.craft__process_success_small.tmf(player, score);
                         break;
                     }
                     case 1 : {
-                        Message.craft__process_success_medium.tm(player, score);
+                        Message.craft__process_success_medium.tmf(player, score);
                         break;
                     }
                     case 2 : {
-                        Message.craft__process_success_big.tm(player, score);
+                        Message.craft__process_success_big.tmf(player, score);
                         break;
                     }
                 }
@@ -245,18 +245,18 @@ public class CraftRecipeManager extends AbstractModule {
             }
             switch (e.getMultiple()) {
                 case 0 : {
-                    Message.craft__process_fail_small.tm(player, score);
+                    Message.craft__process_fail_small.tmf(player, score);
                     break;
                 }
                 case 1 : {
-                    Message.craft__process_fail_medium.tm(player, score);
+                    Message.craft__process_fail_medium.tmf(player, score);
                     break;
                 }
                 case 2 : {
-                    Message.craft__process_fail_big.tm(player, score);
+                    Message.craft__process_fail_big.tmf(player, score);
                     MaterialInstance instance = craftData.takeRandomMaterial(player);
                     if (instance != null) {
-                        Message.craft__process_fail_lost_item.tm(player, instance.getAmount(), instance.getSample());
+                        Message.craft__process_fail_lost_item.tmf(player, instance.getAmount(), instance.getSample());
                     }
                     break;
                 }

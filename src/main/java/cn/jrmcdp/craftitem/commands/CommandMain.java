@@ -42,49 +42,49 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             switch (args[0].toLowerCase()) {
                 case "reload":
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runReload(sender, args);
                 case "category":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runCategory(sender, args);
                 case "open":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runOpen(sender, args);
                 case "get":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runGet(sender, args);
                 case "edit":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runEdit(sender, args);
                 case "create":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runCreate(sender, args);
                 case "delete":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runDelete(sender, args);
                 case "log":
                     if (args.length < 2) break;
                     if (!sender.hasPermission(perm)) {
-                        return Message.no_permission.tm(sender, perm);
+                        return Message.no_permission.tmf(sender, perm);
                     }
                     return runLog(sender, args);
                 default:
@@ -98,7 +98,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         CraftRecipeManager manager = CraftRecipeManager.inst();
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
-            return Message.craft__not_found.tm(sender, args[1]);
+            return Message.craft__not_found.tmf(sender, args[1]);
         }
         Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
         if (p == null) {
@@ -127,10 +127,10 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         CraftRecipeManager manager = CraftRecipeManager.inst();
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
-            return Message.craft__not_found.tm(player, args[1]);
+            return Message.craft__not_found.tmf(player, args[1]);
         }
         manager.delete(args[1]);
-        return Message.delete__done.tm(player, args[1]);
+        return Message.delete__done.tmf(player, args[1]);
     }
 
     private boolean runCreate(CommandSender sender, String[] args) {
@@ -146,7 +146,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         }
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData != null) {
-            return Message.create__found.tm(player, args[1]);
+            return Message.create__found.tmf(player, args[1]);
         }
         craftData = new CraftData();
         manager.save(args[1], craftData);
@@ -168,7 +168,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         }
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
-            return Message.craft__not_found.tm(player, args[1]);
+            return Message.craft__not_found.tmf(player, args[1]);
         }
         GuiEdit.openGui(player, args[1], craftData);
         return true;
@@ -190,10 +190,10 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         CraftRecipeManager manager = CraftRecipeManager.inst();
         CraftData craftData = manager.getCraftData(args[1]);
         if (craftData == null) {
-            return Message.craft__not_found.tm(player, args[1]);
+            return Message.craft__not_found.tmf(player, args[1]);
         }
         if (!manager.hasPermission(player, args[1])) {
-            return Message.no_permission.tm(sender, manager.getPermission(args[1]));
+            return Message.no_permission.tmf(sender, manager.getPermission(args[1]));
         }
         plugin.getScheduler().runTaskAsync(() -> {
             PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
@@ -217,7 +217,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         }
         List<String> list = plugin.config().getCategory().get(args[1]);
         if (list == null) {
-            return Message.category__not_found.tm(player, args[1]);
+            return Message.category__not_found.tmf(player, args[1]);
         }
         plugin.getScheduler().runTaskAsync(() -> {
             PlayerData playerData = PlayerDataManager.inst().getOrCreatePlayerData(player);
@@ -241,13 +241,13 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         }
         CraftData craftData = CraftRecipeManager.inst().getCraftData(args[1]);
         if (craftData == null) {
-            return Message.craft__not_found.tm(player, args[1]);
+            return Message.craft__not_found.tmf(player, args[1]);
         }
-        Message.craft__success.tm(player, craftData.getDisplayItem());
+        Message.craft__success.tmf(player, craftData.getDisplayItem());
         for (ItemStack item : craftData.getItems()) {
             for (ItemStack add : player.getInventory().addItem(new ItemStack[]{item.clone()}).values()) {
                 plugin.getScheduler().runAtLocation(player.getLocation(), loc -> player.getWorld().dropItem(loc, add));
-                Message.full_inventory.tm(player, add, add.getAmount());
+                Message.full_inventory.tmf(player, add, add.getAmount());
             }
         }
         plugin.getScheduler().runTask(() -> {

@@ -109,7 +109,7 @@ public class GuiCategory implements IHolder {
                 String name = iterator.next();
                 CraftData craftData = manager.getCraftData(name);
                 if (craftData == null) {
-                    is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.str(name));
+                    is[i] = AdventureItemStack.buildItem(Material.PAPER, Message.gui__category__not_found.strFormat(name));
                     continue;
                 }
                 ItemStack clone = craftData.getDisplayItem().clone();
@@ -118,10 +118,10 @@ public class GuiCategory implements IHolder {
                 if (lore == null) lore = new ArrayList<>();
                 lore.addAll(Message.gui__craft_info__lore__header.list());
                 for (ItemStack itemStack : craftData.getItems())
-                    lore.add(Message.gui__craft_info__lore__item.str(Utils.getItemName(itemStack, getPlayer()), itemStack.getAmount()));
+                    lore.add(Message.gui__craft_info__lore__item.strFormat(Utils.getItemName(itemStack, getPlayer()), itemStack.getAmount()));
                 for (String command : craftData.getCommands()) {
                     String[] split = command.split("\\|\\|");
-                    if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.str(split[1]));
+                    if (split.length > 1) lore.add(Message.gui__craft_info__lore__command.strFormat(split[1]));
                 }
                 AdventureItemStack.setItemLoreMiniMessage(clone, lore);
                 is[i] = clone;
@@ -169,7 +169,7 @@ public class GuiCategory implements IHolder {
                 String name = getSlot()[event.getRawSlot()];
                 if (name == null) return;
                 if (!manager.hasPermission(player, name)) {
-                    Message.no_permission.tm(getPlayer(), manager.getPermission(name));
+                    Message.no_permission.tmf(getPlayer(), manager.getPermission(name));
                     return;
                 }
                 ConfigForgeGui.inst().openGui(getPlayerData(), name, manager.getCraftData(name), type);

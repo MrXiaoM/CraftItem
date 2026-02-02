@@ -101,7 +101,7 @@ public class GuiForge implements IHolder {
                 Pair.of("<CostLevel>", craftData.getTimeCostLevel()),
                 Pair.of("<LimitCountCurrent>", count),
                 Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),
-                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.str(count, limit) : Message.craft__unlimited.str())
+                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.strFormat(count, limit) : Message.craft__unlimited.str())
         );
 
         if (item.getType().getMaxDurability() > 1) {
@@ -202,13 +202,13 @@ public class GuiForge implements IHolder {
                     for (ItemStack itemStack : craftData.getItems()) {
                         String itemName = Utils.getItemName(itemStack, getPlayer());
                         int amount = itemStack.getAmount();
-                        tail.add(Message.gui__craft_info__lore__item.str(itemName, amount));
+                        tail.add(Message.gui__craft_info__lore__item.strFormat(itemName, amount));
                     }
                     for (String command : craftData.getCommands()) {
                         List<String> split = CollectionUtils.split(command, '|', 2);
                         String str = split.size() > 1 ? split.get(1) : "";
                         if (str.trim().isEmpty()) {
-                            tail.add(Message.gui__craft_info__lore__command.str(str));
+                            tail.add(Message.gui__craft_info__lore__command.strFormat(str));
                         }
                     }
                     if (!tail.isEmpty()) {
@@ -234,7 +234,7 @@ public class GuiForge implements IHolder {
                                 Pair.of("<Combo>", craftData.getCombo()),
                                 Pair.of("<LimitCountCurrent>", count),
                                 Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),
-                                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.str(count, limit) : Message.craft__unlimited.str())
+                                Pair.of("<LimitCount>", limit != 0 ? Message.craft__limited.strFormat(count, limit) : Message.craft__unlimited.str())
                         );
                     }
                     break;
@@ -342,7 +342,7 @@ public class GuiForge implements IHolder {
 
     private boolean checkForgeData(Player player, CraftData craftData) {
         if (craftData.getMultiple().size() != 3) {
-            Message.not_expected.tm(player, "multiple");
+            Message.not_expected.tmf(player, "multiple");
             return true;
         }
         return false;
@@ -365,7 +365,7 @@ public class GuiForge implements IHolder {
         String key = getId();
         int limit = craftData.getForgeCountLimit(player);
         if (limit < 0 || (limit > 0 && playerData.getForgeCount(key) >= limit)) {
-            Message.craft__forge_limit.tm(player, Math.max(limit, 0));
+            Message.craft__forge_limit.tmf(player, Math.max(limit, 0));
             return;
         }
         if (craftData.doCost(player)) return;
@@ -408,7 +408,7 @@ public class GuiForge implements IHolder {
         String key = getId();
         int limit = craftData.getForgeCountLimit(player);
         if (limit < 0 || (limit > 0 && playerData.getForgeCount(key) + combo - 1 >= limit)) {
-            Message.craft__forge_limit.tm(player, Math.max(limit, 0));
+            Message.craft__forge_limit.tmf(player, Math.max(limit, 0));
             return;
         }
 
@@ -452,11 +452,11 @@ public class GuiForge implements IHolder {
             playerData.removeTime(key);
             playerData.addTimeForgeCount(key, 1);
             playerData.save(); // 锻造结束，给予奖励
-            Message.craft__success.tm(player, craftData.getDisplayItem());
+            Message.craft__success.tmf(player, craftData.getDisplayItem());
             for (ItemStack item : craftData.getItems()) {
                 for (ItemStack add : player.getInventory().addItem(new ItemStack[] { item.clone() }).values()) {
                     player.getWorld().dropItem(player.getLocation(), add);
-                    Message.full_inventory.tm(player, add, add.getAmount());
+                    Message.full_inventory.tmf(player, add, add.getAmount());
                 }
             }
             manager.plugin.getScheduler().runTask(() -> {
@@ -473,7 +473,7 @@ public class GuiForge implements IHolder {
             if (craftData.isNotEnoughMaterial(player)) return;
             int limit = craftData.getTimeForgeCountLimit(player);
             if (limit < 0 || (limit > 0 && playerData.getTimeForgeCount(key) >= limit)) {
-                Message.craft__time_forge_limit.tm(player, Math.max(limit, 0));
+                Message.craft__time_forge_limit.tmf(player, Math.max(limit, 0));
                 return;
             }
 
