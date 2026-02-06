@@ -5,6 +5,8 @@ import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
+import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
+import et.momirealms.customfishing.common.util.Key;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static top.mrxiaom.pluginbase.utils.Util.isPresent;
+
 @AutoRegister
 public class MaterialAdapterManager extends AbstractModule {
     boolean useNewIcon;
@@ -23,6 +27,7 @@ public class MaterialAdapterManager extends AbstractModule {
     boolean enableMythicMobs;
     boolean enableItemsAdder;
     boolean enableCustomFishing;
+    boolean enableCraftEngine;
     private final Map<String, Function<ItemStack, IMaterialAdapter>> externalAdapters = new HashMap<>();
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
@@ -48,6 +53,7 @@ public class MaterialAdapterManager extends AbstractModule {
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", true);
         enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", true);
         enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", true);
+        enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true) && isPresent("net.momirealms.craftengine.bukkit.api.CraftEngineItems");
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
@@ -102,6 +108,14 @@ public class MaterialAdapterManager extends AbstractModule {
                         }
                         return null;
                     });
+                }
+                if (enableCraftEngine && adapter == null) {
+                    if (CraftEngineItems.isCustomItem(item)) {
+                        Key key = CraftEngineItems.getCustomItemId(item);
+                        if (key != null) {
+                            adapter = new CraftEngineMaterial(key.asString());
+                        }
+                    }
                 }
                 if (adapter == null) {
                     adapter = new VanillaMaterial(item);

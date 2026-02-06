@@ -70,6 +70,9 @@ Material-Adapters:
   CustomFishing:
     # 是否启用材料适配器。若启用适配器且锻造材料是鱼类，则仅匹配物品ID (CustomFishing.id 标签)，不匹配整个物品
     enable: true
+  # 对于 CraftEngine 物品的适配
+  CraftEngine:
+    enable: true
 
 # 困难锻造随机进行的小游戏列表
 RandomGames:

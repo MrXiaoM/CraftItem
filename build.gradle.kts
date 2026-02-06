@@ -23,11 +23,11 @@ allprojects {
         maven("https://repo.helpch.at/releases/")
         maven("https://jitpack.io")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
+        maven("https://repo.momirealms.net/releases/")
     }
 }
 repositories {
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
-    maven("https://mvn.lumine.io/repository/maven/")
     maven("https://repo.momirealms.net/releases/")
 }
 
@@ -50,6 +50,9 @@ dependencies {
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
     // CustomFishing
     compileOnly("net.momirealms:custom-fishing:2.3.3")
+    // CraftEngine
+    compileOnly("net.momirealms:craft-engine-core:0.0.67") // 将 "{version}" 替换为插件稳定版本
+    compileOnly("net.momirealms:craft-engine-bukkit:0.0.67") // 例如 0.0.60
 
     base.library("com.zaxxer:HikariCP:4.0.3")
     base.library("net.kyori:adventure-api:4.22.0")
