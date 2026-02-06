@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static top.mrxiaom.pluginbase.utils.Util.isPresent;
-
 @AutoRegister
 public class MaterialAdapterManager extends AbstractModule {
     boolean useNewIcon;
@@ -53,7 +51,7 @@ public class MaterialAdapterManager extends AbstractModule {
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", true);
         enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", true);
         enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", true);
-        enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true) && isPresent("net.momirealms.craftengine.bukkit.api.CraftEngineItems");
+        enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true);
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
