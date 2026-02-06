@@ -28,6 +28,7 @@ allprojects {
 }
 repositories {
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven/")
     maven("https://repo.momirealms.net/releases/")
 }
 
