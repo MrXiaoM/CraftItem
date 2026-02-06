@@ -72,6 +72,7 @@ Material-Adapters:
     enable: true
   # 对于 CraftEngine 物品的适配
   CraftEngine:
+    # 是否启用材料适配器。若启用适配器且锻造材料是 CE 物品，则仅匹配物品命名空间与物品ID，不匹配整个物品
     enable: true
 
 # 困难锻造随机进行的小游戏列表
