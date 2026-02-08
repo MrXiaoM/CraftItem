@@ -6,11 +6,11 @@ import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
-import net.momirealms.craftengine.core.util.Key;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +51,11 @@ public class MaterialAdapterManager extends AbstractModule {
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", true);
         enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", true);
         enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", true);
-        enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true);
+        if (Util.isPresent("net.momirealms.craftengine.bukkit.api.CraftEngineItems")) {
+            enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true);
+        } else {
+            enableCraftEngine = false;
+        }
     }
 
     public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {

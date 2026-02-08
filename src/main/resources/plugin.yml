@@ -11,6 +11,7 @@ softdepend:
   - MythicMobs
   - ItemsAdder
   - LangUtils
+  - CraftEngine
 api-version: 1.13
 folia-supported: true
 libraries:
