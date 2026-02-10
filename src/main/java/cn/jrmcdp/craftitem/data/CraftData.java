@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.data;
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.currency.ICurrency;
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import cn.jrmcdp.craftitem.func.MaterialAdapterManager;
 import cn.jrmcdp.craftitem.utils.RandomUtils;
@@ -14,7 +15,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -70,7 +73,11 @@ public class CraftData implements ConfigurationSerializable {
      */
     private List<Integer> multiple;
     /**
-     * 单次锻造需要花费的 Vault 金币
+     * 单次锻造需要花费的货币类型
+     */
+    private ICurrency costCurrency;
+    /**
+     * 单次锻造需要花费的金钱数量
      */
     private int cost;
     /**
@@ -94,7 +101,11 @@ public class CraftData implements ConfigurationSerializable {
      */
     private long time;
     /**
-     * 时长锻造需要花费的 Vault 金币
+     * 时长锻造需要花费的货币类型
+     */
+    private ICurrency timeCostCurrency;
+    /**
+     * 时长锻造需要花费的金钱数量
      */
     private int timeCost;
     /**
@@ -114,22 +125,19 @@ public class CraftData implements ConfigurationSerializable {
      */
     private int combo;
     /**
-     * 普通锻造/困难锻造 可用次数限制组
-     *
-     * 详见 {@link cn.jrmcdp.craftitem.config.ConfigMain#countLimitGroups}
+     * 普通锻造/困难锻造 的可用次数限制组
      */
     private String countLimit;
     /**
-     * 时长锻造 可用次数限制组
-     *
-     * 详见 {@link cn.jrmcdp.craftitem.config.ConfigMain#countLimitGroups}
+     * 时长锻造 的可用次数限制组
      */
     private String timeCountLimit;
     public CraftData() {
-        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), 188, 0, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, 0, 0, false, 0, 0, "", "");
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), vault(), 188, 0, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, vault(), 0, 0, false, 0, 0, "", "");
     }
 
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
+    @ApiStatus.Internal
+    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, ICurrency costCurrency, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, ICurrency timeCostCurrency, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.config = ConfigMain.inst();
         this.plugin = config.plugin;
         this.setMaterial(material);
@@ -143,12 +151,14 @@ public class CraftData implements ConfigurationSerializable {
             }
             multiple.add(i);
         }
+        this.costCurrency = costCurrency;
         this.cost = cost;
         this.costLevel = costLevel;
         this.displayItem = displayItem;
         this.items = items;
         this.commands = commands;
         this.time = time;
+        this.timeCostCurrency = timeCostCurrency;
         this.timeCost = timeCost;
         this.timeCostLevel = timeCostLevel;
         this.difficult = difficult;
@@ -156,6 +166,10 @@ public class CraftData implements ConfigurationSerializable {
         this.combo = combo;
         this.countLimit = countLimit;
         this.timeCountLimit = timeCountLimit;
+    }
+
+    public CraftItem plugin() {
+        return plugin;
     }
 
     public String getTimeDisplay() {
@@ -377,8 +391,13 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public boolean checkCost(Player player, int times) {
-        if (!plugin.economy().has(player, cost * times)) {
-            Message.craft__not_enough_money.tm(player);
+        if (costCurrency == null) {
+            Message.craft__currency_not_available.tm(player);
+            return true;
+        }
+        if (!costCurrency.has(player, cost * times)) {
+            String currencyName = costCurrency.getName();
+            Message.craft__not_enough_currency.tm(player, Pair.of("%currency%", currencyName));
             return true;
         }
         if (player.getLevel() < costLevel * times) {
@@ -389,11 +408,16 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public boolean doCost(Player player) {
-        int level = player.getLevel();
-        if (!plugin.economy().takeMoney(player, cost)) {
-            Message.craft__not_enough_money.tm(player);
+        if (costCurrency == null) {
+            Message.craft__currency_not_available.tm(player);
             return true;
         }
+        if (!costCurrency.takeMoney(player, cost)) {
+            String currencyName = costCurrency.getName();
+            Message.craft__not_enough_currency.tm(player, Pair.of("%currency%", currencyName));
+            return true;
+        }
+        int level = player.getLevel();
         if (level < costLevel) {
             Message.craft__not_enough_level.tm(player);
             return true;
@@ -403,8 +427,13 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public boolean checkCostTime(Player player) {
-        if (!plugin.economy().has(player, timeCost)) {
-            Message.craft__not_enough_money.tm(player);
+        if (timeCostCurrency == null) {
+            Message.craft__currency_not_available.tm(player);
+            return true;
+        }
+        if (!timeCostCurrency.has(player, timeCost)) {
+            String currencyName = timeCostCurrency.getName();
+            Message.craft__not_enough_currency.tm(player, Pair.of("%currency%", currencyName));
             return true;
         }
         if (player.getLevel() < timeCostLevel) {
@@ -415,11 +444,16 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     public boolean doCostTime(Player player) {
-        int level = player.getLevel();
-        if (!plugin.economy().takeMoney(player, timeCost)) {
-            Message.craft__not_enough_money.tm(player);
+        if (timeCostCurrency == null) {
+            Message.craft__currency_not_available.tm(player);
             return true;
         }
+        if (!timeCostCurrency.takeMoney(player, timeCost)) {
+            String currencyName = timeCostCurrency.getName();
+            Message.craft__not_enough_currency.tm(player, Pair.of("%currency%", currencyName));
+            return true;
+        }
+        int level = player.getLevel();
         if (level < timeCostLevel) {
             Message.craft__not_enough_level.tm(player);
             return true;
@@ -435,12 +469,18 @@ public class CraftData implements ConfigurationSerializable {
         map.put("Material", this.material);
         map.put("Chance", this.chance);
         map.put("Multiple", this.multiple);
+        if (this.costCurrency != null) {
+            map.put("CostCurrency", this.costCurrency.serialize());
+        }
         map.put("Cost", this.cost);
         map.put("CostLevel", this.costLevel);
         map.put("DisplayItem", this.displayItem);
         map.put("Items", this.items);
         map.put("Commands", this.commands);
         map.put("TimeSecond", this.time);
+        if (this.timeCostCurrency != null) {
+            map.put("TimeCostCurrency", this.timeCostCurrency.serialize());
+        }
         map.put("TimeCost", this.timeCost);
         map.put("TimeCostLevel", this.timeCostLevel);
         map.put("Difficult", this.difficult);
@@ -459,12 +499,14 @@ public class CraftData implements ConfigurationSerializable {
                 get(map, "Material", ArrayList::new), // List<ItemStack>
                 get(map, "Chance", 0),
                 get(map, "Multiple", ArrayList::new), // List<Integer>
+                currency(map, "CostCurrency"),
                 get(map, "Cost", 0),
                 get(map, "CostLevel", 0),
                 get(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
                 get(map, "Items", ArrayList::new), // List<ItemStack>
                 get(map, "Commands", ArrayList::new), // List<String>
                 Long.parseLong(String.valueOf(get(map, "TimeSecond", "0"))),
+                currency(map, "TimeCostCurrency"),
                 get(map, "TimeCost", 0),
                 get(map, "TimeCostLevel", 0),
                 get(map, "Difficult", false),
@@ -481,5 +523,17 @@ public class CraftData implements ConfigurationSerializable {
     @SuppressWarnings("unchecked")
     private static <T> T get(Map<String, Object> map, String key, Supplier<T> def) {
         return map.get(key) == null ? def.get() : (T) map.get(key);
+    }
+    private static ICurrency currency(Map<String, Object> map, String key) {
+        String currencyStr = (String) map.get(key);
+        if (currencyStr == null) {
+            // 如果没有这个配置，返回 Vault 货币作为缺省值
+            return vault();
+        }
+        // 解析货币类型
+        return CraftItem.getPlugin().parseCurrency(currencyStr);
+    }
+    private static ICurrency vault() {
+        return CraftItem.getPlugin().parseCurrency("Vault");
     }
 }

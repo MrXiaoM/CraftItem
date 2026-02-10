@@ -2,9 +2,8 @@
 version: ${version}
 main: cn.jrmcdp.craftitem.CraftItem
 authors: [ ZhiBuMiao, MrXiaoM ]
-depend:
-  - Vault
 softdepend:
+  - Vault
   - PlaceholderAPI
   - MythicLib
   - MMOItems

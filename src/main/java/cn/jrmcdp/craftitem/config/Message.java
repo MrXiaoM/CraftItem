@@ -1,21 +1,11 @@
 package cn.jrmcdp.craftitem.config;
 
-import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
-import cn.jrmcdp.craftitem.utils.Utils;
-import com.google.common.collect.Lists;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.language.IHolderAccessor;
 import top.mrxiaom.pluginbase.func.language.Language;
 import top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import static top.mrxiaom.pluginbase.func.language.LanguageEnumAutoHolder.wrap;
 
 @Language(prefix = "")
@@ -57,7 +47,8 @@ public enum Message implements IHolderAccessor {
     ),
     craft__time_start("&a已开启时长锻造，时间结束后再次打开锻造书即可锻造成功。你也可以在锻造书中查看进度和剩余时间。"),
     craft__success("&a成功锻造出了 &e%s&a."),
-    craft__not_enough_money("&e没有足够的金币来锻造."),
+    craft__currency_not_available("&e该锻造配方的货币类型不可用"),
+    craft__not_enough_currency("&e没有足够的%currency%来锻造."),
     craft__not_enough_level("&e没有足够的经验等级来锻造."),
     craft__not_enough_material("&e身上没有足够的材料."),
     craft__not_enough_material_details("&7需要 %s&7 (&f%d &7/ &f%d&7)."),

@@ -5,6 +5,10 @@ import cn.jrmcdp.craftitem.actions.ActionReopen;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.ItemTranslation;
 import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.currency.ICurrency;
+import cn.jrmcdp.craftitem.currency.ICurrencyProvider;
+import cn.jrmcdp.craftitem.currency.NyEconomyCurrency;
+import cn.jrmcdp.craftitem.currency.VaultCurrency;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.depend.mythic.IMythic;
 import cn.jrmcdp.craftitem.depend.mythic.Mythic4;
@@ -12,6 +16,7 @@ import cn.jrmcdp.craftitem.depend.mythic.Mythic5;
 import cn.jrmcdp.craftitem.gui.IHolder;
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,11 +28,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 import top.mrxiaom.pluginbase.actions.ActionProviders;
 import top.mrxiaom.pluginbase.api.IRunTask;
-import top.mrxiaom.pluginbase.economy.EnumEconomy;
 import top.mrxiaom.pluginbase.economy.IEconomy;
 import top.mrxiaom.pluginbase.func.GuiManager;
 import top.mrxiaom.pluginbase.func.LanguageManager;
@@ -45,9 +51,8 @@ import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.*;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.*;
 
 public class CraftItem extends BukkitPlugin {
     private ConfigMain config;
@@ -55,13 +60,13 @@ public class CraftItem extends BukkitPlugin {
     private IRunTask timer;
     private String langUtilsLanguage;
     private IMythic mythic;
+    private final List<ICurrencyProvider> currencyRegistry = new ArrayList<>();
     public CraftItem() throws Exception {
         super(new OptionsBuilder()
                 .bungee(true)
                 .adventure(true)
                 .database(true)
                 .reconnectDatabaseWhenReloadConfig(false)
-                .economy(EnumEconomy.VAULT)
                 .scanIgnore("cn.jrmcdp.craftitem.libs"));
         scheduler = new FoliaLibScheduler(this);
 
@@ -114,8 +119,30 @@ public class CraftItem extends BukkitPlugin {
         return enableConfigUpdater;
     }
 
+    @Deprecated
     public IEconomy economy() {
-        return options.economy();
+        return parseCurrency("Vault");
+    }
+
+    public void registerCurrency(@NotNull ICurrencyProvider provider) {
+        currencyRegistry.add(provider);
+        currencyRegistry.sort(Comparator.comparingInt(ICurrencyProvider::priority));
+    }
+
+    public void unregisterCurrency(@NotNull ICurrencyProvider provider) {
+        currencyRegistry.remove(provider);
+        currencyRegistry.sort(Comparator.comparingInt(ICurrencyProvider::priority));
+    }
+
+    @Nullable
+    public ICurrency parseCurrency(String str) {
+        for (ICurrencyProvider provider : currencyRegistry) {
+            ICurrency currency = provider.parse(str);
+            if (currency != null) {
+                return currency;
+            }
+        }
+        return null;
     }
 
     public IMythic getMythic() {
@@ -138,6 +165,24 @@ public class CraftItem extends BukkitPlugin {
         if (Util.isPresent("io.lumine.xikage.mythicmobs.MythicMobs")) {
             mythic = new Mythic4();
         }
+        if (Util.isPresent("net.milkbowl.vault.economy.Economy")) {
+            RegisteredServiceProvider<Economy> service = Bukkit.getServicesManager().getRegistration(Economy.class);
+            Economy economy = service == null ? null : service.getProvider();
+            if (economy != null) {
+                ICurrency currency = new VaultCurrency(economy);
+                registerCurrency(str -> {
+                    if (str.equalsIgnoreCase("Vault")) {
+                        return currency;
+                    }
+                    return null;
+                });
+                info("已挂钩 Vault 经济 (" + economy.getName() + ")");
+            } else {
+                warn("已发现 Vault 经济接口，但没有可用的经济服务，你可能未安装经济插件");
+            }
+        }
+        // TODO: 注册更多货币适配器
+
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);
         ActionProviders.registerActionProviders(ActionBack.PROVIDER, ActionReopen.PROVIDER);

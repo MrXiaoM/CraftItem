@@ -7,31 +7,18 @@ import cn.jrmcdp.craftitem.config.data.Sound;
 import cn.jrmcdp.craftitem.config.data.Title;
 import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.func.AbstractModule;
-import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTType;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
-import top.mrxiaom.pluginbase.utils.AdventureUtil;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.*;
-
-import static cn.jrmcdp.craftitem.utils.Utils.valueOf;
-import static cn.jrmcdp.craftitem.utils.Utils.valueOfOrNull;
 
 @AutoRegister
 public class ConfigMain extends AbstractModule {
@@ -52,6 +39,7 @@ public class ConfigMain extends AbstractModule {
     private final Map<String, Map<String, Integer>> countLimitGroups = new HashMap<>();
     private String timeFormatHours, timeFormatHour, timeFormatMinutes, timeFormatMinute, timeFormatSeconds, timeFormatSecond;
     private final NotDisappear notDisappear = new NotDisappear();
+    private final Map<String, String> currencyNames = new HashMap<>();
     private final ConfigUpdater updater;
 
     public ConfigMain(CraftItem plugin) {
@@ -59,6 +47,7 @@ public class ConfigMain extends AbstractModule {
         updater = ConfigUpdater.create(plugin, "config.yml");
         updater.prefixMatch("Setting.")
                 .fullMatch("RandomGames")
+                .prefixMatch("CurrencyNames.")
                 .prefixMatch("TimeFormat.")
                 .prefixMatch("Material-Adapters.")
                 .fullMatch("DoNotDisappear.Material")
@@ -147,10 +136,33 @@ public class ConfigMain extends AbstractModule {
         }
 
         notDisappear.reloadConfig(config);
+
+        currencyNames.clear();
+        section = config.getConfigurationSection("CurrencyNames");
+        if (section != null) for (String key : section.getKeys(false)) {
+            if (section.isConfigurationSection(key)) {
+                ConfigurationSection section1 = section.getConfigurationSection(key);
+                if (section1 == null) continue;
+                for (String key1 : section1.getKeys(false)) {
+                    String value = section1.getString(key1);
+                    currencyNames.put(key.toLowerCase() + ":" + key1.toLowerCase(), value);
+                }
+            }
+            String value = section.getString(key);
+            currencyNames.put(key.toLowerCase(), value);
+        }
     }
 
     public NotDisappear getNotDisappear() {
         return notDisappear;
+    }
+
+    public String getCurrencyName(String pluginName) {
+        return currencyNames.getOrDefault(pluginName.toLowerCase(), pluginName);
+    }
+
+    public String getCurrencyName(String pluginName, String currencyId) {
+        return currencyNames.getOrDefault(pluginName.toLowerCase() + ":" + currencyId.toLowerCase(), currencyId);
     }
 
     public List<MaterialInstance> filterMaterials(List<MaterialInstance> materials) {
@@ -266,7 +278,7 @@ public class ConfigMain extends AbstractModule {
             if (chance <= i)
                 return chanceNames.get(i);
         }
-        return "<red><u>未知领域</u>";
+        return chanceNameUnknown;
     }
 
     public static ConfigMain inst() {

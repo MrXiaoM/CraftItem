@@ -142,6 +142,10 @@ DoNotDisappear:
     # 设为空列表就代表，只要有 DO_NOT_DISAPPEAR 这个标签，物品就不消失
     DO_NOT_DISAPPEAR: []
 
+# 自定义货币名称显示
+CurrencyNames:
+  Vault: 金币
+
 # 触发事件执行命令
 # [console] 开头以管理员权限执行
 # [player] 开头以玩家权限执行
