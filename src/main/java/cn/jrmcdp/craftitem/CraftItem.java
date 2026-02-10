@@ -7,7 +7,6 @@ import cn.jrmcdp.craftitem.config.ItemTranslation;
 import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.currency.ICurrency;
 import cn.jrmcdp.craftitem.currency.ICurrencyProvider;
-import cn.jrmcdp.craftitem.currency.NyEconomyCurrency;
 import cn.jrmcdp.craftitem.currency.VaultCurrency;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.depend.mythic.IMythic;
