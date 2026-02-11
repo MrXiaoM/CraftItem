@@ -30,6 +30,7 @@ repositories {
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven("https://mvn.lumine.io/repository/maven/")
     maven("https://repo.momirealms.net/releases/")
+    maven("https://repo.rosewooddev.io/repository/public/")
 }
 
 dependencies {
@@ -37,6 +38,10 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.0.0")
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+    compileOnly("org.black_ixx:playerpoints:3.2.7")
+    compileOnly(files("libs/MPoints-1.2.2.jar"))
+    compileOnly("com.github.nulli0n:CoinsEngine-spigot:c32f037025")
+    compileOnly("com.github.blank038:NyEconomy:8e3f27c18f")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 

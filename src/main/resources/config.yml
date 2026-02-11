@@ -145,6 +145,11 @@ DoNotDisappear:
 # 自定义货币名称显示
 CurrencyNames:
   Vault: 金币
+  PlayerPoints: 点券
+  MPoints:
+    sign: 点数
+  NyEconomy:
+    type: 点数
 
 # 触发事件执行命令
 # [console] 开头以管理员权限执行

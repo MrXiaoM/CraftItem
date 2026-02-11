@@ -47,7 +47,10 @@ public class ConfigMain extends AbstractModule {
         updater = ConfigUpdater.create(plugin, "config.yml");
         updater.prefixMatch("Setting.")
                 .fullMatch("RandomGames")
-                .prefixMatch("CurrencyNames.")
+                .fullMatch("CurrencyNames.Vault")
+                .fullMatch("CurrencyNames.PlayerPoints")
+                .fullMatch("CurrencyNames.MPoints")
+                .fullMatch("CurrencyNames.NyEconomy")
                 .prefixMatch("TimeFormat.")
                 .prefixMatch("Material-Adapters.")
                 .fullMatch("DoNotDisappear.Material")

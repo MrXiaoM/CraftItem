@@ -5,9 +5,7 @@ import cn.jrmcdp.craftitem.actions.ActionReopen;
 import cn.jrmcdp.craftitem.config.ConfigMain;
 import cn.jrmcdp.craftitem.config.ItemTranslation;
 import cn.jrmcdp.craftitem.config.Message;
-import cn.jrmcdp.craftitem.currency.ICurrency;
-import cn.jrmcdp.craftitem.currency.ICurrencyProvider;
-import cn.jrmcdp.craftitem.currency.VaultCurrency;
+import cn.jrmcdp.craftitem.currency.*;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.depend.mythic.IMythic;
 import cn.jrmcdp.craftitem.depend.mythic.Mythic4;
@@ -15,7 +13,6 @@ import cn.jrmcdp.craftitem.depend.mythic.Mythic5;
 import cn.jrmcdp.craftitem.gui.IHolder;
 import cn.jrmcdp.craftitem.minigames.GameManager;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,7 +24,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
@@ -165,22 +161,20 @@ public class CraftItem extends BukkitPlugin {
             mythic = new Mythic4();
         }
         if (Util.isPresent("net.milkbowl.vault.economy.Economy")) {
-            RegisteredServiceProvider<Economy> service = Bukkit.getServicesManager().getRegistration(Economy.class);
-            Economy economy = service == null ? null : service.getProvider();
-            if (economy != null) {
-                ICurrency currency = new VaultCurrency(economy);
-                registerCurrency(str -> {
-                    if (str.equalsIgnoreCase("Vault")) {
-                        return currency;
-                    }
-                    return null;
-                });
-                info("已挂钩 Vault 经济 (" + economy.getName() + ")");
-            } else {
-                warn("已发现 Vault 经济接口，但没有可用的经济服务，你可能未安装经济插件");
-            }
+            VaultCurrency.register(this);
         }
-        // TODO: 注册更多货币适配器
+        if (Util.isPresent("org.black_ixx.playerpoints.PlayerPointsAPI")) {
+            PlayerPointsCurrency.register(this);
+        }
+        if (Util.isPresent("me.yic.mpoints.MPointsAPI")) {
+            MPointsCurrency.register(this);
+        }
+        if (Util.isPresent("su.nightexpress.coinsengine.api.CoinsEngineAPI")) {
+            CoinsEngineCurrency.register(this);
+        }
+        if (Util.isPresent("com.mc9y.nyeconomy.api.NyEconomyAPI")) {
+            NyEconomyCurrency.register(this);
+        }
 
         saveDefaultConfig();
         ConfigurationSerialization.registerClass(CraftData.class);

@@ -4,6 +4,10 @@ main: cn.jrmcdp.craftitem.CraftItem
 authors: [ ZhiBuMiao, MrXiaoM ]
 softdepend:
   - Vault
+  - PlayerPoints
+  - MPoints
+  - CoinsEngine
+  - NyEconomy
   - PlaceholderAPI
   - MythicLib
   - MMOItems
