@@ -205,7 +205,8 @@ public enum Message implements IHolderAccessor {
     gui__edit_input_multiple("&a请按照格式填写倍率 \"5 10 20\" (小 中 大)"),
     gui__edit_input_cost_currency("&a按以下格式修改锻造价格 正整数",
             "&e  数值 &f修改锻造价格，如&e 100 &f消耗100金币",
-            "&e  数值+空格+货币 &f修改锻造价格，如&e 100 PlayerPoints &f消耗100点券"),
+            "&e  数值+空格+货币 &f修改锻造价格，如&e 100 PlayerPoints &f消耗100点券",
+            "&f货币格式可使用&e 插件名:货币名 &f格式，例如&e CoinsEngine:Example"),
     gui__edit_input_cost_level("&a请输入经验等级 正整数"),
     gui__edit_display_title("将要展示的物品放在第一格"),
     gui__edit_display_not_found("&c未找到第一格的物品"),
@@ -222,6 +223,7 @@ public enum Message implements IHolderAccessor {
             "&a按以下格式修改数值 正整数",
             "&e  M+数值 &f修改时长锻造价格，如&e M100 &f消耗100金币",
             "&e  M+数值+空格+货币 &f修改时长锻造价格，如&e M100 PlayerPoints &f消耗100点券",
+            "&f货币格式可使用&e 插件名:货币名 &f格式，例如&e CoinsEngine:Example",
             "&e  L+数值 &f修改时长锻造消耗经验等级，如&e L3 &f消耗3级经验"),
     gui__edit_time_cost_currency_sum__wrong_type("&e时长锻造消耗输入格式有误"),
 
