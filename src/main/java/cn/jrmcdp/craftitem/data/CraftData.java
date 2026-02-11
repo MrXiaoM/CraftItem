@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.Pair;
 
 import java.util.*;
@@ -195,6 +196,20 @@ public class CraftData implements ConfigurationSerializable {
         this.timeCost = timeCost;
     }
 
+    @Nullable
+    public ICurrency getTimeCostCurrency() {
+        return timeCostCurrency;
+    }
+
+    @NotNull
+    public String getTimeCostCurrencyName() {
+        return timeCostCurrency == null ? "" : timeCostCurrency.getName();
+    }
+
+    public void setTimeCostCurrency(@Nullable ICurrency timeCostCurrency) {
+        this.timeCostCurrency = timeCostCurrency;
+    }
+
     public int getTimeCostLevel() {
         return timeCostLevel;
     }
@@ -282,6 +297,20 @@ public class CraftData implements ConfigurationSerializable {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    @Nullable
+    public ICurrency getCostCurrency() {
+        return costCurrency;
+    }
+
+    @NotNull
+    public String getCostCurrencyName() {
+        return costCurrency == null ? "" : costCurrency.getName();
+    }
+
+    public void setCostCurrency(@Nullable ICurrency costCurrency) {
+        this.costCurrency = costCurrency;
     }
 
     public int getCostLevel() {

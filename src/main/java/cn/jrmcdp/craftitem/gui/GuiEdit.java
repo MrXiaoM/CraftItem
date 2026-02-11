@@ -1,8 +1,8 @@
 package cn.jrmcdp.craftitem.gui;
 
-import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.ConfigForgeGui;
 import cn.jrmcdp.craftitem.config.Message;
+import cn.jrmcdp.craftitem.currency.ICurrency;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.func.CraftRecipeManager;
 import cn.jrmcdp.craftitem.utils.Prompter;
@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.ArrayList;
@@ -82,8 +83,9 @@ public class GuiEdit implements IHolder {
         }),
         COST_MONEY(3, gui -> { // 价格
             return getItemStack(getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.str(),
-                    Message.gui__edit__item__cost__lore.listFormat(
-                            gui.craftData.getCost()
+                    Message.gui__edit__item__cost__description.list(
+                            Pair.of("%money%", gui.craftData.getCost()),
+                            Pair.of("%currency%", gui.craftData.getCostCurrencyName())
                     ));
         }),
         COST_LEVEL(4, gui -> { // 花费经验等级
@@ -112,8 +114,10 @@ public class GuiEdit implements IHolder {
         }),
         TIME(8, gui -> { // 锻造时长
             return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.str(),
-                    Message.gui__edit__item__time__lore.listFormat(
-                            gui.craftData.getTimeDisplay(), gui.craftData.getTimeCost()
+                    Message.gui__edit__item__time__description.list(
+                            Pair.of("%time%", gui.craftData.getTimeDisplay()),
+                            Pair.of("%money%", gui.craftData.getTimeCost()),
+                            Pair.of("%currency%", gui.craftData.getTimeCostCurrencyName())
                     ));
         }),
         TIME_LIMIT(9, gui -> { // 锻造次数限制
@@ -282,14 +286,28 @@ public class GuiEdit implements IHolder {
             }
             case COST_MONEY: { // 价格
                 player.closeInventory();
-                Message.gui__edit_input_cost.tm(player);
+                Message.gui__edit_input_cost_currency.tm(player);
                 Prompter.onChat(player, message -> {
-                    Integer cost = Util.parseInt(message).orElse(null);
-                    if (cost == null || cost < 0) {
-                        Message.not_integer.tm(player);
+                    String[] split = message.split(" ", 2);
+                    ICurrency currency; String inputCurrency;
+                    int cost;
+                    if (split.length == 1) {
+                        currency = manager.plugin.parseCurrency(inputCurrency = "Vault");
+                        cost = Util.parseInt(message).orElse(-1);
                     } else {
-                        craftData.setCost(cost);
-                        manager.save(getId(), craftData);
+                        currency = manager.plugin.parseCurrency(inputCurrency = split[1]);
+                        cost = Util.parseInt(split[0]).orElse(-1);
+                    }
+                    if (currency == null) {
+                        Message.gui__edit__currency__not_available.tm(player, Pair.of("%currency%", inputCurrency));
+                    } else {
+                        if (cost < 0) {
+                            Message.not_integer.tm(player);
+                        } else {
+                            craftData.setCostCurrency(currency);
+                            craftData.setCost(cost);
+                            manager.save(getId(), craftData);
+                        }
                     }
                     reopen();
                 });
@@ -402,25 +420,42 @@ public class GuiEdit implements IHolder {
             }
             case TIME: { // 锻造时长
                 if (event.isLeftClick()) {
+                    // 左键 增加时间
                     craftData.setTime(craftData.getTime() + (event.isShiftClick() ? 600 : 60));
                     manager.save(getId(), craftData);
                 } else if (event.isRightClick()) {
+                    // 右键 减少时间
                     craftData.setTime(Math.max(0, craftData.getTime() - (event.isShiftClick() ? 600 : 60)));
                     manager.save(getId(), craftData);
                 } else if (event.getClick().equals(ClickType.DROP)) {
+                    // Q键 设置金额
                     player.closeInventory();
-                    Message.gui__edit_time_cost_sum__tips.tm(player);
+                    Message.gui__edit_time_cost_currency_sum__tips.tm(player);
                     Prompter.onChat(player, message -> {
                         char type = Character.toUpperCase(message.charAt(0));
                         String args = message.substring(1);
                         switch (type) {
                             case 'M': {
-                                int cost = Util.parseInt(args).orElse(-1);
-                                if (cost < 0) {
-                                    Message.not_integer.tm(player);
+                                String[] split = args.split(" ", 2);
+                                ICurrency currency; String inputCurrency;
+                                int cost;
+                                if (split.length == 1) {
+                                    currency = manager.plugin.parseCurrency(inputCurrency = "Vault");
+                                    cost = Util.parseInt(args).orElse(-1);
                                 } else {
-                                    craftData.setTimeCost(cost);
-                                    manager.save(getId(), craftData);
+                                    currency = manager.plugin.parseCurrency(inputCurrency = split[1]);
+                                    cost = Util.parseInt(split[0]).orElse(-1);
+                                }
+                                if (currency == null) {
+                                    Message.gui__edit__currency__not_available.tm(player, Pair.of("%currency%", inputCurrency));
+                                } else {
+                                    if (cost < 0) {
+                                        Message.not_integer.tm(player);
+                                    } else {
+                                        craftData.setTimeCostCurrency(currency);
+                                        craftData.setTimeCost(cost);
+                                        manager.save(getId(), craftData);
+                                    }
                                 }
                                 break;
                             }
@@ -435,7 +470,7 @@ public class GuiEdit implements IHolder {
                                 break;
                             }
                             default: {
-                                Message.gui__edit_time_cost_sum__wrong_type.tm(player);
+                                Message.gui__edit_time_cost_currency_sum__wrong_type.tm(player);
                                 break;
                             }
                         }

@@ -97,7 +97,9 @@ public class GuiForge implements IHolder {
                 Pair.of("<Progress>", String.format("%.2f%%", progress * 100)),
                 Pair.of("<RemainTime>", remainTime),
                 Pair.of("<Time>", craftData.getTimeDisplay()),
-                Pair.of("<Cost>", craftData.getTimeCost()),
+                Pair.of("<Cost>", craftData.getTimeCost() + " " + craftData.getTimeCostCurrencyName()),
+                Pair.of("<CostMoney>", craftData.getTimeCost()),
+                Pair.of("<CostCurrency>", craftData.getTimeCostCurrencyName()),
                 Pair.of("<CostLevel>", craftData.getTimeCostLevel()),
                 Pair.of("<LimitCountCurrent>", count),
                 Pair.of("<LimitCountMax>", limit != 0 ? Math.max(limit, 0) : Message.craft__unlimited.str()),
@@ -106,7 +108,8 @@ public class GuiForge implements IHolder {
 
         if (item.getType().getMaxDurability() > 1) {
             short damage = (short) ((1.0d - progress) * item.getType().getMaxDurability());
-            item.setDurability(damage); // 不用 Damageable，兼容 1.12.2 或以下
+            // noinspection deprecation: 不用 Damageable，兼容 1.12.2 或以下
+            item.setDurability(damage);
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -185,20 +188,7 @@ public class GuiForge implements IHolder {
                 case "物": {
                     ItemStack item = craftData.getDisplayItem().clone();
                     List<Component> lore = AdventureItemStack.getItemLore(item);
-                    if (lore == null) {
-                        ItemMeta meta = item.getItemMeta();
-                        if (meta.hasLore()) {
-                            List<String> loreRaw = meta.getLore();
-                            if (loreRaw != null) {
-                                lore = AdventureUtil.miniMessage(loreRaw);
-                            }
-                        }
-                        if (lore == null) {
-                            lore = new ArrayList<>();
-                        }
-                    }
-                    List<String> tail = new ArrayList<>();
-                    tail.addAll(Message.gui__craft_info__lore__header.list());
+                    List<String> tail = new ArrayList<>(Message.gui__craft_info__lore__header.list());
                     for (ItemStack itemStack : craftData.getItems()) {
                         String itemName = Utils.getItemName(itemStack, getPlayer());
                         int amount = itemStack.getAmount();
@@ -229,7 +219,9 @@ public class GuiForge implements IHolder {
                                 player,
                                 Pair.of("<ChanceName>", parent.plugin.config().getChanceName(craftData.getChance())),
                                 Pair.of("<Score>", playerData.getScore(id)),
-                                Pair.of("<Cost>", craftData.getCost()),
+                                Pair.of("<Cost>", craftData.getCost() + " " + craftData.getCostCurrencyName()),
+                                Pair.of("<CostMoney>", craftData.getCost()),
+                                Pair.of("<CostCurrency>", craftData.getCostCurrencyName()),
                                 Pair.of("<CostLevel>", craftData.getCostLevel()),
                                 Pair.of("<Combo>", craftData.getCombo()),
                                 Pair.of("<LimitCountCurrent>", count),

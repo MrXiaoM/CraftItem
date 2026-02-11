@@ -92,11 +92,11 @@ public enum Message implements IHolderAccessor {
             "&7当前: &e%s"
     ),
     gui__edit__item__cost__name("&a价格"),
-    gui__edit__item__cost__lore(
+    gui__edit__item__cost__description(
             "&7点击 查看/编辑",
             "&7使用正整数",
             "",
-            "&7当前: &e%d"
+            "&7当前: &e%money% %currency%"
     ),
     gui__edit__item__cost_level__name("&a花费经验等级"),
     gui__edit__item__cost_level__lore(
@@ -132,7 +132,7 @@ public enum Message implements IHolderAccessor {
             "%s"
     ),
     gui__edit__item__time__name("&a锻造时长"),
-    gui__edit__item__time__lore(
+    gui__edit__item__time__description(
             "&7左键点击 增加1分钟",
             "&7右键点击 减少1分钟",
             "&7Shift+左键点击 增加10分钟",
@@ -143,8 +143,8 @@ public enum Message implements IHolderAccessor {
             "&7玩家可以选择进行“时长锻造”操作，花费一定金币",
             "&7等待一段时间即可获得奖励，无需敲打锻造。",
             "",
-            "&7当前时长: &f%s",
-            "&7花费金币: &f%s"
+            "&7当前时长: &f%time%",
+            "&7花费金钱: &f%money% %currency%"
     ),
     gui__edit__item__time_count_limit__name("&a锻造次数限制"),
     gui__edit__item__time_count_limit__lore(
@@ -198,11 +198,14 @@ public enum Message implements IHolderAccessor {
             "&7单次连击次数: &e%s"
     ),
 
+    gui__edit__currency__not_available("&e货币类型 %currency% 不可用"),
 
     gui__edit_material_title("&0材料"),
     gui__edit_input_chance("&a请输入概率 正整数"),
     gui__edit_input_multiple("&a请按照格式填写倍率 \"5 10 20\" (小 中 大)"),
-    gui__edit_input_cost("&a请输入金额 正整数"),
+    gui__edit_input_cost_currency("&a按以下格式修改锻造价格 正整数",
+            "&e  数值 &f修改锻造价格，如&e 100 &f消耗100金币",
+            "&e  数值+空格+货币 &f修改锻造价格，如&e 100 PlayerPoints &f消耗100点券"),
     gui__edit_input_cost_level("&a请输入经验等级 正整数"),
     gui__edit_display_title("将要展示的物品放在第一格"),
     gui__edit_display_not_found("&c未找到第一格的物品"),
@@ -215,11 +218,12 @@ public enum Message implements IHolderAccessor {
     gui__edit_command_lore("", "&4点击删除"),
     gui__edit_time_limit_count_title_normal("&0选择 普通/困难锻造限制组"),
     gui__edit_time_limit_count_title_time("&0选择 时长锻造限制组"),
-    gui__edit_time_cost_sum__tips(
+    gui__edit_time_cost_currency_sum__tips(
             "&a按以下格式修改数值 正整数",
             "&e  M+数值 &f修改时长锻造价格，如&e M100 &f消耗100金币",
+            "&e  M+数值+空格+货币 &f修改时长锻造价格，如&e M100 PlayerPoints &f消耗100点券",
             "&e  L+数值 &f修改时长锻造消耗经验等级，如&e L3 &f消耗3级经验"),
-    gui__edit_time_cost_sum__wrong_type("&e时长锻造消耗输入格式有误"),
+    gui__edit_time_cost_currency_sum__wrong_type("&e时长锻造消耗输入格式有误"),
 
     gui__category__not_found("&c未找到 &e%s"),
     gui__craft_info__lore__header(
