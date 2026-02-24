@@ -6,6 +6,7 @@ import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
+import net.momirealms.craftengine.core.util.Key;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -112,11 +113,9 @@ public class MaterialAdapterManager extends AbstractModule {
                     });
                 }
                 if (enableCraftEngine && adapter == null) {
-                    if (CraftEngineItems.isCustomItem(item)) {
-                        Object key = CraftEngineItems.getCustomItemId(item);
-                        if (key != null) {
-                            adapter = new CraftEngineMaterial(key);
-                        }
+                    Key itemId = CraftEngineItems.getCustomItemId(item);
+                    if (itemId != null) {
+                        adapter = new CraftEngineMaterial(itemId);
                     }
                 }
                 if (adapter == null) {
