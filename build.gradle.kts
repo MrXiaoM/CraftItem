@@ -40,7 +40,7 @@ dependencies {
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("org.black_ixx:playerpoints:3.2.7")
     compileOnly(files("libs/MPoints-1.2.2.jar"))
-    compileOnly("com.github.nulli0n:CoinsEngine-spigot:c32f037025")
+    compileOnly("com.github.nulli0n:ExcellentEconomy:c32f037025") // CoinsEngine
     compileOnly("com.github.blank038:NyEconomy:8e3f27c18f")
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
