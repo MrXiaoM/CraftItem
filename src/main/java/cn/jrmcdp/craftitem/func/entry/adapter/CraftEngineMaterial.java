@@ -4,6 +4,7 @@ import cn.jrmcdp.craftitem.CraftItem;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
 import net.momirealms.craftengine.core.item.CustomItem;
 import net.momirealms.craftengine.core.util.Key;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,18 @@ public class CraftEngineMaterial implements IMaterialAdapter {
     @Override
     public boolean match(@Nullable Player player, ItemStack item) {
         return ((Object) this.itemId).equals(CraftEngineItems.getCustomItemId(item));
+    }
+
+    @Nullable
+    public static String getTranslationKey(ItemStack item) {
+        if (item == null || item.getType().equals(Material.AIR) || item.getAmount() < 1) {
+            return null;
+        }
+        CustomItem<ItemStack> customItem = CraftEngineItems.byItemStack(item);
+        if (customItem == null || customItem.isEmpty()) {
+            return null;
+        }
+        return customItem.translationKey();
     }
 
     @Override

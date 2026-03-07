@@ -2,19 +2,16 @@ package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.func.AbstractModule;
+import cn.jrmcdp.craftitem.func.entry.adapter.CraftEngineMaterial;
 import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import com.meowj.langutils.lang.LanguageHelper;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTType;
-import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +23,12 @@ public class ItemTranslation extends AbstractModule {
     private static final Map<String, String> material = new HashMap<>();
     private static boolean supportTranslationKey;
     private static boolean supportLangUtils;
+    private static boolean supportCraftEngine;
     public ItemTranslation(CraftItem plugin) {
         super(plugin);
         supportTranslationKey = isPresent("org.bukkit.Translatable");
         supportLangUtils = isPresent("com.meowj.langutils.lang.LanguageHelper");
+        supportCraftEngine = Util.isPresent("net.momirealms.craftengine.bukkit.api.CraftEngineItems");
     }
 
     private static void doItemTest() {
@@ -71,6 +70,12 @@ public class ItemTranslation extends AbstractModule {
         String displayName = meta != null && meta.hasDisplayName() ? meta.getDisplayName() : null;
         if (displayName != null) {
             return displayName;
+        }
+        if (supportCraftEngine) {
+            String key = CraftEngineMaterial.getTranslationKey(item);
+            if (key != null) {
+                return "<translate:" + key + ">";
+            }
         }
         if (supportTranslationKey) {
             return "<translate:" + item.getTranslationKey() + ">";
