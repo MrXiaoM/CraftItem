@@ -1,13 +1,13 @@
 plugins {
     java
     `maven-publish`
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.gradleup.shadow") version "9.3.0"
     id("com.github.gmazzo.buildconfig") version "5.6.7"
 }
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.5")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.13")
 }
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
@@ -57,8 +57,8 @@ dependencies {
     // CustomFishing
     compileOnly("net.momirealms:custom-fishing:2.3.3")
     // CraftEngine
-    compileOnly("net.momirealms:craft-engine-core:0.0.67") // 将 "{version}" 替换为插件稳定版本
-    compileOnly("net.momirealms:craft-engine-bukkit:0.0.67") // 例如 0.0.60
+    compileOnly("net.momirealms:craft-engine-core:0.0.67")
+    compileOnly("net.momirealms:craft-engine-bukkit:0.0.67")
 
     base.library("com.zaxxer:HikariCP:4.0.3")
     base.library("net.kyori:adventure-api:4.22.0")
@@ -66,7 +66,7 @@ dependencies {
     base.library("net.kyori:adventure-text-minimessage:4.22.0")
     base.library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
-    implementation("de.tr7zw:item-nbt-api:2.15.5")
+    implementation("de.tr7zw:item-nbt-api:2.15.6")
     for (artifact in pluginBaseModules) {
         implementation(artifact)
     }
@@ -86,6 +86,7 @@ buildConfig {
 }
 
 java {
+    disableAutoTargetJvm()
     withSourcesJar()
     withJavadocJar()
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -98,6 +99,7 @@ java {
 }
 tasks {
     shadowJar {
+        configurations.add(project.configurations.runtimeClasspath.get())
         from("LICENSE")
         mapOf(
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
@@ -107,7 +109,7 @@ tasks {
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }
     }
-    val copyTask = create<Copy>("copyBuildArtifact") {
+    val copyTask = this.register<Copy>("copyBuildArtifact") {
         dependsOn(shadowJar)
         from(shadowJar.get().outputs)
         rename { "CraftItem-$version.jar" }
@@ -119,7 +121,10 @@ tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         from(sourceSets.main.get().resources.srcDirs) {
-            expand(mapOf("version" to version))
+            expand(mapOf(
+                "version" to version,
+                "libraries" to base.addedLibraries.joinToString("\"\n  - \""),
+            ))
             include("plugin.yml")
         }
     }

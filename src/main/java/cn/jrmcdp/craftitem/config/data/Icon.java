@@ -1,12 +1,12 @@
 package cn.jrmcdp.craftitem.config.data;
 
-import cn.jrmcdp.craftitem.minigames.utils.AdventureManagerImpl;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
+import top.mrxiaom.pluginbase.utils.ColorHelper;
 import top.mrxiaom.pluginbase.utils.depend.PAPI;
 import top.mrxiaom.pluginbase.utils.Pair;
 
@@ -28,18 +28,19 @@ public class Icon {
     public final List<IAction> shiftLeftClick;
     public final List<IAction> shiftRightClick;
 
-    public Icon(Material material, String redirect, int data, int amount, String name, List<String> lore, Integer customModelData, List<String> leftClick, List<String> rightClick, List<String> shiftLeftClick, List<String> shiftRightClick) {
+    public Icon(Material material, String key, ConfigurationSection section) {
         this.material = material;
-        this.redirect = redirect;
-        this.data = data;
-        this.amount = amount;
-        this.name = name;
-        this.lore = lore;
-        this.customModelData = customModelData;
-        this.leftClick = loadActions(leftClick);
-        this.rightClick = loadActions(rightClick);
-        this.shiftLeftClick = loadActions(shiftLeftClick);
-        this.shiftRightClick = loadActions(shiftRightClick);
+
+        this.redirect = section.getString(key + ".Redirect", "");
+        this.name = ColorHelper.parseColor(section.getString(key + ".Name", ""));
+        this.data = section.getInt(key + ".Data", 0);
+        this.amount = section.getInt(key + ".Amount", 1);
+        this.lore = ColorHelper.parseColor(section.getStringList(key + ".Lore"));
+        this.customModelData = section.contains(key + ".CustomModelData") ? section.getInt(key + ".CustomModelData") : null;
+        this.leftClick = loadActions(section, key + ".LeftClick");
+        this.rightClick = loadActions(section, key + ".RightClick");
+        this.shiftLeftClick = loadActions(section, key + ".ShiftLeftClick");
+        this.shiftRightClick = loadActions(section, key + ".ShiftRightClick");
     }
 
     @SafeVarargs

@@ -63,7 +63,7 @@ public class ConfigForgeGui extends AbstractModule {
         if (plugin.isEnableConfigUpdater()) {
             updater.apply(config, plugin.resolve("./Gui.yml"));
         }
-        title = ColorHelper.parseColor(config.getString("Title"));
+        title = ColorHelper.parseColor(config.getString("Title", ""));
 
         chest = String.join("", config.getStringList("Chest")).toCharArray();
         chestTime = String.join("", config.getStringList("ChestTime")).toCharArray();
@@ -88,18 +88,7 @@ public class ConfigForgeGui extends AbstractModule {
                     continue;
                 }
             }
-
-            String redirect = section.getString(key + ".Redirect", "");
-            String name = ColorHelper.parseColor(section.getString(key + ".Name", ""));
-            int data = section.getInt(key + ".Data", 0);
-            int amount = section.getInt(key + ".Amount", 1);
-            List<String> lore = ColorHelper.parseColor(section.getStringList(key + ".Lore"));
-            Integer customModelData = section.contains(key + ".CustomModelData") ? section.getInt(key + ".CustomModelData") : null;
-            List<String> leftClick = ColorHelper.parseColor(section.getStringList(key + ".LeftClick"));
-            List<String> rightClick = ColorHelper.parseColor(section.getStringList(key + ".RightClick"));
-            List<String> shiftLeftClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftLeftClick"));
-            List<String> shiftRightClick = ColorHelper.parseColor(section.getStringList(key + ".ShiftRightClick"));
-            items.put(key, new Icon(material, redirect, data, amount, name, lore, customModelData, leftClick, rightClick, shiftLeftClick, shiftRightClick));
+            items.put(key, new Icon(material, key, section));
         }
 
         checkError(chest, "Chest");
