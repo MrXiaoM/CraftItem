@@ -6,10 +6,10 @@ import cn.jrmcdp.craftitem.data.player.IPlayerData;
 import cn.jrmcdp.craftitem.data.player.SQLPlayerData;
 import cn.jrmcdp.craftitem.data.player.YamlPlayerData;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,6 +72,11 @@ public class PlayerDataManager extends AbstractModule implements Listener, IData
                     "PRIMARY KEY (`uuid`, `craft`)" +
                 ");"
         )) { ps.execute(); }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        getOrCreatePlayerData(event.getPlayer());
     }
 
     @EventHandler
