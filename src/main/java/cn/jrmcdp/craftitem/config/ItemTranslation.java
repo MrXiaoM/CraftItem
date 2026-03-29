@@ -56,6 +56,16 @@ public class ItemTranslation extends AbstractModule {
     }
 
     public static String get(ItemStack item, Player player) {
+        if (supportCraftEngine) {
+            String name = CraftEngineMaterial.getItemName(item);
+            if (name != null) {
+                return name;
+            }
+            String key = CraftEngineMaterial.getTranslationKey(item);
+            if (key != null) {
+                return "<translate:" + key + ">";
+            }
+        }
         if (supportTranslationKey) {
             return "<translate:" + item.getTranslationKey() + ">";
         }
@@ -72,6 +82,10 @@ public class ItemTranslation extends AbstractModule {
             return displayName;
         }
         if (supportCraftEngine) {
+            String name = CraftEngineMaterial.getItemName(item);
+            if (name != null) {
+                return name;
+            }
             String key = CraftEngineMaterial.getTranslationKey(item);
             if (key != null) {
                 return "<translate:" + key + ">";

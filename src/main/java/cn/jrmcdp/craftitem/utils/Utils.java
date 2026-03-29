@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("UnusedReturnValue")
 public class Utils {
+    @SafeVarargs
     public static List<String> replace(List<String> list, Pair<String, Object>... replacements) {
         return Pair.replace(list, replacements);
     }
