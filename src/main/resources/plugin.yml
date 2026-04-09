@@ -17,8 +17,7 @@ softdepend:
   - CraftEngine
 api-version: 1.13
 folia-supported: true
-libraries:
-  - "${libraries}"
+# PluginBase Libraries ${libraries_config}
 commands:
   CraftItem:
     aliases:

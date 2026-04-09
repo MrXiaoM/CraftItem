@@ -7,7 +7,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.13")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.17")
 }
 val base = top.mrxiaom.gradle.LibraryHelper(project)
 
@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:24.0.0")
+    compileOnly(base.depend.annotations)
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
     compileOnly("org.black_ixx:playerpoints:3.2.7")
@@ -60,13 +60,13 @@ dependencies {
     compileOnly("net.momirealms:craft-engine-core:0.0.67")
     compileOnly("net.momirealms:craft-engine-bukkit:0.0.67")
 
-    base.library("com.zaxxer:HikariCP:4.0.3")
+    base.library(base.depend.HikariCP)
     base.library("net.kyori:adventure-api:4.22.0")
     base.library("net.kyori:adventure-platform-bukkit:4.4.0")
     base.library("net.kyori:adventure-text-minimessage:4.22.0")
     base.library("net.kyori:adventure-text-serializer-plain:4.22.0")
 
-    implementation("de.tr7zw:item-nbt-api:2.15.6")
+    implementation(base.depend.nbtapi)
     for (artifact in pluginBaseModules) {
         implementation(artifact)
     }
@@ -85,18 +85,9 @@ buildConfig {
     buildConfigField("String[]", "RESOLVED_LIBRARIES", base.join())
 }
 
-java {
-    disableAutoTargetJvm()
-    withSourcesJar()
-    withJavadocJar()
-    val javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        val lang = JavaLanguageVersion.of(targetJavaVersion)
-        toolchain.languageVersion.set(lang)
-    }
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
+top.mrxiaom.gradle.LibraryHelper.initJava(project, base, targetJavaVersion, true)
+top.mrxiaom.gradle.LibraryHelper.initPublishing(project)
+
 tasks {
     shadowJar {
         configurations.add(project.configurations.runtimeClasspath.get())
@@ -107,56 +98,6 @@ tasks {
             "com.tcoded.folialib" to "folialib",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
-        }
-    }
-    val copyTask = this.register<Copy>("copyBuildArtifact") {
-        dependsOn(shadowJar)
-        from(shadowJar.get().outputs)
-        rename { "CraftItem-$version.jar" }
-        into(rootProject.file("out"))
-    }
-    build {
-        dependsOn(copyTask)
-    }
-    processResources {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-        from(sourceSets.main.get().resources.srcDirs) {
-            expand(mapOf(
-                "version" to version,
-                "libraries" to base.addedLibraries.joinToString("\"\n  - \""),
-            ))
-            include("plugin.yml")
-        }
-    }
-    withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-        if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
-            options.release.set(targetJavaVersion)
-        }
-    }
-    javadoc {
-        (options as StandardJavadocDocletOptions).apply {
-            links("https://hub.spigotmc.org/javadocs/spigot/")
-
-            locale("zh_CN")
-            encoding("UTF-8")
-            docEncoding("UTF-8")
-            addBooleanOption("keywords", true)
-            addBooleanOption("Xdoclint:none", true)
-        }
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenRelease") {
-            groupId = project.group.toString()
-            artifactId = project.name
-            version = project.version.toString()
-
-            artifact(tasks["shadowJar"]).classifier = null
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
         }
     }
 }
