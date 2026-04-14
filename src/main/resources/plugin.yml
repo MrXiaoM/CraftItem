@@ -16,6 +16,7 @@ softdepend:
   - LangUtils
   - CraftEngine
   - SXItem
+  - NeigeItems
 api-version: 1.13
 folia-supported: true
 # PluginBase Libraries ${libraries_config}

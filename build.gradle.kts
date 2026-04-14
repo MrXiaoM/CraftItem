@@ -31,6 +31,7 @@ repositories {
     maven("https://mvn.lumine.io/repository/maven/")
     maven("https://repo.momirealms.net/releases/")
     maven("https://repo.rosewooddev.io/repository/public/")
+    maven("https://r.irepo.space/maven/")
 }
 
 dependencies {
@@ -61,6 +62,8 @@ dependencies {
     compileOnly("net.momirealms:craft-engine-bukkit:0.0.67")
     // SX-Item
     compileOnly("com.github.Saukiya:SX-Item:4.4.9")
+    // NeigeItems
+    compileOnly("pers.neige.neigeitems:NeigeItems:1.21.128")
 
     base.library(base.depend.HikariCP)
     base.library("net.kyori:adventure-api:4.22.0")

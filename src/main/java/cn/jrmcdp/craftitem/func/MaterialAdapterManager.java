@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import pers.neige.neigeitems.manager.ItemManager;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.Util;
 
@@ -30,6 +31,7 @@ public class MaterialAdapterManager extends AbstractModule {
     boolean enableCustomFishing;
     boolean enableCraftEngine;
     boolean enableSXItem;
+    boolean enableNeigeItems;
     private final Map<String, Function<ItemStack, IMaterialAdapter>> externalAdapters = new HashMap<>();
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
@@ -64,6 +66,11 @@ public class MaterialAdapterManager extends AbstractModule {
             enableSXItem = config.getBoolean("Material-Adapters.SX-Item.enable", true);
         } else {
             enableSXItem = false;
+        }
+        if (Util.isPresent("pers.neige.neigeitems.manager.ItemManager")) {
+            enableNeigeItems = config.getBoolean("Material-Adapters.NeigeItems.enable", true);
+        } else {
+            enableNeigeItems = false;
         }
     }
 
@@ -130,6 +137,12 @@ public class MaterialAdapterManager extends AbstractModule {
                     String itemKey = SXItem.getItemManager().getItemKey(item);
                     if (itemKey != null) {
                         adapter = new SXItemMaterial(itemKey);
+                    }
+                }
+                if (enableNeigeItems && adapter == null) {
+                    String itemId = ItemManager.INSTANCE.getItemId(item);
+                    if (itemId != null) {
+                        adapter = new NeigeItemsMaterial(itemId);
                     }
                 }
                 if (adapter == null) {
