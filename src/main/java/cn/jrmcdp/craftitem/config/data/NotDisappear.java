@@ -5,13 +5,13 @@ import cn.jrmcdp.craftitem.utils.Utils;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import top.mrxiaom.pluginbase.utils.AdventureUtil;
+import top.mrxiaom.pluginbase.utils.adventure.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +65,7 @@ public class NotDisappear {
         if (notDisappearMaterials.contains(item.getType())) return true;
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
+            // TODO: 验证并使用 Component 进行判定
             if (!notDisappearNames.isEmpty()) {
                 String displayName = meta.hasDisplayName() ? meta.getDisplayName() : null;
                 if (displayName != null && !displayName.isEmpty()) {
