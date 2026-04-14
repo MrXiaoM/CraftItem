@@ -5,6 +5,7 @@ import cn.jrmcdp.craftitem.data.MaterialInstance;
 import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
+import github.saukiya.sxitem.SXItem;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
 import net.momirealms.craftengine.core.util.Key;
 import org.bukkit.Material;
@@ -27,6 +28,7 @@ public class MaterialAdapterManager extends AbstractModule {
     boolean enableItemsAdder;
     boolean enableCustomFishing;
     boolean enableCraftEngine;
+    boolean enableSXItem;
     private final Map<String, Function<ItemStack, IMaterialAdapter>> externalAdapters = new HashMap<>();
     public MaterialAdapterManager(CraftItem plugin) {
         super(plugin);
@@ -56,6 +58,11 @@ public class MaterialAdapterManager extends AbstractModule {
             enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true);
         } else {
             enableCraftEngine = false;
+        }
+        if (Util.isPresent("github.saukiya.sxitem.SXItem")) {
+            enableSXItem = config.getBoolean("Material-Adapters.SX-Item.enable", true);
+        } else {
+            enableSXItem = false;
         }
     }
 
@@ -116,6 +123,12 @@ public class MaterialAdapterManager extends AbstractModule {
                     Key itemId = CraftEngineItems.getCustomItemId(item);
                     if (itemId != null) {
                         adapter = new CraftEngineMaterial(itemId);
+                    }
+                }
+                if (enableSXItem && adapter == null) {
+                    String itemKey = SXItem.getItemManager().getItemKey(item);
+                    if (itemKey != null) {
+                        adapter = new SXItemMaterial(itemKey);
                     }
                 }
                 if (adapter == null) {

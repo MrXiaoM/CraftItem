@@ -59,6 +59,8 @@ dependencies {
     // CraftEngine
     compileOnly("net.momirealms:craft-engine-core:0.0.67")
     compileOnly("net.momirealms:craft-engine-bukkit:0.0.67")
+    // SX-Item
+    compileOnly("com.github.Saukiya:SX-Item:4.4.9")
 
     base.library(base.depend.HikariCP)
     base.library("net.kyori:adventure-api:4.22.0")
