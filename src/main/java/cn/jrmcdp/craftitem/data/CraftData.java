@@ -55,7 +55,7 @@ public class CraftData implements ConfigurationSerializable {
     /**
      * 原始材料物品
      */
-    private List<ItemStack> material;
+    private List<@NotNull ItemStack> material;
     /**
      * 已加载、经过处理的材料匹配器
      */
@@ -138,7 +138,7 @@ public class CraftData implements ConfigurationSerializable {
     }
 
     @ApiStatus.Internal
-    public CraftData(List<ItemStack> material, int chance, List<Integer> multiple, ICurrency costCurrency, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, ICurrency timeCostCurrency, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
+    public CraftData(List<@NotNull ItemStack> material, int chance, List<Integer> multiple, ICurrency costCurrency, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, ICurrency timeCostCurrency, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.config = ConfigMain.inst();
         this.plugin = config.plugin;
         this.setMaterial(material);
@@ -258,7 +258,7 @@ public class CraftData implements ConfigurationSerializable {
         this.timeCountLimit = timeCountLimit;
     }
 
-    public List<ItemStack> getMaterial() {
+    public List<@NotNull ItemStack> getMaterial() {
         return this.material;
     }
 
@@ -270,7 +270,7 @@ public class CraftData implements ConfigurationSerializable {
         return array;
     }
 
-    public void setMaterial(List<ItemStack> material) {
+    public void setMaterial(List<@NotNull ItemStack> material) {
         this.material = material;
         this.loadedMaterial = MaterialAdapterManager.inst().fromMaterials(material);
     }

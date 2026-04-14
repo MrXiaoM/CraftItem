@@ -11,6 +11,7 @@ import net.momirealms.craftengine.core.util.Key;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import top.mrxiaom.pluginbase.func.AutoRegister;
 import top.mrxiaom.pluginbase.utils.Util;
 
@@ -66,19 +67,19 @@ public class MaterialAdapterManager extends AbstractModule {
         }
     }
 
-    public List<MaterialInstance> fromMaterials(List<ItemStack> materials) {
+    public List<MaterialInstance> fromMaterials(List<@NotNull ItemStack> materials) {
         List<MaterialInstance> list = new ArrayList<>();
         for (ItemStack item : materials) {
             IMaterialAdapter adapter = null;
-            if (item != null && !item.getType().equals(Material.AIR)) {
-                if (adapter == null) {
-                    for (Function<ItemStack, IMaterialAdapter> func : externalAdapters.values()) {
-                        adapter = func.apply(item);
-                        if (adapter != null) {
-                            break;
-                        }
+            if (!item.getType().equals(Material.AIR) && item.getAmount() > 0) {
+                // 先判定外置的材料适配器
+                for (Function<ItemStack, IMaterialAdapter> func : externalAdapters.values()) {
+                    adapter = func.apply(item);
+                    if (adapter != null) {
+                        break;
                     }
                 }
+                // 再判定内置的材料适配器
                 if (enableMMOItems && adapter == null) {
                     adapter = NBT.get(item, nbt -> {
                         String type = nbt.getString("MMOITEMS_ITEM_TYPE");
@@ -138,7 +139,7 @@ public class MaterialAdapterManager extends AbstractModule {
             if (adapter == null) {
                 adapter = NoneAdapter.INSTANCE;
             }
-            if (adapter != null && useNewIcon && adapter.supportNewIcon()) {
+            if (useNewIcon && adapter.supportNewIcon()) {
                 ItemStack sample = adapter.getNewIcon(plugin);
                 if (sample != null) {
                     sample.setAmount(item.getAmount());
