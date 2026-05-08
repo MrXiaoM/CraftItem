@@ -1,3 +1,5 @@
+import top.mrxiaom.gradle.LibraryHelper
+
 plugins {
     java
     `maven-publish`
@@ -7,9 +9,9 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.17")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.20")
 }
-val base = top.mrxiaom.gradle.LibraryHelper(project)
+val base = LibraryHelper(project)
 
 group = "cn.jrmcdp"
 version = "2.1.1"
@@ -47,8 +49,8 @@ dependencies {
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
     // MMOItems
-    compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
-    compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
+    compileOnly("io.lumine:MythicLib-dist:1.7.1-SNAPSHOT")
+    compileOnly("net.Indyuce:MMOItems-API:6.10.1-SNAPSHOT")
     // MythicMobs
     compileOnly("io.lumine:Mythic-Dist:4.13.0")
     compileOnly("io.lumine:Mythic:5.6.2")
@@ -66,10 +68,7 @@ dependencies {
     compileOnly("pers.neige.neigeitems:NeigeItems:1.21.128")
 
     base.library(base.depend.HikariCP)
-    base.library("net.kyori:adventure-api:4.22.0")
-    base.library("net.kyori:adventure-text-minimessage:4.22.0")
-    base.library("net.kyori:adventure-text-serializer-gson:4.22.0")
-    base.library("net.kyori:adventure-text-serializer-plain:4.22.0")
+    base.library(LibraryHelper.adventure("4.22.0"))
 
     implementation(base.depend.nbtapi)
     for (artifact in pluginBaseModules) {
@@ -90,8 +89,8 @@ buildConfig {
     buildConfigField("String[]", "RESOLVED_LIBRARIES", base.join())
 }
 
-top.mrxiaom.gradle.LibraryHelper.initJava(project, base, targetJavaVersion, true)
-top.mrxiaom.gradle.LibraryHelper.initPublishing(project)
+LibraryHelper.initJava(project, base, targetJavaVersion, true)
+LibraryHelper.initPublishing(project)
 
 tasks {
     shadowJar {
