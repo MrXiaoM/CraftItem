@@ -1,9 +1,8 @@
 package cn.jrmcdp.craftitem.actions;
 
-import cn.jrmcdp.craftitem.CraftItem;
-import cn.jrmcdp.craftitem.config.ConfigCategoryGui;
 import cn.jrmcdp.craftitem.gui.GuiForge;
 import cn.jrmcdp.craftitem.utils.Utils;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -19,15 +18,28 @@ public class ActionReopen implements IAction {
     public static final ActionReopen INSTANCE;
     static {
         INSTANCE = new ActionReopen();
-        PROVIDER = s -> s.equals("[reopen]") || s.equals("reopen") ? INSTANCE : null;
+        PROVIDER = input -> {
+            if (input instanceof ConfigurationSection) {
+                ConfigurationSection section = (ConfigurationSection) input;
+                if ("reopen".equals(section.getString("type"))) {
+                    return INSTANCE;
+                }
+            } else {
+                String s = String.valueOf(input);
+                if (s.equals("[reopen]") || s.equals("reopen")) {
+                    return INSTANCE;
+                }
+            }
+            return null;
+        };
     }
     private ActionReopen() {
     }
 
     @Override
     public void run(Player player, @Nullable List<Pair<String, Object>> replacements) {
+        if (player == null) return;
         Inventory inv = player.getOpenInventory().getTopInventory();
-        if (inv == null) return;
         InventoryHolder holder = Utils.getHolder(inv);
         if (holder instanceof GuiForge) {
             GuiForge gui = (GuiForge) holder;

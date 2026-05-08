@@ -29,6 +29,7 @@ public class Utils {
     }
 
     public static InventoryHolder getHolder(Inventory inv) {
+        if (inv == null) return null;
         try {
             return inv.getHolder();
         } catch (Throwable ignored) {

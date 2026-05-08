@@ -4,7 +4,7 @@ import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.ConfigCategoryGui;
 import cn.jrmcdp.craftitem.gui.GuiForge;
 import cn.jrmcdp.craftitem.utils.Utils;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -20,15 +20,28 @@ public class ActionBack implements IAction {
     public static final ActionBack INSTANCE;
     static {
         INSTANCE = new ActionBack();
-        PROVIDER = s -> s.equals("[back]") || s.equals("back") ? INSTANCE : null;
+        PROVIDER = input -> {
+            if (input instanceof ConfigurationSection) {
+                ConfigurationSection section = (ConfigurationSection) input;
+                if ("back".equals(section.getString("type"))) {
+                    return INSTANCE;
+                }
+            } else {
+                String s = String.valueOf(input);
+                if (s.equals("[back]") || s.equals("back")) {
+                    return INSTANCE;
+                }
+            }
+            return null;
+        };
     }
     private ActionBack() {
     }
 
     @Override
     public void run(Player player, @Nullable List<Pair<String, Object>> replacements) {
+        if (player == null) return;
         Inventory inv = player.getOpenInventory().getTopInventory();
-        if (inv == null) return;
         InventoryHolder holder = Utils.getHolder(inv);
         if (holder instanceof GuiForge) {
             GuiForge gui = (GuiForge) holder;
