@@ -2,8 +2,6 @@ package cn.jrmcdp.craftitem.func.entry.adapter;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.depend.mythic.IMythic;
-import de.tr7zw.changeme.nbtapi.NBT;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -11,9 +9,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class MythicMobsMaterial implements IMaterialAdapter {
+    private final IMythic mythic;
     private final String id;
 
-    public MythicMobsMaterial(String id) {
+    public MythicMobsMaterial(IMythic mythic, String id) {
+        this.mythic = mythic;
         this.id = id;
     }
 
@@ -33,10 +33,7 @@ public class MythicMobsMaterial implements IMaterialAdapter {
 
     @Override
     public boolean match(@Nullable Player player, ItemStack item) {
-        if (item == null || item.getType().equals(Material.AIR)) return false;
-        return NBT.get(item, nbt -> {
-            return id.equals(nbt.getString("MYTHIC_TYPE"));
-        });
+        return id.equals(mythic.getMythicId(item));
     }
 
     @Override

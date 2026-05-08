@@ -4,4 +4,5 @@ import org.bukkit.inventory.ItemStack;
 
 public interface IMythic {
     ItemStack getItem(String mythicId);
+    String getMythicId(ItemStack item);
 }

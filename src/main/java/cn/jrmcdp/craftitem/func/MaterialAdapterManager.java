@@ -2,6 +2,7 @@ package cn.jrmcdp.craftitem.func;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.data.MaterialInstance;
+import cn.jrmcdp.craftitem.depend.mythic.IMythic;
 import cn.jrmcdp.craftitem.func.entry.adapter.*;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
@@ -98,13 +99,13 @@ public class MaterialAdapterManager extends AbstractModule {
                     });
                 }
                 if (enableMythicMobs && adapter == null) {
-                    adapter = NBT.get(item, nbt -> {
-                        String mythicId = nbt.getString("MYTHIC_TYPE");
+                    IMythic mythic = plugin.getMythic();
+                    if (mythic != null) {
+                        String mythicId = mythic.getMythicId(item);
                         if (mythicId != null && !mythicId.isEmpty()) {
-                            return new MythicMobsMaterial(mythicId);
+                            adapter = new MythicMobsMaterial(mythic, mythicId);
                         }
-                        return null;
-                    });
+                    }
                 }
                 if (enableItemsAdder && adapter == null) {
                     adapter = NBT.get(item, nbt -> {
