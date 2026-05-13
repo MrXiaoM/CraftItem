@@ -362,7 +362,7 @@ public class GuiForge implements IHolder {
         }
         if (craftData.doCost(player)) return;
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
-        final int multiple = RandomUtils.nextInt(3);
+        final int multiple = craftData.getMultiple(win);
         player.closeInventory();
         if (craftData.isDifficult()) {
             String randomGame = parent.plugin.config().getRandomGame();
@@ -412,7 +412,7 @@ public class GuiForge implements IHolder {
                 for (int i = 0; i < combo; i++) {
                     if (craftData.doCost(player)) break;
                     final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
-                    final int multiple = RandomUtils.nextInt(3);
+                    final int multiple = craftData.getMultiple(win);
                     if (!manager.doForgeResult(this, player, win, multiple, null)) {
                         break;
                     }

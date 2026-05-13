@@ -91,6 +91,21 @@ public enum Message implements IHolderAccessor {
             "",
             "&7当前: &e%s"
     ),
+    gui__edit__item__multiple_level_weight__name("&a倍数权重"),
+    gui__edit__item__multiple_level_weight__lore(
+            "&7左键点击 编辑成功倍数权重",
+            "&7右键点击 编辑失败倍数权重",
+            "",
+            "&7格式 \"10 10 10\"",
+            "&7对应 小/中/大 程度的权重",
+            "",
+            "&7例如将失败倍数权重设为 \"30 20 10\"，",
+            "&7则发生失败时，大失败的概率为 六分之一，",
+            "&7即 10 / (30+20+10)",
+            "",
+            "&7当前成功倍数权重: &e%weight_success%",
+            "&7当前失败倍数权重: &e%weight_fail%"
+    ),
     gui__edit__item__cost__name("&a价格"),
     gui__edit__item__cost__description(
             "&7点击 查看/编辑",
@@ -203,6 +218,8 @@ public enum Message implements IHolderAccessor {
     gui__edit_material_title("&0材料"),
     gui__edit_input_chance("&a请输入概率 正整数"),
     gui__edit_input_multiple("&a请按照格式填写倍率 \"5 10 20\" (小 中 大)"),
+    gui__edit_input_multiple_weight_success("&a请按照格式填写成功倍数权重 \"10 10 10\" (小 中 大)"),
+    gui__edit_input_multiple_weight_fail("&a请按照格式填写失败倍数权重 \"10 10 10\" (小 中 大)"),
     gui__edit_input_cost_currency("&a按以下格式修改锻造价格 正整数",
             "&e  数值 &f修改锻造价格，如&e 100 &f消耗100金币",
             "&e  数值+空格+货币 &f修改锻造价格，如&e 100 PlayerPoints &f消耗100点券",

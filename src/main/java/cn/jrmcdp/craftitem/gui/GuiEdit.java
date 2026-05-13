@@ -39,7 +39,7 @@ public class GuiEdit implements IHolder {
 
     private final CraftData craftData;
     private Inventory inventory;
-    private int invSize = 0;
+    private final int invSize = Slot.invSize;
 
     private final Player player;
     private final CraftRecipeManager manager = CraftRecipeManager.inst();
@@ -81,38 +81,45 @@ public class GuiEdit implements IHolder {
                             gui.craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                     ));
         }),
-        COST_MONEY(3, gui -> { // 价格
+        MULTIPLE_LEVEL_WEIGHT(2, gui -> { // 倍率权重
+            return getItemStack(getMaterial("ITEM_FRAME"), Message.gui__edit__item__multiple_level_weight__name.str(),
+                    Message.gui__edit__item__multiple_level_weight__lore.list(
+                            Pair.of("%weight_success%", gui.craftData.getWeightSuccessLevel().stream().map(String::valueOf).collect(Collectors.joining(" "))),
+                            Pair.of("%weight_fail%", gui.craftData.getWeightFailLevel().stream().map(String::valueOf).collect(Collectors.joining(" ")))
+                    ));
+        }),
+        COST_MONEY(4, gui -> { // 价格
             return getItemStack(getMaterial("GOLD_INGOT"), Message.gui__edit__item__cost__name.str(),
                     Message.gui__edit__item__cost__description.list(
                             Pair.of("%money%", gui.craftData.getCost()),
                             Pair.of("%currency%", gui.craftData.getCostCurrencyName())
                     ));
         }),
-        COST_LEVEL(4, gui -> { // 花费经验等级
+        COST_LEVEL(5, gui -> { // 花费经验等级
             return getItemStack(getMaterial("EXPERIENCE_BOTTLE"), Message.gui__edit__item__cost_level__name.str(),
                     Message.gui__edit__item__cost_level__lore.listFormat(
                             gui.craftData.getCostLevel()
                     ));
         }),
-        DISPLAY(5, gui -> { // 显示物品
+        DISPLAY(6, gui -> { // 显示物品
             return getItemStack(getMaterial("PAINTING"), Message.gui__edit__item__display__name.str(),
                     Message.gui__edit__item__display__lore.listFormat(
                             gui.craftData.getDisplayItem()
                     ));
         }),
-        REWARD_ITEMS(6, gui -> { // 奖励物品
+        REWARD_ITEMS(7, gui -> { // 奖励物品
             return getItemStack(getMaterial("CHEST"), Message.gui__edit__item__item__name.str(),
                     Message.gui__edit__item__item__lore.listFormat(
                             String.join("\n§7", Utils.itemToListString(gui.craftData.getItems(), gui.getPlayer()))
                     ));
         }),
-        REWARD_COMMANDS(7, gui -> { // 奖励命令
+        REWARD_COMMANDS(8, gui -> { // 奖励命令
             return getItemStack(getMaterial("PAPER"), Message.gui__edit__item__command__name.str(),
                     Message.gui__edit__item__command__lore.listFormat(
                             String.join("\n§7", gui.craftData.getCommands())
                     ));
         }),
-        TIME(8, gui -> { // 锻造时长
+        TIME(9, gui -> { // 锻造时长
             return getItemStack(getMaterial("CLOCK", "WATCH"), Message.gui__edit__item__time__name.str(),
                     Message.gui__edit__item__time__description.list(
                             Pair.of("%time%", gui.craftData.getTimeDisplay()),
@@ -120,7 +127,7 @@ public class GuiEdit implements IHolder {
                             Pair.of("%currency%", gui.craftData.getTimeCostCurrencyName())
                     ));
         }),
-        TIME_LIMIT(9, gui -> { // 锻造次数限制
+        TIME_LIMIT(10, gui -> { // 锻造次数限制
             String groupTime = gui.craftData.getTimeCountLimit();
             if (groupTime.trim().isEmpty()) groupTime = Message.gui__edit__unset.str();
             String groupNormal = gui.craftData.getCountLimit();
@@ -128,19 +135,19 @@ public class GuiEdit implements IHolder {
             return getItemStack(getMaterial("BUCKET"), Message.gui__edit__item__time_count_limit__name.str(),
                     Message.gui__edit__item__time_count_limit__lore.listFormat(groupNormal, groupTime));
         }),
-        DIFFICULT(10, gui -> { // 困难锻造
+        DIFFICULT(11, gui -> { // 困难锻造
             return getItemStack(getMaterial("FISHING_ROD"), Message.gui__edit__item__difficult__name.str(),
                     Message.gui__edit__item__difficult__lore.listFormat(
                             (gui.craftData.isDifficult() ? Message.gui__edit__status__on : Message.gui__edit__status__off).str()
                     ));
         }),
-        FAIL_TIMES(11, gui -> { // 保底次数
+        FAIL_TIMES(12, gui -> { // 保底次数
             return getItemStack(getMaterial("BOWL"), Message.gui__edit__item__fail_times__name.str(),
                     Message.gui__edit__item__fail_times__lore.listFormat(
                             gui.craftData.getGuaranteeFailTimes() > 0 ? String.valueOf(gui.craftData.getGuaranteeFailTimes()) : Message.gui__edit__unset.str()
                     ));
         }),
-        COMBO(12, gui -> { // 连击次数
+        COMBO(13, gui -> { // 连击次数
             return getItemStack(getMaterial("MAGMA_CREAM"), Message.gui__edit__item__combo__name.str(),
                     Message.gui__edit__item__combo__lore.listFormat(
                             gui.craftData.getCombo() > 0 ? String.valueOf(gui.craftData.getCombo()) : Message.gui__edit__unset.str()
@@ -148,6 +155,15 @@ public class GuiEdit implements IHolder {
         }),
 
         ;
+        private static final int invSize;
+        static {
+            int totalCount = values().length;
+            int i = 0;
+            while (i < totalCount) {
+                i += 9;
+            }
+            invSize = i;
+        }
         final int index;
         final Function<GuiEdit, ItemStack> icon;
 
@@ -172,7 +188,7 @@ public class GuiEdit implements IHolder {
 
     @Override
     public Inventory newInventory() {
-        ItemStack[] items = new ItemStack[invSize = 18];
+        ItemStack[] items = new ItemStack[invSize];
         inventory = manager.plugin.createInventory(this, items.length, Message.gui__edit_title.strFormat(this.id));
         for (Slot slot : Slot.values()) {
             items[slot.index] = slot.icon.apply(this);
@@ -204,6 +220,37 @@ public class GuiEdit implements IHolder {
 
     private void reopen() {
         manager.plugin.getScheduler().runTask(this::open);
+    }
+
+    private void promptList3Length(Message tips, Consumer<List<Integer>> saveAction) {
+        tips.tm(player);
+        AtomicReference<Consumer<List<Integer>>> save = new AtomicReference<>(null);
+        Consumer<String> consumeChat = message -> {
+            String[] split = message.split(" ");
+            List<Integer> list = new ArrayList<>();
+            for (String str : split) {
+                Integer chance = Util.parseInt(str).orElse(null);
+                if (chance == null) {
+                    Message.not_integer.tm(player);
+                    reopen();
+                    return;
+                }
+                list.add(chance);
+            }
+            Consumer<List<Integer>> consumer = save.get();
+            if (consumer != null) consumer.accept(list);
+        };
+        save.set(list -> {
+            if (list.size() != 3) {
+                tips.tm(player);
+                Prompter.onChat(player, consumeChat);
+            } else {
+                saveAction.accept(list);
+                manager.save(getId(), craftData);
+            }
+            reopen();
+        });
+        Prompter.onChat(player, consumeChat);
     }
 
     @Override
@@ -254,34 +301,20 @@ public class GuiEdit implements IHolder {
             }
             case MULTIPLE: { // 倍数
                 player.closeInventory();
-                Message.gui__edit_input_multiple.tm(player);
-                AtomicReference<Consumer<List<Integer>>> save = new AtomicReference<>(null);
-                Consumer<String> consumeChat = message -> {
-                    String[] split = message.split(" ");
-                    List<Integer> list = new ArrayList<>();
-                    for (String str : split) {
-                        Integer chance = Util.parseInt(str).orElse(null);
-                        if (chance == null) {
-                            Message.not_integer.tm(player);
-                            reopen();
-                            return;
-                        }
-                        list.add(chance);
-                    }
-                    Consumer<List<Integer>> consumer = save.get();
-                    if (consumer != null) consumer.accept(list);
-                };
-                save.set(list -> {
-                    if (list.size() != 3) {
-                        Message.gui__edit_input_multiple.tm(player);
-                        Prompter.onChat(player, consumeChat);
-                    } else {
-                        craftData.setMultiple(list);
-                        manager.save(getId(), craftData);
-                    }
-                    reopen();
-                });
-                Prompter.onChat(player, consumeChat);
+                promptList3Length(Message.gui__edit_input_multiple, craftData::setMultiple);
+                break;
+            }
+            case MULTIPLE_LEVEL_WEIGHT: { // 倍数权重
+                if (click.isLeftClick() && !click.isShiftClick()) {
+                    player.closeInventory();
+                    promptList3Length(Message.gui__edit_input_multiple_weight_success, craftData::setWeightSuccessLevel);
+                    break;
+                }
+                if (click.isRightClick() && !click.isShiftClick()) {
+                    player.closeInventory();
+                    promptList3Length(Message.gui__edit_input_multiple_weight_fail, craftData::setWeightFailLevel);
+                    break;
+                }
                 break;
             }
             case COST_MONEY: { // 价格

@@ -74,6 +74,16 @@ public class CraftData implements ConfigurationSerializable {
      */
     private List<Integer> multiple;
     /**
+     * 锻造成功程度的权重
+     * @see CraftData#multiple 索引与 multiple 一致
+     */
+    private List<Integer> weightSuccessLevel;
+    /**
+     * 锻造失败程度的权重
+     * @see CraftData#multiple 索引与 multiple 一致
+     */
+    private List<Integer> weightFailLevel;
+    /**
      * 单次锻造需要花费的货币类型
      */
     private ICurrency costCurrency;
@@ -134,16 +144,18 @@ public class CraftData implements ConfigurationSerializable {
      */
     private String timeCountLimit;
     public CraftData() {
-        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), vault(), 188, 0, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, vault(), 0, 0, false, 0, 0, "", "");
+        this(new ArrayList<>(), 75, Arrays.asList(5, 10, 20), Arrays.asList(10, 10, 10), Arrays.asList(10, 10, 10), vault(), 188, 0, new ItemStack(Material.COBBLESTONE), new ArrayList<>(), new ArrayList<>(), 0, vault(), 0, 0, false, 0, 0, "", "");
     }
 
     @ApiStatus.Internal
-    public CraftData(List<@NotNull ItemStack> material, int chance, List<Integer> multiple, ICurrency costCurrency, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, ICurrency timeCostCurrency, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
+    public CraftData(List<@NotNull ItemStack> material, int chance, List<Integer> multiple, List<Integer> weightSuccessLevel, List<Integer> weightFailLevel, ICurrency costCurrency, int cost, int costLevel, ItemStack displayItem, List<ItemStack> items, List<String> commands, long time, ICurrency timeCostCurrency, int timeCost, int timeCostLevel, boolean difficult, int guaranteeFailTimes, int combo, String countLimit, String timeCountLimit) {
         this.config = ConfigMain.inst();
         this.plugin = config.plugin;
         this.setMaterial(material);
         this.chance = chance;
         this.multiple = multiple;
+        this.weightSuccessLevel = weightSuccessLevel;
+        this.weightFailLevel = weightFailLevel;
         if (multiple.isEmpty()) throw new IllegalArgumentException("multiple can not be empty!");
         Integer i = null;
         while (multiple.size() < 3) {
@@ -291,6 +303,34 @@ public class CraftData implements ConfigurationSerializable {
         this.multiple = multiple;
     }
 
+    public int getMultiple(boolean win) {
+        List<Integer> weightList = win ? getWeightSuccessLevel() : getWeightFailLevel();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < weightList.size(); i++) {
+            int weight = weightList.get(i);
+            for (int j = 0; j < weight; j++) {
+                list.add(i);
+            }
+        }
+        return RandomUtils.next(list, 0);
+    }
+
+    public List<Integer> getWeightSuccessLevel() {
+        return weightSuccessLevel;
+    }
+
+    public void setWeightSuccessLevel(List<Integer> weightSuccessLevel) {
+        this.weightSuccessLevel = weightSuccessLevel;
+    }
+
+    public List<Integer> getWeightFailLevel() {
+        return weightFailLevel;
+    }
+
+    public void setWeightFailLevel(List<Integer> weightFailLevel) {
+        this.weightFailLevel = weightFailLevel;
+    }
+
     public int getCost() {
         return this.cost;
     }
@@ -397,8 +437,8 @@ public class CraftData implements ConfigurationSerializable {
 
     public MaterialInstance takeRandomMaterial(Player player) {
         List<MaterialInstance> list = config.filterMaterials(loadedMaterial);
-        if (list.isEmpty()) return null;
-        MaterialInstance item = list.get(RandomUtils.nextInt(list.size()));
+        MaterialInstance item = RandomUtils.next(list, null);
+        if (item == null) return null;
         MaterialInstance.Mutable clone = item.toMutable();
         clone.setAmount(1); // 只拿走一个
 
@@ -498,6 +538,8 @@ public class CraftData implements ConfigurationSerializable {
         map.put("Material", this.material);
         map.put("Chance", this.chance);
         map.put("Multiple", this.multiple);
+        map.put("WeightSuccessLevel", this.weightSuccessLevel);
+        map.put("WeightFailLevel", this.weightFailLevel);
         if (this.costCurrency != null) {
             map.put("CostCurrency", this.costCurrency.serialize());
         }
@@ -527,7 +569,9 @@ public class CraftData implements ConfigurationSerializable {
         return new CraftData(
                 get(map, "Material", ArrayList::new), // List<ItemStack>
                 get(map, "Chance", 0),
-                get(map, "Multiple", ArrayList::new), // List<Integer>
+                get(map, "Multiple", () -> Arrays.asList(5, 10, 20)), // List<Integer>
+                get(map, "WeightSuccessLevel", () -> Arrays.asList(10, 10, 10)), // List<Integer>
+                get(map, "WeightFailLevel", () -> Arrays.asList(10, 10, 10)), // List<Integer>
                 currency(map, "CostCurrency"),
                 get(map, "Cost", 0),
                 get(map, "CostLevel", 0),
