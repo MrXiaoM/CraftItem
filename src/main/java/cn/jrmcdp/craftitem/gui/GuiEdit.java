@@ -81,7 +81,7 @@ public class GuiEdit implements IHolder {
                             gui.craftData.getMultiple().stream().map(String::valueOf).collect(Collectors.joining(" "))
                     ));
         }),
-        MULTIPLE_LEVEL_WEIGHT(2, gui -> { // 倍率权重
+        MULTIPLE_LEVEL_WEIGHT(3, gui -> { // 倍率权重
             return getItemStack(getMaterial("ITEM_FRAME"), Message.gui__edit__item__multiple_level_weight__name.str(),
                     Message.gui__edit__item__multiple_level_weight__lore.list(
                             Pair.of("%weight_success%", gui.craftData.getWeightSuccessLevel().stream().map(String::valueOf).collect(Collectors.joining(" "))),
