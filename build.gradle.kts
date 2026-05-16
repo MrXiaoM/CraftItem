@@ -9,7 +9,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.20")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.21")
 }
 val base = LibraryHelper(project)
 
@@ -41,11 +41,11 @@ dependencies {
     compileOnly(base.depend.annotations)
 
     compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("org.black_ixx:playerpoints:3.2.7")
+    compileOnly("org.black_ixx:playerpoints:3.3.4")
     compileOnly(files("libs/MPoints-1.2.2.jar"))
     compileOnly("com.github.nulli0n:ExcellentEconomy:c32f037025") // CoinsEngine
     compileOnly("com.github.blank038:NyEconomy:8e3f27c18f")
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
     // MMOItems
@@ -69,6 +69,7 @@ dependencies {
 
     base.library(base.depend.HikariCP)
     base.library(LibraryHelper.adventure("4.22.0"))
+    base.collectPluginHolders()
 
     implementation(base.depend.nbtapi)
     for (artifact in pluginBaseModules) {
