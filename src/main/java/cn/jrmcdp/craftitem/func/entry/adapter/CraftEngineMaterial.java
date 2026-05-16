@@ -2,7 +2,7 @@ package cn.jrmcdp.craftitem.func.entry.adapter;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
-import net.momirealms.craftengine.core.item.CustomItem;
+import net.momirealms.craftengine.bukkit.item.BukkitItemDefinition;
 import net.momirealms.craftengine.core.item.processor.ItemNameProcessor;
 import net.momirealms.craftengine.core.item.processor.ItemProcessor;
 import net.momirealms.craftengine.core.util.Key;
@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 
-@SuppressWarnings("RedundantCast") // jdk1.8没有记录类需要强转Object调用方法
 public class CraftEngineMaterial implements IMaterialAdapter {
     private final Key itemId;
     @Nullable
@@ -29,13 +28,14 @@ public class CraftEngineMaterial implements IMaterialAdapter {
 
     @Override
     public ItemStack getNewIcon(CraftItem plugin) {
-        CustomItem<ItemStack> item = CraftEngineItems.byId(this.itemId);
+        BukkitItemDefinition item = CraftEngineItems.byId(this.itemId);
         if (item == null) return null;
-        return item.buildItemStack();
+        return item.buildBukkitItem();
     }
 
     @Override
     public boolean match(@Nullable Player player, ItemStack item) {
+        // noinspection RedundantCast
         return ((Object) this.itemId).equals(CraftEngineItems.getCustomItemId(item));
     }
 
@@ -44,22 +44,22 @@ public class CraftEngineMaterial implements IMaterialAdapter {
         if (item == null || item.getType().equals(Material.AIR) || item.getAmount() < 1) {
             return null;
         }
-        CustomItem<ItemStack> customItem = CraftEngineItems.byItemStack(item);
-        if (customItem == null || customItem.isEmpty()) {
+        BukkitItemDefinition customItem = CraftEngineItems.byItemStack(item);
+        if (customItem == null) {
             return null;
         }
         return customItem.translationKey();
     }
 
     public static String getItemName(ItemStack item) {
-        CustomItem<ItemStack> customItem = CraftEngineItems.byItemStack(item);
-        if (customItem != null && !customItem.isEmpty()) {
+        BukkitItemDefinition customItem = CraftEngineItems.byItemStack(item);
+        if (customItem != null) {
             String displayName = AdventureItemStack.getItemDisplayNameAsMiniMessage(item);
             if (displayName != null) {
                 return displayName.replace("&", "&&");
             }
             // 如果还有通过物品处理器添加的名字，优先返回
-            for (ItemProcessor processor : customItem.dataModifiers()) {
+            for (ItemProcessor processor : customItem.processors()) {
                 if (processor instanceof ItemNameProcessor) {
                     return ((ItemNameProcessor) processor).itemName();
                 }
@@ -72,6 +72,7 @@ public class CraftEngineMaterial implements IMaterialAdapter {
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof CraftEngineMaterial)) return false;
+        // noinspection RedundantCast
         return ((Object) this.itemId).equals(((CraftEngineMaterial) o).itemId);
     }
 

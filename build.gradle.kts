@@ -60,8 +60,8 @@ dependencies {
     // CustomFishing
     compileOnly("net.momirealms:custom-fishing:2.3.3")
     // CraftEngine
-    compileOnly("net.momirealms:craft-engine-core:0.0.67")
-    compileOnly("net.momirealms:craft-engine-bukkit:0.0.67")
+    compileOnly("net.momirealms:craft-engine-core:26.5")
+    compileOnly("net.momirealms:craft-engine-bukkit:26.5")
     // SX-Item
     compileOnly("com.github.Saukiya:SX-Item:4.4.9")
     // NeigeItems
