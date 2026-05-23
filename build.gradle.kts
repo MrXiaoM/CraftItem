@@ -9,12 +9,12 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.21")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.23")
 }
 val base = LibraryHelper(project)
 
 group = "cn.jrmcdp"
-version = "2.1.2"
+version = "2.1.3"
 
 val pluginBaseModules = base.modules.run{ listOf(library, paper, l10n, actions, gui, misc) }
 val targetJavaVersion = 8
@@ -68,7 +68,7 @@ dependencies {
     compileOnly("pers.neige.neigeitems:NeigeItems:1.21.128")
 
     base.library(base.depend.HikariCP)
-    base.library(LibraryHelper.adventure("4.22.0"))
+    base.library(LibraryHelper.adventure("4.25.0"))
     base.collectPluginHolders()
 
     implementation(base.depend.nbtapi)

@@ -58,7 +58,7 @@ public class MaterialAdapterManager extends AbstractModule {
         enableMythicMobs = config.getBoolean("Material-Adapters.MythicMobs.enable", true);
         enableItemsAdder = config.getBoolean("Material-Adapters.ItemsAdder.enable", true);
         enableCustomFishing = config.getBoolean("Material-Adapters.CustomFishing.enable", true);
-        if (Util.isPresent("net.momirealms.craftengine.bukkit.api.CraftEngineItems")) {
+        if (Util.isPresent("net.momirealms.craftengine.bukkit.item.BukkitItemDefinition")) {
             enableCraftEngine = config.getBoolean("Material-Adapters.CraftEngine.enable", true);
         } else {
             enableCraftEngine = false;

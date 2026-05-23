@@ -28,7 +28,7 @@ public class ItemTranslation extends AbstractModule {
         super(plugin);
         supportTranslationKey = isPresent("org.bukkit.Translatable");
         supportLangUtils = isPresent("com.meowj.langutils.lang.LanguageHelper");
-        supportCraftEngine = Util.isPresent("net.momirealms.craftengine.bukkit.api.CraftEngineItems");
+        supportCraftEngine = Util.isPresent("net.momirealms.craftengine.bukkit.item.BukkitItemDefinition");
     }
 
     private static void doItemTest() {
