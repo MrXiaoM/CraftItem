@@ -285,7 +285,7 @@ public class GuiEdit implements IHolder {
                 break;
             }
             case SUCCESSFUL_RATE: { // 成功率
-                player.closeInventory();
+                manager.plugin.getScheduler().closeInventory(player);
                 Message.gui__edit_input_chance.tm(player);
                 Prompter.onChat(player, message -> {
                     Integer chance = Util.parseInt(message).orElse(null);
@@ -300,25 +300,25 @@ public class GuiEdit implements IHolder {
                 break;
             }
             case MULTIPLE: { // 倍数
-                player.closeInventory();
+                manager.plugin.getScheduler().closeInventory(player);
                 promptList3Length(Message.gui__edit_input_multiple, craftData::setMultiple);
                 break;
             }
             case MULTIPLE_LEVEL_WEIGHT: { // 倍数权重
                 if (click.isLeftClick() && !click.isShiftClick()) {
-                    player.closeInventory();
+                    manager.plugin.getScheduler().closeInventory(player);
                     promptList3Length(Message.gui__edit_input_multiple_weight_success, craftData::setWeightSuccessLevel);
                     break;
                 }
                 if (click.isRightClick() && !click.isShiftClick()) {
-                    player.closeInventory();
+                    manager.plugin.getScheduler().closeInventory(player);
                     promptList3Length(Message.gui__edit_input_multiple_weight_fail, craftData::setWeightFailLevel);
                     break;
                 }
                 break;
             }
             case COST_MONEY: { // 价格
-                player.closeInventory();
+                manager.plugin.getScheduler().closeInventory(player);
                 Message.gui__edit_input_cost_currency.tm(player);
                 Prompter.onChat(player, message -> {
                     String[] split = message.split(" ", 2);
@@ -347,7 +347,7 @@ public class GuiEdit implements IHolder {
                 break;
             }
             case COST_LEVEL: { // 花费经验等级
-                player.closeInventory();
+                manager.plugin.getScheduler().closeInventory(player);
                 Message.gui__edit_input_cost_level.tm(player);
                 Prompter.onChat(player, message -> {
                     Integer costLevel = Util.parseInt(message).orElse(null);
@@ -412,7 +412,7 @@ public class GuiEdit implements IHolder {
                         return;
                     }
                     isChat.set(true);
-                    player.closeInventory();
+                    manager.plugin.getScheduler().closeInventory(player);
                     Message.gui__edit_command_tips.tm(player);
 
                     Prompter.onChat(player, message -> {
@@ -426,7 +426,7 @@ public class GuiEdit implements IHolder {
                         });
                         inv.addItem(itemStack);
                         manager.plugin.getScheduler().runTask(() -> {
-                            player.closeInventory();
+                            manager.plugin.getScheduler().closeInventory(player);
                             player.openInventory(inv);
                             isChat.set(false);
                         });
@@ -462,7 +462,7 @@ public class GuiEdit implements IHolder {
                     manager.save(getId(), craftData);
                 } else if (event.getClick().equals(ClickType.DROP)) {
                     // Q键 设置金额
-                    player.closeInventory();
+                    manager.plugin.getScheduler().closeInventory(player);
                     Message.gui__edit_time_cost_currency_sum__tips.tm(player);
                     Prompter.onChat(player, message -> {
                         char type = Character.toUpperCase(message.charAt(0));
@@ -558,7 +558,7 @@ public class GuiEdit implements IHolder {
                             craftData.setCountLimit(group);
                         }
                         manager.save(getId(), craftData);
-                        player.closeInventory();
+                        manager.plugin.getScheduler().closeInventory(player);
                     }, inv -> {
                         reopen();
                     });

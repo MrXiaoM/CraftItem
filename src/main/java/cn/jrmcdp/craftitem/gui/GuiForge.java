@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.api.IScheduler;
 import top.mrxiaom.pluginbase.utils.*;
 import top.mrxiaom.pluginbase.utils.depend.PAPI;
 
@@ -363,7 +364,7 @@ public class GuiForge implements IHolder {
         if (craftData.doCost(player)) return;
         final boolean win = (RandomUtils.nextInt(100) + 1 <= craftData.getChance());
         final int multiple = craftData.getMultiple(win);
-        player.closeInventory();
+        parent.plugin.getScheduler().closeInventory(player);
         if (craftData.isDifficult()) {
             String randomGame = parent.plugin.config().getRandomGame();
             if (randomGame == null) {
@@ -404,9 +405,10 @@ public class GuiForge implements IHolder {
             return;
         }
 
-        player.closeInventory();
+        IScheduler scheduler = parent.plugin.getScheduler();
+        scheduler.closeInventory(player);
         manager.playForgeAnimate(player, (clear, cancel) -> {
-            parent.plugin.getScheduler().runTask(() -> {
+            scheduler.runTask(() -> {
                 if (craftData.isNotEnoughMaterial(player)) return;
 
                 for (int i = 0; i < combo; i++) {
