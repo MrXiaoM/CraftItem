@@ -49,9 +49,10 @@ public class Prompter implements IAutoCloseHolder {
     }
     public static void gui(Player player, int size, Message title, Consumer<Inventory> items, Consumer<InventoryClickEvent> click, Function<Inventory, Boolean> close) {
         Prompter holder = new Prompter();
-        holder.inventory = CraftItem.getPlugin().createInventory(holder, size, title.str());
+        CraftItem plugin = CraftItem.getPlugin();
+        holder.inventory = plugin.createInventory(holder, size, title.str());
         if (items != null) items.accept(holder.inventory);
-        player.openInventory(holder.inventory);
+        plugin.getScheduler().openInventory(player, holder.inventory);
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onInventoryClick(InventoryClickEvent e) {
@@ -75,7 +76,7 @@ public class Prompter implements IAutoCloseHolder {
                     HandlerList.unregisterAll(this);
                 }
             }
-        }, CraftItem.getPlugin());
+        }, plugin);
     }
 
     public static void onChat(Player player, Consumer<String> consumer) {

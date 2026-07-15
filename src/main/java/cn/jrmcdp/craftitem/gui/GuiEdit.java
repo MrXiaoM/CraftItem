@@ -427,7 +427,7 @@ public class GuiEdit implements IHolder {
                         inv.addItem(itemStack);
                         manager.plugin.getScheduler().runTask(() -> {
                             manager.plugin.getScheduler().closeInventory(player);
-                            player.openInventory(inv);
+                            manager.plugin.getScheduler().openInventory(player, inv);
                             isChat.set(false);
                         });
                     });
