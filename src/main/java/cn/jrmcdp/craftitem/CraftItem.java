@@ -169,16 +169,32 @@ public class CraftItem extends BukkitPlugin {
             VaultCurrency.register(this);
         }
         if (Util.isPresent("org.black_ixx.playerpoints.PlayerPointsAPI")) {
-            PlayerPointsCurrency.register(this);
+            try {
+                PlayerPointsCurrency.register(this);
+            } catch (LinkageError e) {
+                warn("无法加载 PlayerPoints 经济兼容，可能是版本不匹配");
+            }
         }
         if (Util.isPresent("me.yic.mpoints.MPointsAPI")) {
-            MPointsCurrency.register(this);
+            try {
+                MPointsCurrency.register(this);
+            } catch (LinkageError e) {
+                warn("无法加载 MPoints 经济兼容，可能是版本不匹配");
+            }
         }
         if (Util.isPresent("su.nightexpress.coinsengine.api.CoinsEngineAPI")) {
-            CoinsEngineCurrency.register(this);
+            try {
+                CoinsEngineCurrency.register(this);
+            } catch (LinkageError e) {
+                warn("无法加载 CoinsEngine 经济兼容，可能是版本不匹配");
+            }
         }
         if (Util.isPresent("com.mc9y.nyeconomy.api.NyEconomyAPI")) {
-            NyEconomyCurrency.register(this);
+            try {
+                NyEconomyCurrency.register(this);
+            } catch (LinkageError e) {
+                warn("无法加载 NyEconomy 经济兼容，可能是版本不匹配");
+            }
         }
 
         saveDefaultConfig();
