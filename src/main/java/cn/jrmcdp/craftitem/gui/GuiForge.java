@@ -19,12 +19,12 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.api.InventoryViewAccessor;
 import top.mrxiaom.pluginbase.api.IScheduler;
 import top.mrxiaom.pluginbase.utils.*;
 import top.mrxiaom.pluginbase.utils.depend.PAPI;
@@ -270,7 +270,7 @@ public class GuiForge implements IHolder {
             InventoryAction action, ClickType click,
             InventoryType.SlotType slotType, int slot,
             ItemStack currentItem, ItemStack cursor,
-            InventoryView view, InventoryClickEvent event
+            InventoryViewAccessor view, InventoryClickEvent event
     ) {
         event.setCancelled(true);
         parent.plugin.config().getSoundClickInventory().play(player);

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.api.IActionProvider;
 import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.pluginbase.utils.Util;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class ActionBack implements IAction {
     @Override
     public void run(Player player, @Nullable List<Pair<String, Object>> replacements) {
         if (player == null) return;
-        Inventory inv = player.getOpenInventory().getTopInventory();
+        Inventory inv = Util.getOpenInventory(player).getTopInventory();
         InventoryHolder holder = Utils.getHolder(inv);
         if (holder instanceof GuiForge) {
             GuiForge gui = (GuiForge) holder;

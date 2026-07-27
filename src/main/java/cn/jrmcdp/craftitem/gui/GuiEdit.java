@@ -15,11 +15,11 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.api.InventoryViewAccessor;
 import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
 
@@ -258,7 +258,7 @@ public class GuiEdit implements IHolder {
             InventoryAction action, ClickType click,
             InventoryType.SlotType slotType, int slotIndex,
             ItemStack currentItem, ItemStack cursor,
-            InventoryView view, InventoryClickEvent event
+            InventoryViewAccessor view, InventoryClickEvent event
     ) {
         event.setCancelled(true);
         manager.plugin.config().getSoundClickInventory().play(player);
@@ -511,7 +511,7 @@ public class GuiEdit implements IHolder {
                     });
                     break;
                 }
-                Slot.TIME.setItem(event.getView().getTopInventory(), this);
+                Slot.TIME.setItem(Util.getView(event).getTopInventory(), this);
                 Util.submitInvUpdate(player);
                 break;
             }
@@ -571,14 +571,14 @@ public class GuiEdit implements IHolder {
                         craftData.setCountLimit("");
                     }
                     manager.save(getId(), craftData);
-                    Slot.TIME_LIMIT.setItem(event.getView().getTopInventory(), this);
+                    Slot.TIME_LIMIT.setItem(Util.getView(event).getTopInventory(), this);
                     Util.submitInvUpdate(player);
                 }
                 break;
             }
             case DIFFICULT: { // 困难锻造
                 craftData.setDifficult(!craftData.isDifficult());
-                Slot.DIFFICULT.setItem(event.getView().getTopInventory(), this);
+                Slot.DIFFICULT.setItem(Util.getView(event).getTopInventory(), this);
                 Util.submitInvUpdate(player);
                 manager.save(getId(), craftData);
                 break;
@@ -591,7 +591,7 @@ public class GuiEdit implements IHolder {
                     craftData.setGuaranteeFailTimes(Math.max(0, craftData.getGuaranteeFailTimes() - (event.isShiftClick() ? 10 : 1)));
                     manager.save(getId(), craftData);
                 }
-                Slot.FAIL_TIMES.setItem(event.getView().getTopInventory(), this);
+                Slot.FAIL_TIMES.setItem(Util.getView(event).getTopInventory(), this);
                 Util.submitInvUpdate(player);
                 break;
             }
@@ -603,7 +603,7 @@ public class GuiEdit implements IHolder {
                     craftData.setCombo(Math.max(0, craftData.getCombo() - (event.isShiftClick() ? 10 : 1)));
                     manager.save(getId(), craftData);
                 }
-                Slot.COMBO.setItem(event.getView().getTopInventory(), this);
+                Slot.COMBO.setItem(Util.getView(event).getTopInventory(), this);
                 Util.submitInvUpdate(player);
                 break;
             }
