@@ -9,7 +9,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.32")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.33")
 }
 val base = LibraryHelper(project)
 
@@ -76,7 +76,6 @@ dependencies {
         implementation(artifact)
     }
     implementation(base.resolver.lite)
-    implementation("com.github.technicallycoded:FoliaLib:0.4.4") { isTransitive = false }
     implementation(project(":paper"))
 }
 
@@ -100,7 +99,6 @@ tasks {
         mapOf(
             "de.tr7zw.changeme.nbtapi" to "nbtapi",
             "top.mrxiaom.pluginbase" to "base",
-            "com.tcoded.folialib" to "folialib",
         ).forEach { (original, target) ->
             relocate(original, "cn.jrmcdp.craftitem.libs.$target")
         }

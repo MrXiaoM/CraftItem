@@ -42,7 +42,6 @@ import top.mrxiaom.pluginbase.utils.ConfigUtils;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.pluginbase.utils.inventory.InventoryFactory;
 import top.mrxiaom.pluginbase.utils.item.ItemEditor;
-import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 import java.io.*;
 import java.net.URL;
@@ -63,7 +62,6 @@ public class CraftItem extends BukkitPlugin {
                 .database(true)
                 .reconnectDatabaseWhenReloadConfig(false)
                 .scanIgnore("cn.jrmcdp.craftitem.libs"));
-        scheduler = new FoliaLibScheduler(this);
 
         try {
             //noinspection ResultOfMethodCallIgnored
