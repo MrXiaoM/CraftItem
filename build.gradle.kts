@@ -9,14 +9,14 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.7.33")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.8.0")
 }
 val base = LibraryHelper(project)
 
 group = "cn.jrmcdp"
 version = "2.1.5"
 
-val pluginBaseModules = base.modules.run{ listOf(library, paper, l10n, actions, gui, misc) }
+val pluginBaseModules = base.modules.run{ listOf(library, message, paper, l10n, actions, gui, misc) }
 val targetJavaVersion = 8
 allprojects {
     repositories {

@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,14 +102,6 @@ public class CraftItem extends BukkitPlugin {
 
     public static GameManager getMiniGames() {
         return GameManager.inst();
-    }
-
-    /**
-     * @see CraftItem#createInventory(InventoryHolder, int, String)
-     */
-    @Deprecated
-    public static InventoryFactory getInventoryFactory() {
-        return getPlugin().inventory;
     }
 
     public boolean isEnableConfigUpdater() {
