@@ -14,7 +14,7 @@ buildscript {
 val base = LibraryHelper(project)
 
 group = "cn.jrmcdp"
-version = "2.1.5"
+version = "2.1.6"
 
 val pluginBaseModules = base.modules.run{ listOf(library, message, paper, l10n, actions, gui, misc) }
 val targetJavaVersion = 8
