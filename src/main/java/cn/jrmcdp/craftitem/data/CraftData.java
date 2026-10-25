@@ -6,6 +6,7 @@ import cn.jrmcdp.craftitem.config.Message;
 import cn.jrmcdp.craftitem.currency.ICurrency;
 import cn.jrmcdp.craftitem.event.MaterialDisappearEvent;
 import cn.jrmcdp.craftitem.func.MaterialAdapterManager;
+import cn.jrmcdp.craftitem.utils.ConfigUtils;
 import cn.jrmcdp.craftitem.utils.RandomUtils;
 import cn.jrmcdp.craftitem.utils.Utils;
 import com.google.common.collect.Lists;
@@ -535,7 +536,7 @@ public class CraftData implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         // 注: 配置路径分隔符是 ' '(空格) 不是 '.'(点)
         Map<String, Object> map = new HashMap<>();
-        map.put("Material", this.material);
+        ConfigUtils.setItemList(map, "Material", this.material);
         map.put("Chance", this.chance);
         map.put("Multiple", this.multiple);
         map.put("WeightSuccessLevel", this.weightSuccessLevel);
@@ -545,8 +546,8 @@ public class CraftData implements ConfigurationSerializable {
         }
         map.put("Cost", this.cost);
         map.put("CostLevel", this.costLevel);
-        map.put("DisplayItem", this.displayItem);
-        map.put("Items", this.items);
+        ConfigUtils.setItem(map, "DisplayItem", this.displayItem);
+        ConfigUtils.setItemList(map, "Items", this.items);
         map.put("Commands", this.commands);
         map.put("TimeSecond", this.time);
         if (this.timeCostCurrency != null) {
@@ -567,7 +568,7 @@ public class CraftData implements ConfigurationSerializable {
     public static CraftData deserialize(Map<String, Object> map) {
         // 注: 配置路径分隔符是 ' '(空格) 不是 '.'(点)
         return new CraftData(
-                get(map, "Material", ArrayList::new), // List<ItemStack>
+                ConfigUtils.getItemList(map, "Material"), // List<ItemStack>
                 get(map, "Chance", 0),
                 get(map, "Multiple", () -> Arrays.asList(5, 10, 20)), // List<Integer>
                 get(map, "WeightSuccessLevel", () -> Arrays.asList(10, 10, 10)), // List<Integer>
@@ -575,10 +576,10 @@ public class CraftData implements ConfigurationSerializable {
                 currency(map, "CostCurrency"),
                 get(map, "Cost", 0),
                 get(map, "CostLevel", 0),
-                get(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
-                get(map, "Items", ArrayList::new), // List<ItemStack>
+                ConfigUtils.getItem(map, "DisplayItem", () -> new ItemStack(Material.BARRIER)),
+                ConfigUtils.getItemList(map, "Items"), // List<ItemStack>
                 get(map, "Commands", ArrayList::new), // List<String>
-                Long.parseLong(String.valueOf(get(map, "TimeSecond", "0"))),
+                Long.parseLong(get(map, "TimeSecond", "0")),
                 currency(map, "TimeCostCurrency"),
                 get(map, "TimeCost", 0),
                 get(map, "TimeCostLevel", 0),
@@ -595,7 +596,8 @@ public class CraftData implements ConfigurationSerializable {
     }
     @SuppressWarnings("unchecked")
     private static <T> T get(Map<String, Object> map, String key, Supplier<T> def) {
-        return map.get(key) == null ? def.get() : (T) map.get(key);
+        Object value = map.get(key);
+        return value == null ? def.get() : (T) value;
     }
     private static ICurrency currency(Map<String, Object> map, String key) {
         String currencyStr = (String) map.get(key);

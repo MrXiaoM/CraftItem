@@ -2,15 +2,25 @@ package cn.jrmcdp.craftitem.utils;
 
 import cn.jrmcdp.craftitem.CraftItem;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.BukkitPlugin;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -88,5 +98,93 @@ public class ConfigUtils {
         } catch (IOException | InvalidConfigurationException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, e);
         }
+    }
+
+    public static void setItem(Map<String, Object> map, String key, ItemStack item) {
+        map.put(key, serializeItem(item));
+    }
+
+    public static void setItemList(Map<String, Object> map, String key, List<ItemStack> itemList) {
+        List<String> list = new ArrayList<>();
+        for (ItemStack itemStack : itemList) {
+            list.add(serializeItem(itemStack));
+        }
+        map.put(key, list);
+    }
+
+    public static void setItem(ConfigurationSection config, String key, ItemStack item) {
+        config.set(key, serializeItem(item));
+    }
+
+    public static void setItemList(ConfigurationSection config, String key, List<ItemStack> itemList) {
+        List<String> list = new ArrayList<>();
+        for (ItemStack itemStack : itemList) {
+            list.add(serializeItem(itemStack));
+        }
+        config.set(key, list);
+    }
+
+    @Nullable
+    public static String serializeItem(ItemStack item) {
+        if (item != null) {
+            try {
+                ReadWriteNBT nbt = NBT.itemStackToNBT(item);
+                try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                    nbt.writeCompound(out);
+                    return Base64.getEncoder().encodeToString(out.toByteArray());
+                }
+            } catch (RuntimeException | IOException ignored) {
+            }
+        }
+        return null;
+    }
+
+    public static ItemStack getItem(Map<String, Object> map, String key, Supplier<ItemStack> def) {
+        return deserializeItem(map.get(key), def);
+    }
+
+    public static List<ItemStack> getItemList(Map<String, Object> map, String key) {
+        List<ItemStack> list = new ArrayList<>();
+        Object value = map.get(key);
+        if (value instanceof List<?>) {
+            List<?> loadedList = (List<?>) value;
+            for (Object object : loadedList) {
+                list.add(deserializeItem(object, null));
+            }
+        }
+        return list;
+    }
+
+    public static ItemStack getItem(ConfigurationSection config, String key, Supplier<ItemStack> def) {
+        return deserializeItem(config.get(key), def);
+    }
+
+    public static List<ItemStack> getItemList(ConfigurationSection config, String key) {
+        List<ItemStack> list = new ArrayList<>();
+        Object value = config.get(key);
+        if (value instanceof List<?>) {
+            List<?> loadedList = (List<?>) value;
+            for (Object object : loadedList) {
+                list.add(deserializeItem(object, null));
+            }
+        }
+        return list;
+    }
+
+    public static ItemStack deserializeItem(Object value, Supplier<ItemStack> def) {
+        if (value instanceof ItemStack) {
+            return (ItemStack) value;
+        }
+        if (value != null) {
+            try {
+                byte[] decoded = Base64.getDecoder().decode(value.toString());
+                try (ByteArrayInputStream in = new ByteArrayInputStream(decoded)) {
+                    ReadWriteNBT nbt = NBT.readNBT(in);
+                    return NBT.itemStackFromNBT(nbt);
+                }
+            } catch (RuntimeException | IOException ignored) {
+            }
+        }
+        return def != null ? def.get() : null;
     }
 }
