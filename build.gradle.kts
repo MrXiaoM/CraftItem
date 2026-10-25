@@ -9,7 +9,7 @@ plugins {
 
 buildscript {
     repositories.mavenCentral()
-    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.8.1")
+    dependencies.classpath("top.mrxiaom:LibrariesResolver-Gradle:1.8.2")
 }
 val base = LibraryHelper(project)
 
@@ -45,7 +45,7 @@ dependencies {
     compileOnly(files("libs/MPoints-1.2.2.jar"))
     compileOnly("com.github.nulli0n:ExcellentEconomy:c32f037025") // CoinsEngine
     compileOnly("com.github.blank038:NyEconomy:8e3f27c18f")
-    compileOnly("me.clip:placeholderapi:2.12.2")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("com.github.MascusJeoraly:LanguageUtils:1.9")
 
     // MMOItems
