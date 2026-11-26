@@ -1,6 +1,7 @@
 package cn.jrmcdp.craftitem.config;
 
 import cn.jrmcdp.craftitem.CraftItem;
+import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.AbstractModule;
 import cn.jrmcdp.craftitem.gui.GuiCategory;
@@ -10,9 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.func.AutoRegister;
-import top.mrxiaom.pluginbase.utils.AdventureItemStack;
 import top.mrxiaom.pluginbase.utils.ConfigUpdater;
 
 import java.util.*;
@@ -21,7 +20,7 @@ import java.util.*;
 public class ConfigCategoryGui extends AbstractModule {
     private String title;
     private String[] chest;
-    private Map<String, ItemStack> items;
+    private Map<String, Icon> items;
     private int slotAmount;
     private final ConfigUpdater updater;
     public ConfigCategoryGui(CraftItem plugin) {
@@ -59,17 +58,15 @@ public class ConfigCategoryGui extends AbstractModule {
         items = new HashMap<>();
         ConfigurationSection section = config.getConfigurationSection("Item");
         if (section != null) for (String key : section.getKeys(false)) {
-            ItemStack itemStack = Utils
-                    .parseMaterial(section.getString(key + ".Type", "STONE"))
-                    .map(ItemStack::new)
-                    .orElseGet(() -> new ItemStack(Material.STONE));
-            if (!itemStack.getType().equals(Material.AIR)) {
-                String name = section.getString(key + ".Name");
-                List<String> lore = section.getStringList(key + ".Lore");
-                if (name != null) AdventureItemStack.setItemDisplayName(itemStack, name);
-                if (!lore.isEmpty()) AdventureItemStack.setItemLoreMiniMessage(itemStack, lore);
+            String rawMaterial = section.getString(key + ".Type", "STONE");
+            Material material = Utils
+                    .parseMaterial(rawMaterial)
+                    .orElse(null);
+            if (material == null) {
+                material = Material.STONE;
+                CraftItem.getPlugin().getLogger().warning("Category.yml 找不到图标 " + key + " 设定的物品类型 " + rawMaterial + "，使用默认图标");
             }
-            items.put(key, itemStack);
+            items.put(key, new Icon(material, key, section));
         }
     }
 

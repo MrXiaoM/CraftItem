@@ -1,7 +1,7 @@
 package cn.jrmcdp.craftitem.gui;
 
-import cn.jrmcdp.craftitem.CraftItem;
 import cn.jrmcdp.craftitem.config.*;
+import cn.jrmcdp.craftitem.config.data.Icon;
 import cn.jrmcdp.craftitem.data.CraftData;
 import cn.jrmcdp.craftitem.data.PlayerData;
 import cn.jrmcdp.craftitem.func.CraftRecipeManager;
@@ -29,7 +29,7 @@ public class GuiCategory implements IHolder {
 
     private final String title;
     private final String[] chest;
-    private final Map<String, ItemStack> items;
+    private final Map<String, Icon> items;
     private final int slotAmount;
 
     private final PlayerData playerData;
@@ -40,7 +40,7 @@ public class GuiCategory implements IHolder {
     private int page;
     private final CraftRecipeManager manager = CraftRecipeManager.inst();
     private final ConfigCategoryGui parent;
-    public GuiCategory(ConfigCategoryGui parent, String title, String[] chest, Map<String, ItemStack> items, int slotAmount, PlayerData playerData, String type, List<String> craftList, int page) {
+    public GuiCategory(ConfigCategoryGui parent, String title, String[] chest, Map<String, Icon> items, int slotAmount, PlayerData playerData, String type, List<String> craftList, int page) {
         this.parent = parent;
         this.title = title;
         this.chest = chest;
@@ -127,7 +127,7 @@ public class GuiCategory implements IHolder {
                 is[i] = clone;
                 slot[i] = name;
             } else {
-                is[i] = items.get(key);
+                is[i] = items.get(key).getItem(getPlayer());
             }
         }
         inventory.setContents(is);
@@ -173,7 +173,12 @@ public class GuiCategory implements IHolder {
                     return;
                 }
                 ConfigForgeGui.inst().openGui(getPlayerData(), name, manager.getCraftData(name), type);
+                return;
             }
+        }
+        Icon icon = items.get(key);
+        if (icon != null) {
+            icon.handleClick(player, event);
         }
     }
 }

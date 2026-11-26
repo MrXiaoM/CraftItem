@@ -301,35 +301,17 @@ public class GuiForge implements IHolder {
             if (category == null) {
                 Icon redirect = parent.getIcon(icon.redirect);
                 if (redirect != null) {
-                    handleClick(redirect, player, event);
+                    redirect.handleClick(player, event);
                 }
                 return;
             }
-            handleClick(icon, player, event);
+            icon.handleClick(player, event);
             return;
         }
         // 其它图标
         Icon icon = parent.getIcon(key);
         if (icon != null) {
-            handleClick(icon, player, event);
-        }
-    }
-
-    private void handleClick(Icon icon, Player player, InventoryClickEvent event) {
-        if (!event.isShiftClick()) {
-            if (event.isLeftClick()) {
-                icon.leftClick(player);
-            }
-            else if (event.isRightClick()) {
-                icon.rightClick(player);
-            }
-        } else {
-            if (event.isLeftClick()) {
-                icon.shiftLeftClick(player);
-            }
-            else if (event.isRightClick()) {
-                icon.shiftRightClick(player);
-            }
+            icon.handleClick(player, event);
         }
     }
 

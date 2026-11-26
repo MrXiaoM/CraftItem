@@ -3,6 +3,7 @@ package cn.jrmcdp.craftitem.config.data;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import top.mrxiaom.pluginbase.api.IAction;
 import top.mrxiaom.pluginbase.utils.AdventureItemStack;
@@ -63,6 +64,25 @@ public class Icon {
         if (customModelData != null) AdventureItemStack.setCustomModelData(item, customModelData);
         return item;
     }
+
+    public void handleClick(Player player, InventoryClickEvent event) {
+        if (!event.isShiftClick()) {
+            if (event.isLeftClick()) {
+                leftClick(player);
+            }
+            else if (event.isRightClick()) {
+                rightClick(player);
+            }
+        } else {
+            if (event.isLeftClick()) {
+                shiftLeftClick(player);
+            }
+            else if (event.isRightClick()) {
+                shiftRightClick(player);
+            }
+        }
+    }
+
 
     public void leftClick(Player player) {
         runCommands(player, leftClick);
